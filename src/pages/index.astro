@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Trailer from '../components/Trailer.astro';
+import { SITE } from '../config';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const systems = (await getCollection('systems')).sort((a, b) => a.data.order - b.data.order);
+
+const highlights = [
+  { title: 'Dedicated servers', text: 'Server-authoritative multiplayer on a Linux build, running in Docker on AWS EC2.' },
+  { title: 'Gameplay Ability System', text: 'Combos, light/heavy attacks, projectiles, area damage, upgrades and consumables built on GAS.' },
+  { title: 'Online backend', text: 'Steam login via EOS, sessions matched by GUID and a Python coordinator that spins up servers and stores stats.' },
+  { title: 'Built solo, end to end', text: 'Gameplay, UI, AI, audio and original music, from first prototype to Steam release.' },
+];
+---
+<Base>
+  <section class="hero wrap">
+    <p class="eyebrow">{SITE.stack}</p>
+    <h1>{SITE.name}</h1>
+    <p class="role">{SITE.role}</p>
+    <p class="pitch">
+      I build multiplayer games in Unreal Engine 5 and C++. My game <strong>Champions Arena</strong> is a
+      team arena fighter with dedicated servers, GAS-driven combat and a full online backend, which I built solo.
+    </p>
+    <div class="ctas">
+      <a class="btn primary" href={`${base}/champions-arena/`}>See Champions Arena</a>
+      <a class="btn" href={`${base}/systems/`}>Explore the systems</a>
+      {SITE.steam && <a class="btn" href={SITE.steam}>Steam page ↗</a>}
+      <a class="btn" href={`${base}/cv.pdf`}>CV (PDF)</a>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <Trailer />
+  </section>
+
+  <section class="wrap">
+    <h2>Highlights</h2>
+    <div class="grid">
+      {highlights.map((h) => (
+        <div class="card"><h3>{h.title}</h3><p>{h.text}</p></div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2>Systems deep dives</h2>
+    <div class="grid">
+      {systems.map((s) => (
+        <a class="card" href={`${base}/systems/${s.id}/`}>
+          <h3>{s.data.title}</h3>
+          <p>{s.data.summary}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: 4.5rem 16px 2.5rem; }
+  .eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.8rem; margin-bottom: 0.8rem; }
+  .hero h1 { margin-bottom: 0.2em; font-size: clamp(2.4rem, 7vw, 4rem); }
+  .role { font-size: 1.25rem; color: var(--text); margin-bottom: 1.2rem; }
+  .pitch { color: var(--text-dim); max-width: 40rem; font-size: 1.05rem; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.6rem; }
+</style>

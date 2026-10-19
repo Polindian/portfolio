@@ -1,0 +1,93 @@
+---
+import Base from './Base.astro';
+import { codeUrl } from '../config';
+
+interface Props {
+  title: string;
+  summary: string;
+  tags: string[];
+  glance: string[];
+  keyFiles: { path: string; note: string }[];
+  status: 'draft' | 'ready';
+  headings: { depth: number; slug: string; text: string }[];
+  prev?: { id: string; title: string };
+  next?: { id: string; title: string };
+}
+const { title, summary, tags, glance, keyFiles, status, headings, prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const toc = headings.filter((h) => h.depth <= 3);
+---
+<Base title={title} description={summary}>
+  <article class="wrap system">
+    <header class="sys-head">
+      <a class="crumb" href={`${base}/systems/`}>← All systems</a>
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+      <div>{tags.map((t) => <span class="tag">{t}</span>)}</div>
+    </header>
+
+    {status === 'draft' && <div class="draft-banner">Work in progress — this deep dive is being written.</div>}
+
+    <section class="glance card">
+      <h2>At a glance</h2>
+      <ul>{glance.map((g) => <li>{g}</li>)}</ul>
+    </section>
+
+    <div class="layout">
+      <aside class="toc">
+        <p class="toc-title">On this page</p>
+        <ul>
+          {toc.map((h) => (
+            <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+          ))}
+          <li class="d2"><a href="#key-files">Key files</a></li>
+        </ul>
+      </aside>
+
+      <div class="body">
+        <slot />
+
+        <h2 id="key-files">Key files</h2>
+        <ul class="files">
+          {keyFiles.map((f) => (
+            <li><a href={codeUrl(f.path)}><code>{f.path.split('/').pop()}</code></a> — {f.note}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <nav class="pager">
+      {prev ? <a class="card" href={`${base}/systems/${prev.id}/`}><small>← Previous</small><h3>{prev.title}</h3></a> : <span />}
+      {next ? <a class="card next" href={`${base}/systems/${next.id}/`}><small>Next →</small><h3>{next.title}</h3></a> : <span />}
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .system { padding-top: 2.5rem; }
+  .crumb { font-size: 0.9rem; color: var(--text-dim); }
+  .sys-head h1 { margin-top: 0.5rem; }
+  .summary { font-size: 1.15rem; color: var(--text-dim); max-width: 46rem; }
+  .glance { margin: 2rem 0; border-left: 3px solid var(--gold); }
+  .glance h2 { margin: 0 0 0.6em; font-size: 1.2rem; }
+  .glance ul { margin: 0; }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 2.5rem; }
+  .toc { position: sticky; top: 88px; align-self: start; font-size: 0.88rem; }
+  .toc-title { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .toc ul { list-style: none; padding: 0; margin: 0; border-left: 1px solid var(--line); }
+  .toc li a { display: block; padding: 0.22em 0 0.22em 0.9em; color: var(--text-dim); }
+  .toc li a:hover { color: var(--gold); text-decoration: none; }
+  .toc li.d3 a { padding-left: 1.8em; font-size: 0.84rem; }
+  .body :global(h2:first-child) { margin-top: 0; }
+  .body :global(.placeholder) { aspect-ratio: 21 / 8; margin-bottom: 1rem; }
+  .files { list-style: none; padding: 0; }
+  .files li { padding: 0.35em 0; border-bottom: 1px solid var(--line); color: var(--text-dim); }
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 4rem; }
+  .pager small { color: var(--text-dim); }
+  .pager h3 { margin: 0.2em 0 0; }
+  .pager .next { text-align: right; }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .toc { position: static; }
+  }
+</style>

@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const systems = (await getCollection('systems')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Systems" description="Deep dives into the systems behind Champions Arena.">
+  <section class="wrap" style="padding-top:2.5rem">
+    <h1>Systems</h1>
+    <p style="color:var(--text-dim);max-width:44rem">
+      Deep dives into how Champions Arena is built. Each page covers the design, the key code,
+      the bugs I hit, what I optimised and what I would do differently.
+    </p>
+    <div class="grid" style="margin-top:2rem">
+      {systems.map((s) => (
+        <a class="card" href={`${base}/systems/${s.id}/`}>
+          <h3>{s.data.title}</h3>
+          <p>{s.data.summary}</p>
+          <div style="margin-top:0.8rem">{s.data.tags.slice(0, 3).map((t) => <span class="tag">{t}</span>)}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="About / CV">
+  <section class="wrap" style="padding-top:2.5rem;max-width:760px">
+    <h1>About</h1>
+    <p>
+      TODO: 3–4 sentences in your own words. Who you are, how you got into game development after a
+      business management degree, what you love building (multiplayer, combat feel, audio), and the role you want.
+    </p>
+
+    <h2>What I work with</h2>
+    <table>
+      <tr><th>Engine</th><td>Unreal Engine 5 (source build), Blueprints, GAS, Enhanced Input, UMG, Behaviour Trees</td></tr>
+      <tr><th>Languages</th><td>C++, Python, C#</td></tr>
+      <tr><th>Online</th><td>Dedicated servers, replication, Epic Online Services, Steamworks, REST/JSON</td></tr>
+      <tr><th>Tools</th><td>Git & Git LFS, Visual Studio, Docker, AWS EC2, Unreal Insights, DaVinci Resolve</td></tr>
+    </table>
+
+    <h2>How I built Champions Arena</h2>
+    <p>
+      TODO: be upfront here. For example: "I designed every system and built them with heavy AI assistance,
+      then studied, refactored and documented the code myself. These deep dives are the result."
+    </p>
+
+    <h2>CV & contact</h2>
+    <p>
+      <a class="btn primary" href={`${base}/cv.pdf`}>Download CV (PDF)</a>
+      <a class="btn" href={`mailto:${SITE.email}`}>Email me</a>
+      <a class="btn" href={SITE.linkedin}>LinkedIn ↗</a>
+    </p>
+  </section>
+</Base>

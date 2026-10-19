@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import { SITE } from '../config';
+
+interface Props { title?: string; description?: string; }
+const { title, description = `${SITE.name} — ${SITE.role}` } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const systems = (await getCollection('systems')).sort((a, b) => a.data.order - b.data.order);
+const path = Astro.url.pathname;
+const active = (p: string) => (path === `${base}${p}` || path.startsWith(`${base}${p}/`) ? 'active' : '');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title ? `${title} · ${SITE.name}` : SITE.name}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="wrap nav">
+        <a class="brand" href={`${base}/`}>{SITE.name}</a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Open menu" />
+        <label for="nav-toggle" class="burger" aria-hidden="true"><span></span></label>
+        <ul class="links">
+          <li><a class={path === `${base}/` ? 'active' : ''} href={`${base}/`}>Home</a></li>
+          <li><a class={active('/champions-arena')} href={`${base}/champions-arena/`}>Champions Arena</a></li>
+          <li class="dropdown">
+            <a class={active('/systems')} href={`${base}/systems/`}>Systems ▾</a>
+            <ul class="menu">
+              {systems.map((s) => (
+                <li><a href={`${base}/systems/${s.id}/`}>{s.data.title}</a></li>
+              ))}
+            </ul>
+          </li>
+          <li><a class={active('/about')} href={`${base}/about/`}>About / CV</a></li>
+          <li><a href={SITE.github} aria-label="GitHub" class="gh">GitHub ↗</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main><slot /></main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} {SITE.name}</span>
+        <span><a href={`mailto:${SITE.email}`}>Email</a> · <a href={SITE.linkedin}>LinkedIn</a> · <a href={SITE.github}>GitHub</a></span>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(13, 15, 20, 0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 1.1rem; letter-spacing: 0.04em; }
+  .brand:hover { text-decoration: none; color: var(--gold); }
+  .links { list-style: none; display: flex; gap: 0.3rem; margin: 0; padding: 0; align-items: center; }
+  .links a { color: var(--text-dim); padding: 0.45em 0.75em; border-radius: 6px; font-size: 0.95rem; display: block; }
+  .links a:hover, .links a.active { color: var(--text); background: var(--bg-raised); text-decoration: none; }
+  .links a.active { color: var(--gold); }
+  .dropdown { position: relative; }
+  .menu {
+    display: none; position: absolute; top: 100%; left: 0; min-width: 240px;
+    list-style: none; margin: 0; padding: 0.4rem;
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .dropdown:hover .menu, .dropdown:focus-within .menu { display: block; }
+  .nav-toggle, .burger { display: none; }
+
+  @media (max-width: 760px) {
+    .burger { display: block; width: 28px; height: 20px; position: relative; cursor: pointer; }
+    .burger span, .burger::before, .burger::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 2px; background: var(--text);
+    }
+    .burger::before { top: 0; } .burger span { top: 9px; } .burger::after { bottom: 0; }
+    .links {
+      display: none; position: absolute; top: 64px; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; padding: 0.6rem 16px 1rem;
+      background: var(--bg); border-bottom: 1px solid var(--line);
+    }
+    .nav-toggle:checked ~ .links { display: flex; }
+    .menu { display: block; position: static; border: 0; background: none; padding: 0 0 0 0.8rem; }
+  }
+
+  .site-footer { border-top: 1px solid var(--line); margin-top: 5rem; padding: 2rem 0; color: var(--text-dim); font-size: 0.9rem; }
+  .site-footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+</style>
