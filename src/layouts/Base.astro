@@ -30,7 +30,6 @@ const active = (p: string) => (path === `${base}${p}` || path.startsWith(`${base
         <label for="nav-toggle" class="burger" aria-hidden="true"><span></span></label>
         <ul class="links">
           <li><a class={path === `${base}/` ? 'active' : ''} href={`${base}/`}>Home</a></li>
-          <li><a class={active('/champions-arena')} href={`${base}/champions-arena/`}>Champions Arena</a></li>
           <li class="dropdown">
             <a class={active('/systems')} href={`${base}/systems/`}>Systems ▾</a>
             <ul class="menu">
