@@ -7,20 +7,35 @@ import { SITE } from '../config';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const sys = (id: string) => `${base}/systems/${id}/`;
 
-const stats = [
-  { value: '21k', label: 'lines of C++' },
-  { value: '3', label: 'playable champions' },
-  { value: '7', label: 'core systems' },
-  { value: '1', label: 'developer' },
+// Match format, straight from AChrisGameMode's defaults.
+const format = [
+  { value: 'Bo3', label: 'first team to 2 rounds' },
+  { value: '60s', label: 'per round' },
+  { value: '60s', label: 'shop phase between rounds' },
+  { value: '5', label: 'tiebreak rules per round' },
 ];
 
-// One match, end to end: each step is a different system.
-const flow = [
-  { step: 'Log in', text: 'Steam account, verified through Epic Online Services', link: sys('online-backend') },
-  { step: 'Find a match', text: 'Lobby created on a coordinator and matched by a unique ID', link: sys('ui-architecture') },
-  { step: 'Server spins up', text: 'A dedicated Linux server launches in Docker on AWS', link: sys('online-backend') },
-  { step: 'Fight', text: 'Server-authoritative combat built on the Gameplay Ability System', link: sys('gas-and-combat') },
-  { step: 'Results saved', text: 'Stats posted at match end and ranked on the leaderboard', link: sys('online-backend') },
+const phases = [
+  { name: 'Hero select', text: 'Pick a champion and a team in the lobby.' },
+  { name: 'Countdown', text: '5 seconds to get ready.' },
+  { name: 'Round', text: '60 seconds to fight and capture flags.' },
+  { name: 'Round result', text: 'The server decides the winner and pays out souls.' },
+  { name: 'Shop', text: '60 seconds to spend souls on upgrades and items.' },
+];
+
+const tiebreaks = [
+  'More flags captured',
+  'Captures tied: more territory on the remaining flag',
+  'No captures: more total territory across all flags',
+  'Still level: more kills',
+  'Dead even: the round is replayed',
+];
+
+// TODO: replace roles/blurbs with the real ones and add portraits from the portrait studio.
+const champions = [
+  { name: 'Christos', text: 'TODO: role and play style in one line.' },
+  { name: 'Drogath', text: 'The Barbarian. TODO: play style in one line.' },
+  { name: 'Yuri', text: 'TODO: role and play style in one line.' },
 ];
 ---
 <Base>
@@ -43,27 +58,61 @@ const flow = [
   <section class="wrap"><Trailer /></section>
 
   <section class="wrap">
+    <h2>The game</h2>
+    <p class="intro">
+      Two teams fight over capture points in short, best-of-three matches. Each round is a 60-second scramble
+      for flags; between rounds, players spend the souls they earned on ability upgrades and items, so every
+      round plays differently from the last.
+    </p>
     <dl class="stats">
-      {stats.map((s) => (
+      {format.map((s) => (
         <div><dt>{s.value}</dt><dd>{s.label}</dd></div>
       ))}
     </dl>
   </section>
 
   <section class="wrap">
-    <h2>One match, end to end</h2>
-    <p class="dim">Everything that happens from pressing Play to landing on the leaderboard. Each step is a system I built.</p>
-    <ol class="flow">
-      {flow.map((f, i) => (
-        <li>
-          <a href={f.link}>
-            <span class="n">{i + 1}</span>
-            <b>{f.step}</b>
-            <span>{f.text}</span>
-          </a>
-        </li>
+    <h2>The match loop</h2>
+    <ol class="loop">
+      {phases.map((p, i) => (
+        <li><span class="n">{i + 1}</span><b>{p.name}</b><span class="t">{p.text}</span></li>
       ))}
     </ol>
+    <p class="repeat">↻ Steps 2–5 repeat until a team has won 2 rounds, then everyone sees match stats and the leaderboard updates.</p>
+    <p class="built">Built in: <a href={sys('gameplay-framework')}>Gameplay Framework</a></p>
+  </section>
+
+  <section class="wrap two">
+    <div>
+      <h3>How a round is won</h3>
+      <p class="dim">Flags rarely split cleanly, so the server checks five rules in order and stops at the first one that separates the teams.</p>
+      <ol class="ladder">
+        {tiebreaks.map((t) => <li>{t}</li>)}
+      </ol>
+    </div>
+    <div>
+      <h3>A comeback economy</h3>
+      <p class="dim">Souls are paid at the end of every round, and the losing team gets more.</p>
+      <div class="souls">
+        <div><dt>100</dt><dd>souls to the losing team</dd></div>
+        <div><dt>50</dt><dd>souls to the winning team</dd></div>
+      </div>
+      <p class="dim">Losing a round buys a bigger upgrade in the shop, which keeps matches close instead of snowballing.</p>
+      <p class="built">Built in: <a href={sys('gas-and-combat')}>GAS & Combat</a></p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2>Champions</h2>
+    <div class="champs">
+      {champions.map((c) => (
+        <div class="champ">
+          <div class="placeholder portrait">Portrait</div>
+          <h3>{c.name}</h3>
+          <p>{c.text}</p>
+        </div>
+      ))}
+    </div>
   </section>
 
   <section class="wrap">
@@ -80,40 +129,58 @@ const flow = [
   .pitch { color: var(--text-dim); max-width: 40rem; font-size: 1.05rem; }
   .ctas { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.6rem; }
   .dim { color: var(--text-dim); }
+  .intro { font-size: 1.1rem; max-width: 46rem; }
+  .built { font-size: 0.88rem; color: var(--text-dim); margin-top: 0.8rem; }
 
   .stats {
-    display: grid; grid-template-columns: repeat(4, 1fr); margin: 2.5rem 0 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); margin: 2rem 0 0;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   }
   .stats div { padding: 1.4rem 0.5rem; text-align: center; }
   .stats div + div { border-left: 1px solid var(--line); }
-  .stats dt { font-family: var(--font-display); font-size: 2.4rem; color: var(--gold); line-height: 1; }
-  .stats dd { margin: 0.4rem 0 0; color: var(--text-dim); font-size: 0.9rem; }
+  .stats dt, .souls dt { font-family: var(--font-display); font-size: 2.4rem; color: var(--gold); line-height: 1; }
+  .stats dd, .souls dd { margin: 0.4rem 0 0; color: var(--text-dim); font-size: 0.9rem; }
 
-  .flow { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; grid-template-columns: repeat(5, 1fr); counter-reset: none; }
-  .flow li { position: relative; }
-  .flow li + li::before {
-    content: ''; position: absolute; top: 1.1rem; left: -50%; width: 100%; height: 2px;
-    background: linear-gradient(90deg, var(--gold), var(--line));
+  .loop { list-style: none; padding: 0; margin: 1.2rem 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; }
+  .loop li {
+    position: relative; display: flex; flex-direction: column; gap: 0.3rem;
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem;
   }
-  .flow a { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.35rem; padding: 0 0.6rem; color: var(--text); }
-  .flow a:hover { text-decoration: none; }
-  .flow a:hover .n { background: var(--gold); color: #17120a; }
-  .flow .n {
-    width: 2.2rem; height: 2.2rem; border-radius: 50%; display: grid; place-items: center;
-    background: var(--bg); border: 2px solid var(--gold); color: var(--gold); font-weight: 700; z-index: 1;
+  .loop li:nth-child(n + 2):nth-child(-n + 5) { border-color: rgba(217, 164, 65, 0.45); }
+  .loop .n { font-family: var(--font-mono); color: var(--gold); font-size: 0.85rem; }
+  .loop .t { color: var(--text-dim); font-size: 0.9rem; line-height: 1.45; }
+  .repeat {
+    margin: 0.8rem 0 0; padding: 0.7rem 1rem; border: 1px dashed rgba(217, 164, 65, 0.45);
+    border-radius: var(--radius); color: var(--text); background: var(--gold-soft); font-size: 0.95rem;
   }
-  .flow b { margin-top: 0.4rem; }
-  .flow span:last-child { color: var(--text-dim); font-size: 0.88rem; line-height: 1.45; }
 
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2.5rem; }
+  .two h3 { font-family: var(--font-display); font-size: 1.35rem; margin-top: 0; }
+  .ladder { padding: 0; margin: 0; list-style: none; counter-reset: rule; }
+  .ladder li {
+    counter-increment: rule; display: flex; gap: 0.9rem; align-items: baseline;
+    padding: 0.65rem 0; border-bottom: 1px solid var(--line);
+  }
+  .ladder li::before { content: counter(rule); font-family: var(--font-mono); color: var(--gold); min-width: 1rem; }
+  .ladder li:last-child { color: var(--text-dim); }
+  .souls { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1rem 0; }
+  .souls div { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem; text-align: center; }
+  .souls div:first-child { border-color: var(--gold); }
+
+  .champs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .champ h3 { font-family: var(--font-display); margin: 0.8rem 0 0.2rem; }
+  .champ p { color: var(--text-dim); margin: 0; font-size: 0.95rem; }
+  .portrait { aspect-ratio: 4 / 3; }
+
+  @media (max-width: 860px) {
+    .loop { grid-template-columns: 1fr; }
+    .two { grid-template-columns: 1fr; }
+  }
   @media (max-width: 760px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
     .stats div:nth-child(3) { border-left: 0; }
     .stats div:nth-child(n + 3) { border-top: 1px solid var(--line); }
-    .flow { grid-template-columns: 1fr; gap: 1.2rem; }
-    .flow li + li::before { display: none; }
-    .flow a { flex-direction: row; align-items: flex-start; text-align: left; flex-wrap: wrap; column-gap: 0.8rem; }
-    .flow a b { margin-top: 0.35rem; }
-    .flow span:last-child { flex-basis: 100%; padding-left: 3rem; }
+    .champs { grid-template-columns: 1fr; }
+    .portrait { aspect-ratio: 16 / 9; }
   }
 </style>
