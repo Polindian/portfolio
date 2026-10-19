@@ -1,17 +1,26 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Trailer from '../components/Trailer.astro';
+import SystemIndex from '../components/SystemIndex.astro';
 import { SITE } from '../config';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const systems = (await getCollection('systems')).sort((a, b) => a.data.order - b.data.order);
+const sys = (id: string) => `${base}/systems/${id}/`;
 
-const highlights = [
-  { title: 'Dedicated servers', text: 'Server-authoritative multiplayer on a Linux build, running in Docker on AWS EC2.' },
-  { title: 'Gameplay Ability System', text: 'Combos, light/heavy attacks, projectiles, area damage, upgrades and consumables built on GAS.' },
-  { title: 'Online backend', text: 'Steam login via EOS, sessions matched by GUID and a Python coordinator that spins up servers and stores stats.' },
-  { title: 'Built solo, end to end', text: 'Gameplay, UI, AI, audio and original music, from first prototype to Steam release.' },
+const stats = [
+  { value: '21k', label: 'lines of C++' },
+  { value: '3', label: 'playable champions' },
+  { value: '7', label: 'core systems' },
+  { value: '1', label: 'developer' },
+];
+
+// One match, end to end: each step is a different system.
+const flow = [
+  { step: 'Log in', text: 'Steam account, verified through Epic Online Services', link: sys('online-backend') },
+  { step: 'Find a match', text: 'Lobby created on a coordinator and matched by a unique ID', link: sys('ui-architecture') },
+  { step: 'Server spins up', text: 'A dedicated Linux server launches in Docker on AWS', link: sys('online-backend') },
+  { step: 'Fight', text: 'Server-authoritative combat built on the Gameplay Ability System', link: sys('gas-and-combat') },
+  { step: 'Results saved', text: 'Stats posted at match end and ranked on the leaderboard', link: sys('online-backend') },
 ];
 ---
 <Base>
@@ -31,29 +40,35 @@ const highlights = [
     </div>
   </section>
 
+  <section class="wrap"><Trailer /></section>
+
   <section class="wrap">
-    <Trailer />
+    <dl class="stats">
+      {stats.map((s) => (
+        <div><dt>{s.value}</dt><dd>{s.label}</dd></div>
+      ))}
+    </dl>
   </section>
 
   <section class="wrap">
-    <h2>Highlights</h2>
-    <div class="grid">
-      {highlights.map((h) => (
-        <div class="card"><h3>{h.title}</h3><p>{h.text}</p></div>
+    <h2>One match, end to end</h2>
+    <p class="dim">Everything that happens from pressing Play to landing on the leaderboard. Each step is a system I built.</p>
+    <ol class="flow">
+      {flow.map((f, i) => (
+        <li>
+          <a href={f.link}>
+            <span class="n">{i + 1}</span>
+            <b>{f.step}</b>
+            <span>{f.text}</span>
+          </a>
+        </li>
       ))}
-    </div>
+    </ol>
   </section>
 
   <section class="wrap">
-    <h2>Systems deep dives</h2>
-    <div class="grid">
-      {systems.map((s) => (
-        <a class="card" href={`${base}/systems/${s.id}/`}>
-          <h3>{s.data.title}</h3>
-          <p>{s.data.summary}</p>
-        </a>
-      ))}
-    </div>
+    <h2>Deep dives</h2>
+    <SystemIndex />
   </section>
 </Base>
 
@@ -64,4 +79,41 @@ const highlights = [
   .role { font-size: 1.25rem; color: var(--text); margin-bottom: 1.2rem; }
   .pitch { color: var(--text-dim); max-width: 40rem; font-size: 1.05rem; }
   .ctas { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.6rem; }
+  .dim { color: var(--text-dim); }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); margin: 2.5rem 0 0;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .stats div { padding: 1.4rem 0.5rem; text-align: center; }
+  .stats div + div { border-left: 1px solid var(--line); }
+  .stats dt { font-family: var(--font-display); font-size: 2.4rem; color: var(--gold); line-height: 1; }
+  .stats dd { margin: 0.4rem 0 0; color: var(--text-dim); font-size: 0.9rem; }
+
+  .flow { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; grid-template-columns: repeat(5, 1fr); counter-reset: none; }
+  .flow li { position: relative; }
+  .flow li + li::before {
+    content: ''; position: absolute; top: 1.1rem; left: -50%; width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--line));
+  }
+  .flow a { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.35rem; padding: 0 0.6rem; color: var(--text); }
+  .flow a:hover { text-decoration: none; }
+  .flow a:hover .n { background: var(--gold); color: #17120a; }
+  .flow .n {
+    width: 2.2rem; height: 2.2rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--bg); border: 2px solid var(--gold); color: var(--gold); font-weight: 700; z-index: 1;
+  }
+  .flow b { margin-top: 0.4rem; }
+  .flow span:last-child { color: var(--text-dim); font-size: 0.88rem; line-height: 1.45; }
+
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats div:nth-child(3) { border-left: 0; }
+    .stats div:nth-child(n + 3) { border-top: 1px solid var(--line); }
+    .flow { grid-template-columns: 1fr; gap: 1.2rem; }
+    .flow li + li::before { display: none; }
+    .flow a { flex-direction: row; align-items: flex-start; text-align: left; flex-wrap: wrap; column-gap: 0.8rem; }
+    .flow a b { margin-top: 0.35rem; }
+    .flow span:last-child { flex-basis: 100%; padding-left: 3rem; }
+  }
 </style>

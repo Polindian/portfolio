@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const systems = (await getCollection('systems')).sort((a, b) => a.data.order - b.data.order);
+---
+<ol class="index">
+  {systems.map((s) => (
+    <li>
+      <a href={`${base}/systems/${s.id}/`}>
+        <span class="num">{String(s.data.order).padStart(2, '0')}</span>
+        <span class="title">{s.data.title}</span>
+        <span class="tags">{s.data.tags.slice(0, 3).join(' · ')}</span>
+        <span class="go" aria-hidden="true">→</span>
+      </a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .index { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index a {
+    display: grid; grid-template-columns: 3rem 1fr auto 1.5rem; align-items: center; gap: 1rem;
+    padding: 1rem 0.5rem; border-bottom: 1px solid var(--line); color: var(--text);
+  }
+  .index a:hover { text-decoration: none; background: var(--bg-raised); }
+  .index a:hover .go { color: var(--gold); transform: translateX(4px); }
+  .num { font-family: var(--font-mono); color: var(--gold); font-size: 0.9rem; }
+  .title { font-family: var(--font-display); font-size: 1.15rem; }
+  .tags { color: var(--text-dim); font-size: 0.85rem; }
+  .go { color: var(--text-dim); transition: transform 0.15s; }
+  @media (max-width: 640px) {
+    .index a { grid-template-columns: 2.2rem 1fr 1.2rem; }
+    .tags { display: none; }
+  }
+</style>
