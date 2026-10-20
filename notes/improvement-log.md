@@ -16,6 +16,20 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** One update per phase instead of per second; late joiners and reconnects see the correct state; smooth timers.
 
+## 2. Move lobby decisions from the Game State to the Lobby Game Mode
+
+- **System:** Gameplay Framework
+- **Found:** 2026-10-20
+- **Status:** Planned
+
+**Now:** `AChrisGameState` holds lobby rules (`StartMatch`, `AbortMatch`, the hero-selection timer, `AssignRandomCharactersToEmptySlots`), guarded with `HasAuthority()`. `ALobbyGameMode` only handles seamless travel and `PreLogin`.
+
+**Problem:** The Game State exists on every client, so decision-making code has to protect itself from running there. It blurs "Game Mode decides, Game State shares".
+
+**Plan:** Move the actions and the timer to `ALobbyGameMode`. Keep the replicated selection data and read-only queries (`CanStartMatch`, `HasValidTeamsForMatch`) in the Game State. The Game Mode writes results into the Game State.
+
+**Benefit:** Clear ownership, no authority guards needed for lobby rules, and a thinner Game State.
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
