@@ -86,4 +86,10 @@ TODO: before/after, with numbers where possible.
 
 ## What I'd do differently
 
-TODO: honest self-critique and planned refactors.
+### Match phase lives in the Game Mode, not the Game State
+
+The current match phase is stored in `AChrisGameMode`, which only exists on the server. Every phase change, and every second of the countdown, is pushed to each player with a `Client_` RPC on their Player Controller.
+
+That works, but RPCs are one-off messages: a player who reconnects mid-round never learns which phase the match is in. It also sends a message every second to every player.
+
+**The fix:** replicate the phase and the time it ends (`PhaseEndServerTime`) on `AChrisGameState`. Each client works out the remaining time locally from the server clock, so there is one update per phase instead of one per second, and late joiners see the right state immediately.
