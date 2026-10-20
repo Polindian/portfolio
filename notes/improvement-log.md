@@ -32,6 +32,20 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** Clear ownership, no authority guards needed for lobby rules, and a thinner Game State.
 
+## 3. Start spots are claimed twice per player
+
+- **System:** Gameplay Framework
+- **Found:** 2026-10-20
+- **Status:** Planned (confirm with a UE_LOG in `FindNextStartSpotForTeam` first)
+
+**Now:** `FindNextStartSpotForTeam` marks a Player Start as "Taken" each time it runs. It runs in `HandleSeamlessTravelPlayer` (or `SpawnPlayerController` for fresh joins) and again in `SpawnDefaultPawnFor`. The second call overwrites `PC->StartSpot`, so the first spot is wasted.
+
+**Problem:** Each player uses two Player Starts. With bigger teams (e.g. 4v4), later players can get `nullptr` and spawn in the wrong place or fail to spawn. The team-ID + start-spot block is also copy-pasted in three functions.
+
+**Plan:** Move "set team ID + claim start spot" into one helper. In `SpawnDefaultPawnFor`, reuse `NewPlayer->StartSpot` if it is already valid; only claim a new spot if not.
+
+**Benefit:** One spot per player, no duplicated code, safe for larger teams.
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
