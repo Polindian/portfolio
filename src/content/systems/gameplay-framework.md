@@ -4,14 +4,15 @@ summary: "How the game is architected: who owns what across menu, lobby and aren
 order: 1
 tags: ["C++", "GameMode", "GameState", "PlayerController", "PlayerState", "Match flow"]
 glance:
-  - "TODO: e.g. Separate GameMode / PlayerController pairs per map (menu, lobby, arena)"
-  - "TODO: e.g. Server-only GameMode drives rounds; GameState replicates match state to everyone"
-  - "TODO: e.g. GameInstance persists login and session data across map travel"
+  - "Each map (menu, lobby, arena) has its own Game Mode and Player Controller"
+  - "The Game Mode decides on the server; the Game State shares the result with every player"
+  - "Every player action is a Server RPC through their own controller, and reaches everyone else by replication"
 keyFiles:
   - { path: "Framework/ChrisGameInstance.cpp", note: "Persists login & sessions across travel" }
   - { path: "Framework/ChrisGameMode.cpp", note: "Server-only rules: rounds, teams, match end" }
   - { path: "Framework/ChrisGameState.cpp", note: "Replicated match state" }
-  - { path: "Framework/LobbyGameMode.cpp", note: "Lobby & hero selection rules" }
+  - { path: "Framework/LobbyGameMode.cpp", note: "Lobby rules: seamless travel, refusing late joins" }
+  - { path: "Player/LobbyPlayerController.cpp", note: "Lobby requests: slot, ready, hero, lock-in" }
   - { path: "Player/ChrisPlayerController.cpp", note: "Per-player input & UI ownership" }
   - { path: "Player/ChrisPlayerState.cpp", note: "Per-player replicated stats" }
   - { path: "Character/ChrisCharacter.cpp", note: "Base character" }
@@ -22,13 +23,35 @@ status: draft
 
 ### Class architecture
 
-<div class="placeholder">GIF / screenshot: Class architecture</div>
+<figure class="diagram">
+  <img src="../../diagrams/framework-classes.svg" alt="Diagram showing which framework classes exist on the dedicated server and on each player's PC, with replication arrows from the server's Game State and Player States to the clients, and RPC arrows between each player's controller and its server copy." />
+  <figcaption>Which classes exist on which machine, and how they talk to each other.</figcaption>
+</figure>
 
-**What it does.** TODO: which classes exist, where they live (server, client or both) and why.
+**What it does.** Champions Arena runs on a dedicated server. Each class in Unreal's gameplay framework has one job, and exists only on the machines that need it:
 
-**How it works.** TODO
+| Class | Job | Exists on | Lives for |
+|---|---|---|---|
+| `ChrisGameInstance` | Login, sessions, travel | Every machine, its own copy (never synced) | The whole time the game is running |
+| `LobbyGameMode` / `ChrisGameMode` | The rules: decides what happens | Server only | One map |
+| `ChrisGameState` | Shared match info: selections, kills, match stats | Server + every client | One map |
+| `ChrisPlayerState` | One player's name, team slot and hero | Server + every client | One map (copied across on travel) |
+| `LobbyPlayerController` / `ChrisPlayerController` | One player's link to the server | Server + that player's PC only | One map |
+| Widgets | Lobby, HUD, shop, match stats | That player's PC only | While on screen |
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+**How it works.** Every player action follows the same path. Readying up in the lobby, for example:
+
+1. The lobby widget on your PC calls a `Server_` RPC on your `LobbyPlayerController`.
+2. The server's copy of your controller passes the request to the Game State, which checks you have a team slot and marks you ready.
+3. The selection array is replicated, so every client receives it. `OnRep_PlayerSelectionArray` fires a delegate, and each lobby widget redraws, so your friend sees your green bar.
+
+Going the other way, the server uses `Client_` RPCs on each controller for one-off events such as the round countdown and result banners.
+
+**Why I designed it this way.**
+
+- **Separate lobby and arena maps, each with its own Game Mode.** They are never used at the same time, so loading both would waste memory, and one Game Mode handling both would fill up with "if lobby / else if arena" checks. Each map also gets its own controller and UI. The trade-off is a load between them, which is why the arena holds a loading screen until every player has arrived.
+- **Requests go through the player's own controller.** Only the server can change replicated data for everyone, and a client can only send RPCs through actors it owns. Widgets exist only on one PC, so they ask the controller, and the controller asks the server.
+- **Seamless travel from lobby to arena.** Players stay connected, so their Player States, with their team and hero, can be copied into the arena with `CopyProperties`. A hard travel would disconnect everyone, and the lobby refuses new joins once team selection is over, so players could not get back in.
 
 ### Per-map game modes & controllers
 

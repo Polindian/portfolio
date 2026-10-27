@@ -80,6 +80,7 @@ const toc = headings.filter((h) => h.depth <= 3);
   .toc li.d3 a { padding-left: 1.8em; font-size: 0.84rem; }
   .body :global(h2:first-child) { margin-top: 0; }
   .body :global(.placeholder) { aspect-ratio: 21 / 8; margin-bottom: 1rem; }
+  .body :global(table) { display: block; overflow-x: auto; }
   .files { list-style: none; padding: 0; }
   .files li { padding: 0.35em 0; border-bottom: 1px solid var(--line); color: var(--text-dim); }
   .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 4rem; }
@@ -87,7 +88,7 @@ const toc = headings.filter((h) => h.depth <= 3);
   .pager h3 { margin: 0.2em 0 0; }
   .pager .next { text-align: right; }
   @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; }
+    .layout { grid-template-columns: minmax(0, 1fr); }
     .toc { position: static; }
   }
 </style>
