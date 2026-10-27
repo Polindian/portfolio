@@ -49,3 +49,4 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
+- **RPC validation accepts everything:** every `_Validate` in `ALobbyPlayerController` returns `true`. Reject impossible values (e.g. slot ID beyond the max, null hero on select) so tampered clients are kicked; keep normal rule checks (slot occupied) in `_Implementation`. (Networking page)
