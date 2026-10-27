@@ -61,19 +61,41 @@ Going the other way, the server uses `Client_` RPCs on each controller for one-o
 
 ### Per-map game modes & controllers
 
-<div class="placeholder">GIF / screenshot: Per-map game modes & controllers</div>
+<figure class="diagram">
+  <img src="../../diagrams/framework-per-map.svg" alt="Three rows, one per map. MainMenuLevel uses MainMenuGameMode, which uses MainMenuPlayerController_BP, which spawns the main menu UI. LobbyLevel uses LobbyGameMode, LobbyPlayerController_BP and the lobby UI. Lvl_ThirdPerson uses ChrisGameMode_BP, ChrisPlayerController and the hero and HUD." />
+  <figcaption>Each map picks its rules, its controller and its UI.</figcaption>
+</figure>
 
 #### What it does
 
-TODO: MainMenu, Lobby and Arena each have their own GameMode/PlayerController pair, and the AMenuPlayerController base.
+Each of the three maps runs with its own Game Mode and its own Player Controller, so the menu, the lobby and the arena only ever load the rules, input and UI they need.
 
 #### How it works
 
-TODO
+The wiring is a chain set up in the editor:
+
+1. Each map's **World Settings → GameMode Override** picks a Game Mode Blueprint. Maps without an override fall back to the project default, `ChrisGameMode_BP`.
+2. Each Game Mode Blueprint sets a **Player Controller Class**, for example the lobby uses `LobbyPlayerController_BP`.
+3. Each controller spawns its own UI. The menu controllers pick which widget to create through a `MenuWidgetClass` property set in their Blueprint.
+
+<figure class="diagram">
+  <img src="../../diagrams/framework-controllers.svg" alt="Inheritance tree. APlayerController is the parent of AMenuPlayerController and AChrisPlayerController. AMenuPlayerController is the parent of AMainMenuPlayerController and ALobbyPlayerController." />
+  <figcaption>The two menu controllers share one base class; the arena controller does not.</figcaption>
+</figure>
+
+The main menu and lobby controllers both inherit from `AMenuPlayerController`, which shows the cursor, creates the menu widget, gives it keyboard and controller focus, and switches input to UI only. Each child then adds its own part: the main menu starts its music, and the lobby adds the RPCs for picking a slot, readying up, choosing a hero and locking in.
+
+**When the widget is created** depends on the situation:
+
+- **Main menu (not connected):** in `BeginPlay`. With no server, this machine has authority and is the local player, so it is safe to build the UI straight away.
+- **Lobby (connected to the dedicated server):** in `OnRep_PlayerState`. On a client, the controller arrives first and the Player State a moment later, and the lobby UI needs the Player State to know who you are.
+- **On the server:** never. The server's copy of each controller is not a local player, and the server has no screen.
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
+- **A shared menu base class** – the main menu and lobby need identical cursor, focus and widget handling, so it is written once. A fix to the menu setup fixes both screens.
+- **The arena controller is separate** – it is not a kind of menu controller. It needs game-only input, the HUD, team IDs and the round RPCs, and inheriting the menu behaviour would give it a menu widget and UI-only input it would have to undo.
+- **Wiring in Blueprints, logic in C++** – the C++ classes hold the behaviour, while the Blueprint children choose which widget and controller to use. Swapping a widget never needs a recompile.
 
 ### The match loop
 

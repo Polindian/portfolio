@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 350" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Each map picks a Game Mode, each Game Mode picks a Player Controller, and each controller spawns its own UI">
+<defs><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker></defs>
+<text x="130.0" y="30" font-size="14" fill="#d9a441" font-weight="700" text-anchor="middle">Map</text>
+<text x="405.0" y="30" font-size="14" fill="#d9a441" font-weight="700" text-anchor="middle">Game Mode (Blueprint)</text>
+<text x="685.0" y="30" font-size="14" fill="#d9a441" font-weight="700" text-anchor="middle">Player Controller</text>
+<text x="935.0" y="30" font-size="14" fill="#d9a441" font-weight="700" text-anchor="middle">Spawns</text>
+<rect x="20" y="52" width="220" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="130.0" y="77" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">MainMenuLevel</text>
+<text x="130.0" y="97" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">set as default map</text>
+<rect x="290" y="52" width="230" height="62" rx="8" fill="#151922" stroke="#d9a441"/>
+<text x="405.0" y="77" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">MainMenuGameMode</text>
+<text x="405.0" y="97" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">no rules of its own</text>
+<rect x="570" y="52" width="230" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="685.0" y="77" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">MainMenuPlayerController_BP</text>
+<text x="685.0" y="97" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">menu widget + music</text>
+<rect x="850" y="52" width="170" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="935.0" y="88.0" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">Main menu UI</text>
+<line x1="242" y1="83" x2="287" y2="83" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<line x1="522" y1="83" x2="567" y2="83" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<line x1="802" y1="83" x2="847" y2="83" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="20" y="144" width="220" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="130.0" y="169" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">LobbyLevel</text>
+<text x="130.0" y="189" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">session lobby</text>
+<rect x="290" y="144" width="230" height="62" rx="8" fill="#151922" stroke="#d9a441"/>
+<text x="405.0" y="169" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">LobbyGameMode</text>
+<text x="405.0" y="189" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">seamless travel · refuses late joins</text>
+<rect x="570" y="144" width="230" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="685.0" y="169" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">LobbyPlayerController_BP</text>
+<text x="685.0" y="189" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">lobby widget + lobby RPCs</text>
+<rect x="850" y="144" width="170" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="935.0" y="180.0" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">Lobby UI</text>
+<line x1="242" y1="175" x2="287" y2="175" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<line x1="522" y1="175" x2="567" y2="175" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<line x1="802" y1="175" x2="847" y2="175" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="20" y="236" width="220" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="130.0" y="261" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">Lvl_ThirdPerson</text>
+<text x="130.0" y="281" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">the arena</text>
+<rect x="290" y="236" width="230" height="62" rx="8" fill="#151922" stroke="#d9a441"/>
+<text x="405.0" y="261" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">ChrisGameMode_BP</text>
+<text x="405.0" y="281" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">round rules</text>
+<rect x="570" y="236" width="230" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="685.0" y="261" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">ChrisPlayerController</text>
+<text x="685.0" y="281" font-size="13" fill="#9aa3b2" font-weight="400" text-anchor="middle">HUD, shop, round RPCs</text>
+<rect x="850" y="236" width="170" height="62" rx="8" fill="#151922" stroke="#2c3340"/>
+<text x="935.0" y="272.0" font-size="15" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hero + HUD</text>
+<line x1="242" y1="267" x2="287" y2="267" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<line x1="522" y1="267" x2="567" y2="267" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<line x1="802" y1="267" x2="847" y2="267" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<text x="275.0" y="336" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">World Settings → GameMode Override</text>
+<text x="545" y="336" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Player Controller Class</text>
+<text x="825" y="336" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">BeginPlay / OnRep</text>
+</svg>

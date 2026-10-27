@@ -46,6 +46,20 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** One spot per player, no duplicated code, safe for larger teams.
 
+## 4. Guard against spawning the menu widget twice
+
+- **System:** Gameplay Framework
+- **Found:** 2026-10-27
+- **Status:** Planned (one line)
+
+**Now:** `AMenuPlayerController::SpawnWidget` runs from `OnRep_PlayerState`, which fires every time the Player State reference changes, not just the first time.
+
+**Problem:** If it fires again (e.g. a reconnect), a second menu widget is created on top of the first.
+
+**Plan:** Return early at the top of `SpawnWidget` if `IsValid(MenuWidget)`.
+
+**Benefit:** Duplicate menus become impossible, whatever order replication arrives in.
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
