@@ -21,51 +21,81 @@ status: draft
 
 <div class="placeholder">GIF / screenshot: Original music</div>
 
-**What it does.** TODO: what you composed, tools and how it is used in game.
+#### What it does
 
-**How it works.** TODO
+TODO: what you composed, tools and how it is used in game.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Sound routing over the network
 
 <div class="placeholder">GIF / screenshot: Sound routing over the network</div>
 
-**What it does.** TODO: who hears it, 2D vs 3D, and why.
+#### What it does
 
-**How it works.** TODO
+TODO: who hears it, 2D vs 3D, and why.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Tag-driven sound library
 
 <div class="placeholder">GIF / screenshot: Tag-driven sound library</div>
 
-**What it does.** TODO: ChrisSoundLibrary and ChrisGameplayTags.
+#### What it does
 
-**How it works.** TODO
+TODO: ChrisSoundLibrary and ChrisGameplayTags.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Animation-timed sounds
 
 <div class="placeholder">GIF / screenshot: Animation-timed sounds</div>
 
-**What it does.** TODO: AnimNotify_ChrisSound and ChrisSoundCueNotify.
+#### What it does
 
-**How it works.** TODO
+TODO: AnimNotify_ChrisSound and ChrisSoundCueNotify.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Settings & volume
 
 <div class="placeholder">GIF / screenshot: Settings & volume</div>
 
-**What it does.** TODO: ChrisGameUserSettings and volume sliders.
+#### What it does
 
-**How it works.** TODO
+TODO: ChrisGameUserSettings and volume sliders.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 

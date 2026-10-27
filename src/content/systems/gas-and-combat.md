@@ -25,101 +25,161 @@ status: draft
 
 <div class="placeholder">GIF / screenshot: Ability architecture</div>
 
-**What it does.** TODO: base ChrisGameplayAbility, custom ASC, input binding and default abilities per hero (PA_GenericAbilitySystem).
+#### What it does
 
-**How it works.** TODO
+TODO: base ChrisGameplayAbility, custom ASC, input binding and default abilities per hero (PA_GenericAbilitySystem).
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Attributes & levelling
 
 <div class="placeholder">GIF / screenshot: Attributes & levelling</div>
 
-**What it does.** TODO: ChrisAttributeSet / CHeroAttributeSet and level scaling via MMC_LevelBased.
+#### What it does
 
-**How it works.** TODO
+TODO: ChrisAttributeSet / CHeroAttributeSet and level scaling via MMC_LevelBased.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Melee combos
 
 <div class="placeholder">GIF / screenshot: Melee combos</div>
 
-**What it does.** TODO: GA_Combo and the light/heavy attacks (Swipe, Thrust, Stab).
+#### What it does
 
-**How it works.** TODO
+TODO: GA_Combo and the light/heavy attacks (Swipe, Thrust, Stab).
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Animation-driven hit detection
 
 <div class="placeholder">GIF / screenshot: Animation-driven hit detection</div>
 
-**What it does.** TODO: anim notifies (AN_SendTargetGroup, AN_SendGameplayEvent) and socket traces that apply damage.
+#### What it does
 
-**How it works.** TODO
+TODO: anim notifies (AN_SendTargetGroup, AN_SendGameplayEvent) and socket traces that apply damage.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Damage calculation
 
 <div class="placeholder">GIF / screenshot: Damage calculation</div>
 
-**What it does.** TODO: the MMCs for base/light/heavy damage and the BlindBomb execution calculation.
+#### What it does
 
-**How it works.** TODO
+TODO: the MMCs for base/light/heavy damage and the BlindBomb execution calculation.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Projectiles & area abilities
 
 <div class="placeholder">GIF / screenshot: Projectiles & area abilities</div>
 
-**What it does.** TODO: GA_Shoot + ProjectileActor, TargetActor_Around, GA_BlindBomb.
+#### What it does
 
-**How it works.** TODO
+TODO: GA_Shoot + ProjectileActor, TargetActor_Around, GA_BlindBomb.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Death & knockback
 
 <div class="placeholder">GIF / screenshot: Death & knockback</div>
 
-**What it does.** TODO: passive abilities GAP_Dead and GAP_Launched.
+#### What it does
 
-**How it works.** TODO
+TODO: passive abilities GAP_Dead and GAP_Launched.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Upgrades, skill tree & souls
 
 <div class="placeholder">GIF / screenshot: Upgrades, skill tree & souls</div>
 
-**What it does.** TODO: earning souls, spending upgrade points, ability upgrades.
+#### What it does
 
-**How it works.** TODO
+TODO: earning souls, spending upgrade points, ability upgrades.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Shop, inventory & consumables
 
 <div class="placeholder">GIF / screenshot: Shop, inventory & consumables</div>
 
-**What it does.** TODO: PA_ShopItem, InventoryComponent, using items in the arena.
+#### What it does
 
-**How it works.** TODO
+TODO: PA_ShopItem, InventoryComponent, using items in the arena.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Weapon equip
 
 <div class="placeholder">GIF / screenshot: Weapon equip</div>
 
-**What it does.** TODO: GA_EquipToggle and SwordEquipComponent.
+#### What it does
 
-**How it works.** TODO
+TODO: GA_EquipToggle and SwordEquipComponent.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 

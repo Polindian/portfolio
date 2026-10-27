@@ -24,61 +24,97 @@ status: draft
 
 <div class="placeholder">GIF / screenshot: Login: Steam → EOS</div>
 
-**What it does.** TODO: EOSPlus + EOS Connect flow and the translator-delegate pattern in the GameInstance.
+#### What it does
 
-**How it works.** TODO
+TODO: EOSPlus + EOS Connect flow and the translator-delegate pattern in the GameInstance.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Creating & finding sessions
 
 <div class="placeholder">GIF / screenshot: Creating & finding sessions</div>
 
-**What it does.** TODO: HTTP request to the coordinator, polling, EOS search by GUID.
+#### What it does
 
-**How it works.** TODO
+TODO: HTTP request to the coordinator, polling, EOS search by GUID.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### The coordinator service
 
 <div class="placeholder">GIF / screenshot: The coordinator service</div>
 
-**What it does.** TODO: what the Flask app does, its endpoints and secrets.
+#### What it does
 
-**How it works.** TODO
+TODO: what the Flask app does, its endpoints and secrets.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Server lifecycle
 
 <div class="placeholder">GIF / screenshot: Server lifecycle</div>
 
-**What it does.** TODO: registration, player tracking in AChrisGameSession, no-players timeout.
+#### What it does
 
-**How it works.** TODO
+TODO: registration, player tracking in AChrisGameSession, no-players timeout.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Match stats & leaderboard
 
 <div class="placeholder">GIF / screenshot: Match stats & leaderboard</div>
 
-**What it does.** TODO: data structs, who posts results, leaver rules, sorting.
+#### What it does
 
-**How it works.** TODO
+TODO: data structs, who posts results, leaver rules, sorting.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Deployment
 
 <div class="placeholder">GIF / screenshot: Deployment</div>
 
-**What it does.** TODO: Linux server build, Docker Compose, EC2, versioned images.
+#### What it does
 
-**How it works.** TODO
+TODO: Linux server build, Docker Compose, EC2, versioned images.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 

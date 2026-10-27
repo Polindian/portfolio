@@ -21,51 +21,81 @@ status: draft
 
 <div class="placeholder">GIF / screenshot: Authority model</div>
 
-**What it does.** TODO: what the server decides vs what clients predict.
+#### What it does
 
-**How it works.** TODO
+TODO: what the server decides vs what clients predict.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Replicated properties vs RPCs
 
 <div class="placeholder">GIF / screenshot: Replicated properties vs RPCs</div>
 
-**What it does.** TODO: examples from the game and when I chose each.
+#### What it does
 
-**How it works.** TODO
+TODO: examples from the game and when I chose each.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Ownership & relevancy
 
 <div class="placeholder">GIF / screenshot: Ownership & relevancy</div>
 
-**What it does.** TODO: who owns which actors and why it matters for RPCs.
+#### What it does
 
-**How it works.** TODO
+TODO: who owns which actors and why it matters for RPCs.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### GAS over the network
 
 <div class="placeholder">GIF / screenshot: GAS over the network</div>
 
-**What it does.** TODO: replication mode and prediction for abilities and effects.
+#### What it does
 
-**How it works.** TODO
+TODO: replication mode and prediction for abilities and effects.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Testing setup
 
 <div class="placeholder">GIF / screenshot: Testing setup</div>
 
-**What it does.** TODO: dedicated server + multiple clients locally, Dev Auth Tool, launch scripts, network emulation.
+#### What it does
 
-**How it works.** TODO
+TODO: dedicated server + multiple clients locally, Dev Auth Tool, launch scripts, network emulation.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 

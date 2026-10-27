@@ -23,51 +23,81 @@ status: draft
 
 <div class="placeholder">GIF / screenshot: Page & overlay system</div>
 
-**What it does.** TODO: widget switcher pages, fade transitions, overlays that hold focus.
+#### What it does
 
-**How it works.** TODO
+TODO: widget switcher pages, fade transitions, overlays that hold focus.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Reusable widgets
 
 <div class="placeholder">GIF / screenshot: Reusable widgets</div>
 
-**What it does.** TODO: MenuButtonWidget, BackHintWidget and why C++ base classes.
+#### What it does
 
-**How it works.** TODO
+TODO: MenuButtonWidget, BackHintWidget and why C++ base classes.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Keyboard & controller navigation
 
 <div class="placeholder">GIF / screenshot: Keyboard & controller navigation</div>
 
-**What it does.** TODO: focus paths, default buttons, back input.
+#### What it does
 
-**How it works.** TODO
+TODO: focus paths, default buttons, back input.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Session search & server browser
 
 <div class="placeholder">GIF / screenshot: Session search & server browser</div>
 
-**What it does.** TODO: SessionSearchBarWidget → results → SessionEntryWidget population.
+#### What it does
 
-**How it works.** TODO
+TODO: SessionSearchBarWidget → results → SessionEntryWidget population.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Leaderboard overlay
 
 <div class="placeholder">GIF / screenshot: Leaderboard overlay</div>
 
-**What it does.** TODO: sorting, paging, animations.
+#### What it does
 
-**How it works.** TODO
+TODO: sorting, paging, animations.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 

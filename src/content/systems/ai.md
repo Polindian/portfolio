@@ -22,41 +22,65 @@ status: draft
 
 <div class="placeholder">GIF / screenshot: Behaviour tree overview</div>
 
-**What it does.** TODO: the tree, blackboard keys and the main loop.
+#### What it does
 
-**How it works.** TODO
+TODO: the tree, blackboard keys and the main loop.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Services: goals, combat mode, tactical position
 
 <div class="placeholder">GIF / screenshot: Services: goals, combat mode, tactical position</div>
 
-**What it does.** TODO: what each BTService decides and how often.
+#### What it does
 
-**How it works.** TODO
+TODO: what each BTService decides and how often.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### AI using GAS
 
 <div class="placeholder">GIF / screenshot: AI using GAS</div>
 
-**What it does.** TODO: BTTask_SendInputToAbilitySystem.
+#### What it does
 
-**How it works.** TODO
+TODO: BTTask_SendInputToAbilitySystem.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Spawning
 
 <div class="placeholder">GIF / screenshot: Spawning</div>
 
-**What it does.** TODO: SkeletonBarrack and SkeletonAI.
+#### What it does
 
-**How it works.** TODO
+TODO: SkeletonBarrack and SkeletonAI.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 

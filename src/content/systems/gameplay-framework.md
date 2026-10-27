@@ -28,7 +28,9 @@ status: draft
   <figcaption>Which classes exist on which machine, and how they talk to each other.</figcaption>
 </figure>
 
-**What it does.** Champions Arena runs on a dedicated server. Each class in Unreal's gameplay framework has one job, and exists only on the machines that need it:
+#### What it does
+
+Champions Arena runs on a dedicated server. Each class in Unreal's gameplay framework has one job, and exists only on the machines that need it:
 
 | Class | Job | Exists on | Lives for |
 |---|---|---|---|
@@ -39,7 +41,9 @@ status: draft
 | `LobbyPlayerController` / `ChrisPlayerController` | One player's link to the server | Server + that player's PC only | One map |
 | Widgets | Lobby, HUD, shop, match stats | That player's PC only | While on screen |
 
-**How it works.** Every player action follows the same path. Readying up in the lobby, for example:
+#### How it works
+
+Every player action follows the same path. Readying up in the lobby, for example:
 
 1. The lobby widget on your PC calls a `Server_` RPC on your `LobbyPlayerController`.
 2. The server's copy of your controller passes the request to the Game State, which checks you have a team slot and marks you ready.
@@ -47,51 +51,77 @@ status: draft
 
 Going the other way, the server uses `Client_` RPCs on each controller for one-off events such as the round countdown and result banners.
 
-**Why I designed it this way.**
+#### Why I designed it this way
 
-- **Separate lobby and arena maps, each with its own Game Mode.** They are never used at the same time, so loading both would waste memory, and one Game Mode handling both would fill up with "if lobby / else if arena" checks. Each map also gets its own controller and UI. The trade-off is a load between them, which is why the arena holds a loading screen until every player has arrived.
-- **Requests go through the player's own controller.** Only the server can change replicated data for everyone, and a client can only send RPCs through actors it owns. Widgets exist only on one PC, so they ask the controller, and the controller asks the server.
-- **Seamless travel from lobby to arena.** Players stay connected, so their Player States, with their team and hero, can be copied into the arena with `CopyProperties`. A hard travel would disconnect everyone, and the lobby refuses new joins once team selection is over, so players could not get back in.
+
+
+- **Separate lobby and arena maps, each with its own Game Mode** – they are never used at the same time, so loading both would waste memory, and one Game Mode handling both would fill up with "if lobby / else if arena" checks. Each map also gets its own controller and UI. The trade-off is a load between them, which is why the arena holds a loading screen until every player has arrived.
+- **Requests go through the player's own controller** – only the server can change replicated data for everyone, and a client can only send RPCs through actors it owns. Widgets exist only on one PC, so they ask the controller, and the controller asks the server.
+- **Seamless travel from lobby to arena** – players stay connected, so their Player States, with their team and hero, can be copied into the arena with `CopyProperties`. A hard travel would disconnect everyone, and the lobby refuses new joins once team selection is over, so players could not get back in.
 
 ### Per-map game modes & controllers
 
 <div class="placeholder">GIF / screenshot: Per-map game modes & controllers</div>
 
-**What it does.** TODO: MainMenu, Lobby and Arena each have their own GameMode/PlayerController pair, and the AMenuPlayerController base.
+#### What it does
 
-**How it works.** TODO
+TODO: MainMenu, Lobby and Arena each have their own GameMode/PlayerController pair, and the AMenuPlayerController base.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### The match loop
 
 <div class="placeholder">GIF / screenshot: The match loop</div>
 
-**What it does.** TODO: trace one player: login → lobby → hero select → arena rounds → match end → stats.
+#### What it does
 
-**How it works.** TODO
+TODO: trace one player: login → lobby → hero select → arena rounds → match end → stats.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Rounds, teams & flag capture
 
 <div class="placeholder">GIF / screenshot: Rounds, teams & flag capture</div>
 
-**What it does.** TODO: how ChrisGameMode runs rounds and win conditions, and what ChrisGameState replicates.
+#### What it does
 
-**How it works.** TODO
+TODO: how ChrisGameMode runs rounds and win conditions, and what ChrisGameState replicates.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ### Characters & hero data
 
 <div class="placeholder">GIF / screenshot: Characters & hero data</div>
 
-**What it does.** TODO: ChrisCharacter / ChrisPlayerCharacter and data-driven heroes via PA_CharacterDefinition.
+#### What it does
 
-**How it works.** TODO
+TODO: ChrisCharacter / ChrisPlayerCharacter and data-driven heroes via PA_CharacterDefinition.
 
-**Why I designed it this way.** TODO: alternatives considered and trade-offs.
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO: alternatives considered and trade-offs.
 
 ## How it connects
 
