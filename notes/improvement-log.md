@@ -60,7 +60,20 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** Duplicate menus become impossible, whatever order replication arrives in.
 
+## 5. Report "loaded" only when background loading has finished
+
+- **System:** Gameplay Framework (match loop)
+- **Found:** 2026-10-28
+- **Status:** Planned
+
+**Now:** Each client sends `Server_ReportLoaded` one frame after `AChrisPlayerController::BeginPlay`. That proves the map has loaded and the controller has started, not that textures, hero meshes, grooms and shaders have finished streaming. The 15-second minimum hold covers the gap.
+
+**Plan:** Send the report once async loading has finished (e.g. wait until `IsAsyncLoading()` is false), combined with the planned async preload of hero soft assets.
+
+**Benefit:** "Loaded" means loaded; the minimum hold becomes purely a design choice (time to read the hint).
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
 - **RPC validation accepts everything:** every `_Validate` in `ALobbyPlayerController` returns `true`. Reject impossible values (e.g. slot ID beyond the max, null hero on select) so tampered clients are kicked; keep normal rule checks (slot occupied) in `_Implementation`. (Networking page)
+- **Stale entries in `LoadedPlayers`:** if a player who already reported loaded leaves during the hold, their entry still counts in `LoadedPlayers.Num()`, so the hold could finish while someone else is still loading. Count only valid entries. (Match loop)
