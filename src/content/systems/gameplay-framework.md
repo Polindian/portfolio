@@ -99,19 +99,41 @@ The main menu and lobby controllers both inherit from `AMenuPlayerController`, w
 
 ### The match loop
 
-<div class="placeholder">GIF / screenshot: The match loop</div>
+<figure class="diagram">
+  <img src="../../diagrams/framework-match-phases.svg" alt="Match phases. Waiting for players, then the loading hold, then a loop: round intro, countdown, in round, round end, transition to shop, shop, transition to arena, and back to round intro. From round end, a team with two round wins goes to match over." />
+  <figcaption>Every phase of a match. The gold loop repeats until a team has won two rounds.</figcaption>
+</figure>
 
 #### What it does
 
-TODO: trace one player: login → lobby → hero select → arena rounds → match end → stats.
+`AChrisGameMode` runs the whole match as a **state machine**: one `EMatchPhase` value at a time, from players arriving, through a loading hold, into a loop of round intro, countdown, fight, result and shop, until one team has won two rounds.
 
 #### How it works
 
-TODO
+**Getting everyone in.** Once enough players have joined, the server starts a loading hold. Each player's controller shows the loading screen, waits one frame so it is actually on screen, then tells the server it is ready with `Server_ReportLoaded`. The server keeps the ready players in a set, and ends the hold when everyone has reported and at least 15 seconds have passed, or after 25 seconds whatever happens.
+
+**Moving between phases.** Each phase ends in one of two ways:
+
+- **A timer** – the round's 60 seconds, the shop's 60 seconds, the fades.
+- **A game event** – a team capturing a majority of the flags, or every player pressing Continue in the shop.
+
+Either way, the next phase is started by one function, and players are told with `Client_` RPCs: banners, the countdown, camera fades and the shop UI.
+
+**Keeping it from breaking.** Events can arrive at awkward moments, so every transition is protected:
+
+- **Phase guards** – anything triggered from outside the timer chain checks the phase first. A flag captured during the shop, or a Continue vote after the shop has closed, is ignored.
+- **One timer handle for "what comes next"** – setting a new timer on it replaces the old one, so only one next phase can ever be pending.
+- **Cancel the timer when an event wins** – when flags end a round early, or everyone votes Continue, the pending timer is cleared before moving on, so it cannot fire again later.
+- **Run once** – the loading hold can finish from two routes, so a flag makes sure it only finishes once.
+- **Sets** – loaded players and Continue votes are stored in sets, so nobody counts twice.
+
+Because Unreal runs gameplay on one thread, two of these events never truly happen at once: whichever runs first cancels the other's timer, and the phase guard rejects anything that arrives late.
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
+- **Timers and events instead of checking every frame** – the Game Mode does nothing between transitions instead of asking "is the round over yet?" 60 times a second. Each phase only says what ends it and what comes next.
+- **A minimum loading hold** – everyone usually loads in a couple of seconds, but 15 seconds gives players time to read the hint and a breather between choosing heroes and fighting. The 25-second timeout means one slow PC cannot hold the whole match hostage.
+- **Checking for the match winner before the shop** – the last round goes straight to the result instead of into a shop nobody needs.
 
 ### Rounds, teams & flag capture
 
