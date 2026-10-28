@@ -114,7 +114,7 @@ The main menu and lobby controllers both inherit from `AMenuPlayerController`, w
 
 **Moving between phases.** Each phase ends in one of two ways:
 
-- **A timer** – the round's 60 seconds, the shop's 60 seconds, the fades.
+- **A timer** – the round's five minutes, the shop's 60 seconds, the fades.
 - **A game event** – a team capturing a majority of the flags, or every player pressing Continue in the shop.
 
 Either way, the next phase is started by one function, and players are told with `Client_` RPCs: banners, the countdown, camera fades and the shop UI.

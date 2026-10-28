@@ -10,15 +10,15 @@ const sys = (id: string) => `${base}/systems/${id}/`;
 // Match format, straight from AChrisGameMode's defaults.
 const format = [
   { value: 'Bo3', label: 'first team to 2 rounds' },
-  { value: '60s', label: 'per round' },
+  { value: '5 min', label: 'per round' },
   { value: '60s', label: 'shop phase between rounds' },
   { value: '5', label: 'tiebreak rules per round' },
 ];
 
 const phases = [
   { name: 'Hero select', text: 'Pick a champion and a team in the lobby.' },
-  { name: 'Countdown', text: '5 seconds to get ready.' },
-  { name: 'Round', text: '60 seconds to fight and capture flags.' },
+  { name: 'Countdown', text: '10 seconds to get ready.' },
+  { name: 'Round', text: 'Five minutes to fight and capture flags.' },
   { name: 'Round result', text: 'The server decides the winner and pays out souls.' },
   { name: 'Shop', text: '60 seconds to spend souls on upgrades and items.' },
 ];
@@ -60,7 +60,7 @@ const champions = [
   <section class="wrap">
     <h2>The game</h2>
     <p class="intro">
-      Two teams fight over capture points in short, best-of-three matches. Each round is a 60-second scramble
+      Two teams fight over capture points in best-of-three matches. Each round is a five-minute fight
       for flags; between rounds, players spend the souls they earned on ability upgrades and items, so every
       round plays differently from the last.
     </p>
