@@ -2,7 +2,7 @@
 title: "Gameplay Framework"
 summary: "How the game is architected: who owns what across menu, lobby and arena, and how a match flows from login to results."
 order: 1
-tags: ["C++", "GameMode", "GameState", "PlayerController", "PlayerState", "Match flow"]
+tags: ["C++", "GameMode", "GameState", "PlayerController", "PlayerState", "Match flow", "Flag capture"]
 glance:
   - "Each map (menu, lobby, arena) has its own Game Mode and Player Controller"
   - "The Game Mode decides on the server; the Game State shares the result with every player"
@@ -135,13 +135,13 @@ Because Unreal runs gameplay on one thread, two of these events never truly happ
 - **A minimum loading hold** – everyone usually loads in a couple of seconds, but 15 seconds gives players time to read the hint and a breather between choosing heroes and fighting. The 25-second timeout means one slow PC cannot hold the whole match hostage.
 - **Checking for the match winner before the shop** – the last round goes straight to the result instead of into a shop nobody needs.
 
-### Rounds, teams & flag capture
+### Rounds, teams & scoring
 
-<div class="placeholder">GIF / screenshot: Rounds, teams & flag capture</div>
+<div class="placeholder">GIF / screenshot: Rounds, teams & scoring</div>
 
 #### What it does
 
-TODO: how ChrisGameMode runs rounds and win conditions, and what ChrisGameState replicates.
+TODO: teams from lobby slots, ending a round, the tiebreak ladder, souls, winning the match.
 
 #### How it works
 
@@ -149,7 +149,23 @@ TODO
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
+TODO
+
+### Flag capture
+
+<div class="placeholder">GIF / screenshot: Flag capture</div>
+
+#### What it does
+
+TODO: capture zones, hero and minion weighting, capture progress, replication and the on-screen gauges.
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
 
 ### Characters & hero data
 
