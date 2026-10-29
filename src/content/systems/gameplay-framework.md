@@ -137,18 +137,39 @@ Because Unreal runs gameplay on one thread, two of these events never truly happ
 
 ### Rounds, teams & scoring
 
+#### What it does
+
+Players pick a team by clicking a slot in the lobby. That choice is carried into the arena, turned into team 0 or team 1, and used by everything that cares about sides. Teams then fight over three flags for up to five minutes a round, and the server decides each round's winner, pays out souls and keeps score until one team has won two rounds.
+
+#### How it works: from lobby slot to arena team
+
+<figure class="diagram">
+  <img src="../../diagrams/framework-team-journey.svg" alt="Team journey in three stages. Lobby: click a slot, request it with a Server RPC, the Game State array updates, every lobby redraws, and your Player State keeps a copy. Travel: seamless travel and CopyProperties carry the copy to a new Player State. Arena: the slot becomes team 0 or 1, is set on the controller, picks a start spot, is copied to the hero, and replicates so every PC colours health bars." />
+  <figcaption>A team is just a slot number until the arena turns it into team 0 or team 1.</figcaption>
+</figure>
+
+**In the lobby.** Each player's choice is an `FPlayerSelection` record: their slot (0–9), name, ready state, hero and lock-in. The lobby shows ten slots, 0–4 in the red column and 5–9 in the blue. Clicking one sends `Server_RequestSlotSelectionChange` through the player's `LobbyPlayerController`. On the server, the Game State refuses the request if the slot is taken, otherwise it moves the player's record to the new slot, or adds one on their first pick. Switching is blocked while the player is readied up.
+
+The records live in the Game State's replicated `PlayerSelectionArray`, so every client receives the change and `OnRep_PlayerSelectionArray` redraws every lobby. Each Player State also listens for changes and keeps a copy of its own record.
+
+**Travelling to the arena.** The Game State is destroyed when the server changes map; the Player State is not. That is why each Player State keeps its own copy. During seamless travel, `CopyProperties` hands the record to the player's new Player State in the arena.
+
+**Turning the slot into a team.** When a player arrives, the arena Game Mode reads their new Player State and turns the slot into a team with one rule, the same rule the lobby used to build its columns:
+
+```cpp
+return PlayerSelection.GetPlayerSlot() < UChrisNetStatics::GetPlayerCountPerTeam() ? FGenericTeamId{ 0 } : FGenericTeamId{ 1 };
+```
+
+The team is set on the player's controller, used to claim one of that team's start spots, and copied onto the hero when the controller possesses it.
+
+**Showing it to everyone.** Other players' PCs never have your controller, and minions have no controller at all, so the team is replicated on the character itself. When it arrives, `OnRep_TeamID` compares the character's team with the viewing player's own team, and colours the health bar green for an ally or red for an enemy. Flags, kills, AI and souls all ask a character or controller for its team through Unreal's `IGenericTeamAgentInterface`, casting to it and checking the result before using it.
+
+#### How it works: ending and scoring a round
+
 <figure class="diagram">
   <img src="../../diagrams/framework-round-scoring.svg" alt="A round ends on a flag majority, every flag being taken, or the five-minute timer. DetermineRoundWinner then checks five rules in order: flags captured, territory on the remaining flag, total territory, kills this round, otherwise replay. The server pays souls, adds a round win, and either ends the match at two wins or moves to the shop." />
   <figcaption>How a round ends, who wins it, and what happens next.</figcaption>
 </figure>
-
-#### What it does
-
-Players pick a team in the lobby, fight over three flags for up to five minutes, and the server decides each round's winner, pays out souls and keeps score until one team has won two rounds.
-
-#### How it works
-
-**Teams.** Your team comes from the lobby slot you click: slots 0–4 are the red column and team 0, slots 5–9 the blue column and team 1. The same rule builds the lobby UI and sets your team in the arena, so the two can never disagree. On arrival the team is set on your Player Controller, copied to your hero when the controller possesses it, and replicated on the character. Each PC compares every character's team with its own player's team to colour health bars green for allies and red for enemies. Minions carry a team the same way, with no controller at all.
 
 **Ending a round.** Every flag capture triggers a recount of all flags. A round ends early as soon as one team holds a majority (2 of 3), because captured flags cannot be retaken, so the result can no longer change. If every flag is taken without a majority, which only happens with an even number of flags, the round also ends. Otherwise the five-minute timer ends it.
 
@@ -158,11 +179,13 @@ Players pick a team in the lobby, fight over three flags for up to five minutes,
 
 #### Why I designed it this way
 
+- **The slot is the team** – one number decides both the lobby column and the arena team, so the two can never disagree.
+- **A copy on the Player State** – the lobby only needs the Game State's array, but the Game State does not survive travel. The copy only ever flows one way, from the array to the Player State, so the two cannot drift apart.
+- **Team on the character, not just the controller** – other players' PCs never have your controller, and minions have none at all, so every character carries its own team.
 - **Recount the flags instead of keeping a tally** – the flags themselves are the single source of truth. A separate running score could drift out of sync after a missed event or a reset between rounds; a recount is always right and costs almost nothing with three flags.
 - **End the round on a majority** – once a team holds two of three flags it cannot be caught, so playing out the timer would just be waiting.
 - **A tiebreak ladder instead of draws** – rounds almost always produce a winner, and kills only matter when the objective is genuinely level. Kills reset every round so an early lead cannot decide a later tie.
 - **Losers earn more souls** – the losing team gets 100 and the winners 50, so falling behind buys a bigger upgrade in the shop and matches stay close. A rare draw pays both teams 100, so the replayed round plays differently.
-- **Team on the character, not just the controller** – other players' PCs never have your controller, and minions have none at all, so every character carries its own team.
 
 ### Flag capture
 
