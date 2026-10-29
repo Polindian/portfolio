@@ -106,7 +106,7 @@ TODO: alternatives considered and trade-offs.
 
 ## Challenges & bugs
 
-**Symptom → cause → fix → lesson.** TODO: TODO: e.g. BindToAnimationFinished stacking callbacks, or SetActiveWidget failing silently.
+**Symptom → cause → fix → lesson** – TODO: TODO: e.g. BindToAnimationFinished stacking callbacks, or SetActiveWidget failing silently.
 
 ## Optimisations
 

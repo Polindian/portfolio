@@ -46,8 +46,8 @@ Champions Arena runs on a dedicated server. Each class in Unreal's gameplay fram
 Every player action follows the same path. Readying up in the lobby, for example:
 
 1. The lobby widget on your PC calls a `Server_` RPC on your `LobbyPlayerController`.
-2. The server's copy of your controller passes the request to the Game State, which checks you have a team slot and marks you ready.
-3. The selection array is replicated, so every client receives it. `OnRep_PlayerSelectionArray` fires a delegate, and each lobby widget redraws, so your friend sees your green bar.
+2. The server's copy of your controller passes the request to the Game State ([`RequestPlayerReadyChange`](code:AChrisGameState::RequestPlayerReadyChange)), which checks you have a team slot and marks you ready.
+3. The selection array is replicated, so every client receives it. [`OnRep_PlayerSelectionArray`](code:AChrisGameState::OnRep_PlayerSelectionArray) fires a delegate, and each lobby widget redraws, so your friend sees your green bar.
 
 Going the other way, the server uses `Client_` RPCs on each controller for one-off events such as the round countdown and result banners.
 
@@ -57,7 +57,7 @@ Going the other way, the server uses `Client_` RPCs on each controller for one-o
 
 - **Separate lobby and arena maps, each with its own Game Mode** – they are never used at the same time, so loading both would waste memory, and one Game Mode handling both would fill up with "if lobby / else if arena" checks. Each map also gets its own controller and UI. The trade-off is a load between them, which is why the arena holds a loading screen until every player has arrived.
 - **Requests go through the player's own controller** – only the server can change replicated data for everyone, and a client can only send RPCs through actors it owns. Widgets exist only on one PC, so they ask the controller, and the controller asks the server.
-- **Seamless travel from lobby to arena** – players stay connected, so their Player States, with their team and hero, can be copied into the arena with `CopyProperties`. A hard travel would disconnect everyone, and the lobby refuses new joins once team selection is over, so players could not get back in.
+- **Seamless travel from lobby to arena** – players stay connected, so their Player States, with their team and hero, can be copied into the arena with [`CopyProperties`](code:AChrisPlayerState::CopyProperties). A hard travel would disconnect everyone, and the lobby refuses new joins once team selection is over, so players could not get back in.
 
 ### Per-map game modes & controllers
 
@@ -83,13 +83,13 @@ The wiring is a chain set up in the editor:
   <figcaption>The two menu controllers share one base class; the arena controller does not.</figcaption>
 </figure>
 
-The main menu and lobby controllers both inherit from `AMenuPlayerController`, which shows the cursor, creates the menu widget, gives it keyboard and controller focus, and switches input to UI only. Each child then adds its own part: the main menu starts its music, and the lobby adds the RPCs for picking a slot, readying up, choosing a hero and locking in.
+The main menu and lobby controllers both inherit from [`AMenuPlayerController`](code:AMenuPlayerController), which shows the cursor, creates the menu widget ([`SpawnWidget`](code:AMenuPlayerController::SpawnWidget)), gives it keyboard and controller focus, and switches input to UI only. Each child then adds its own part: the main menu starts its music, and the lobby adds the RPCs for picking a slot, readying up, choosing a hero and locking in.
 
 **When the widget is created** depends on the situation:
 
-- **Main menu (not connected):** in `BeginPlay`. With no server, this machine has authority and is the local player, so it is safe to build the UI straight away.
-- **Lobby (connected to the dedicated server):** in `OnRep_PlayerState`. On a client, the controller arrives first and the Player State a moment later, and the lobby UI needs the Player State to know who you are.
-- **On the server:** never. The server's copy of each controller is not a local player, and the server has no screen.
+- **Main menu (not connected)** – in [`BeginPlay`](code:AMenuPlayerController::BeginPlay). With no server, this machine has authority and is the local player, so it is safe to build the UI straight away.
+- **Lobby (connected to the dedicated server)** – in [`OnRep_PlayerState`](code:AMenuPlayerController::OnRep_PlayerState). On a client, the controller arrives first and the Player State a moment later, and the lobby UI needs the Player State to know who you are.
+- **On the server** – never. The server's copy of each controller is not a local player, and the server has no screen.
 
 #### Why I designed it this way
 
@@ -106,25 +106,25 @@ The main menu and lobby controllers both inherit from `AMenuPlayerController`, w
 
 #### What it does
 
-`AChrisGameMode` runs the whole match as a **state machine**: one `EMatchPhase` value at a time, from players arriving, through a loading hold, into a loop of round intro, countdown, fight, result and shop, until one team has won two rounds.
+[`AChrisGameMode`](code:AChrisGameMode) runs the whole match as a **state machine**: one `EMatchPhase` value at a time, from players arriving, through a loading hold, into a loop of round intro, countdown, fight, result and shop, until one team has won two rounds.
 
 #### How it works
 
-**Getting everyone in.** Once enough players have joined, the server starts a loading hold. Each player's controller shows the loading screen, waits one frame so it is actually on screen, then tells the server it is ready with `Server_ReportLoaded`. The server keeps the ready players in a set, and ends the hold when everyone has reported and at least 15 seconds have passed, or after 25 seconds whatever happens.
+**Getting everyone in** – once enough players have joined, the server starts a loading hold ([`StartLoadingHold`](code:AChrisGameMode::StartLoadingHold)). Each player's controller shows the loading screen ([`BeginPlay`](code:AChrisPlayerController::BeginPlay)), waits one frame so it is actually on screen, then tells the server it is ready with [`Server_ReportLoaded`](code:AChrisPlayerController::Server_ReportLoaded_Implementation). The server keeps the ready players in a set ([`ReportPlayerLoaded`](code:AChrisGameMode::ReportPlayerLoaded)), and ends the hold ([`TryFinishLoadingHold`](code:AChrisGameMode::TryFinishLoadingHold)) when everyone has reported and at least 15 seconds have passed, or after 25 seconds whatever happens.
 
-**Moving between phases.** Each phase ends in one of two ways:
+**Moving between phases** – each phase ends in one of two ways:
 
 - **A timer** – the round's five minutes, the shop's 60 seconds, the fades.
 - **A game event** – a team capturing a majority of the flags, or every player pressing Continue in the shop.
 
 Either way, the next phase is started by one function, and players are told with `Client_` RPCs: banners, the countdown, camera fades and the shop UI.
 
-**Keeping it from breaking.** Events can arrive at awkward moments, so every transition is protected:
+**Keeping it from breaking** – events can arrive at awkward moments, so every transition is protected:
 
-- **Phase guards** – anything triggered from outside the timer chain checks the phase first. A flag captured during the shop, or a Continue vote after the shop has closed, is ignored.
+- **Phase guards** – anything triggered from outside the timer chain checks the phase first. A flag captured during the shop ([`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback)), or a Continue vote after the shop has closed ([`OnPlayerVoteContinue`](code:AChrisGameMode::OnPlayerVoteContinue)), is ignored.
 - **One timer handle for "what comes next"** – setting a new timer on it replaces the old one, so only one next phase can ever be pending.
 - **Cancel the timer when an event wins** – when flags end a round early, or everyone votes Continue, the pending timer is cleared before moving on, so it cannot fire again later.
-- **Run once** – the loading hold can finish from two routes, so a flag makes sure it only finishes once.
+- **Run once** – the loading hold can finish from two routes, so a flag makes sure it only finishes once ([`FinishLoadingHold`](code:AChrisGameMode::FinishLoadingHold)).
 - **Sets** – loaded players and Continue votes are stored in sets, so nobody counts twice.
 
 Because Unreal runs gameplay on one thread, two of these events never truly happen at once: whichever runs first cancels the other's timer, and the phase guard rejects anything that arrives late.
@@ -148,21 +148,21 @@ Players pick a team by clicking a slot in the lobby. That choice is carried into
   <figcaption>A team is just a slot number until the arena turns it into team 0 or team 1.</figcaption>
 </figure>
 
-**In the lobby.** Each player's choice is an `FPlayerSelection` record: their slot (0–9), name, ready state, hero and lock-in. The lobby shows ten slots, 0–4 in the red column and 5–9 in the blue. Clicking one sends `Server_RequestSlotSelectionChange` through the player's `LobbyPlayerController`. On the server, the Game State refuses the request if the slot is taken, otherwise it moves the player's record to the new slot, or adds one on their first pick. Switching is blocked while the player is readied up.
+**In the lobby** – each player's choice is an [`FPlayerSelection`](code:FPlayerSelection) record: their slot (0–9), name, ready state, hero and lock-in. The lobby shows ten slots ([`ClearAndPopulateTeamSelectionSlots`](code:ULobbyWidget::ClearAndPopulateTeamSelectionSlots)), 0–4 in the red column and 5–9 in the blue. Clicking one ([`SlotSelected`](code:ULobbyWidget::SlotSelected)) sends [`Server_RequestSlotSelectionChange`](code:ALobbyPlayerController::Server_RequestSlotSelectionChange_Implementation) through the player's `LobbyPlayerController`. On the server, the Game State ([`RequestPlayerSelectionChange`](code:AChrisGameState::RequestPlayerSelectionChange)) refuses the request if the slot is taken, otherwise it moves the player's record to the new slot, or adds one on their first pick. Switching is blocked while the player is readied up.
 
-The records live in the Game State's replicated `PlayerSelectionArray`, so every client receives the change and `OnRep_PlayerSelectionArray` redraws every lobby. Each Player State also listens for changes and keeps a copy of its own record.
+The records live in the Game State's replicated `PlayerSelectionArray`, so every client receives the change and [`OnRep_PlayerSelectionArray`](code:AChrisGameState::OnRep_PlayerSelectionArray) redraws every lobby. Each Player State also listens for changes and keeps a copy of its own record ([`PlayerSelectionUpdated`](code:AChrisPlayerState::PlayerSelectionUpdated)).
 
-**Travelling to the arena.** The Game State is destroyed when the server changes map; the Player State is not. That is why each Player State keeps its own copy. During seamless travel, `CopyProperties` hands the record to the player's new Player State in the arena.
+**Travelling to the arena** – the Game State is destroyed when the server changes map; the Player State is not. That is why each Player State keeps its own copy. During seamless travel, [`CopyProperties`](code:AChrisPlayerState::CopyProperties) hands the record to the player's new Player State in the arena.
 
-**Turning the slot into a team.** When a player arrives, the arena Game Mode reads their new Player State and turns the slot into a team with one rule, the same rule the lobby used to build its columns:
+**Turning the slot into a team** – when a player arrives ([`HandleSeamlessTravelPlayer`](code:AChrisGameMode::HandleSeamlessTravelPlayer)), the arena Game Mode reads their new Player State ([`GetTeamIDForPlayer`](code:AChrisGameMode::GetTeamIDForPlayer)) and turns the slot into a team with one rule ([`GetTeamIdBasedOnSlot`](code:AChrisPlayerState::GetTeamIdBasedOnSlot)), the same rule the lobby used to build its columns:
 
 ```cpp
 return PlayerSelection.GetPlayerSlot() < UChrisNetStatics::GetPlayerCountPerTeam() ? FGenericTeamId{ 0 } : FGenericTeamId{ 1 };
 ```
 
-The team is set on the player's controller, used to claim one of that team's start spots, and copied onto the hero when the controller possesses it.
+The team is set on the player's controller, used to claim one of that team's start spots ([`FindNextStartSpotForTeam`](code:AChrisGameMode::FindNextStartSpotForTeam)), and copied onto the hero when the controller possesses it ([`OnPossess`](code:AChrisPlayerController::OnPossess)).
 
-**Showing it to everyone.** Other players' PCs never have your controller, and minions have no controller at all, so the team is replicated on the character itself. When it arrives, `OnRep_TeamID` compares the character's team with the viewing player's own team, and colours the health bar green for an ally or red for an enemy. Flags, kills, AI and souls all ask a character or controller for its team through Unreal's `IGenericTeamAgentInterface`, casting to it and checking the result before using it.
+**Showing it to everyone** – other players' PCs never have your controller, and minions have no controller at all, so the team is replicated on the character itself. When it arrives, [`OnRep_TeamID`](code:AChrisCharacter::OnRep_TeamID) compares the character's team with the viewing player's own team ([`ConfigureTeamColor`](code:UOverheadStatsGauge::ConfigureTeamColor)), and colours the health bar green for an ally or red for an enemy. Flags, kills, AI and souls all ask a character or controller for its team through Unreal's `IGenericTeamAgentInterface`, casting to it and checking the result before using it.
 
 #### How it works: ending and scoring a round
 
@@ -171,11 +171,11 @@ The team is set on the player's controller, used to claim one of that team's sta
   <figcaption>How a round ends, who wins it, and what happens next.</figcaption>
 </figure>
 
-**Ending a round.** Every flag capture triggers a recount of all flags. A round ends early as soon as one team holds a majority (2 of 3), because captured flags cannot be retaken, so the result can no longer change. If every flag is taken without a majority, which only happens with an even number of flags, the round also ends. Otherwise the five-minute timer ends it.
+**Ending a round** – every flag capture triggers a recount of all flags ([`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback)). A round ends early as soon as one team holds a majority (2 of 3), because captured flags cannot be retaken, so the result can no longer change. If every flag is taken without a majority, which only happens with an even number of flags, the round also ends. Otherwise the five-minute timer ends it.
 
-**Picking the winner.** `DetermineRoundWinner` walks down a ladder and stops at the first rule that separates the teams: flags captured, then territory on the remaining flag, then total territory if nobody captured anything, then kills this round. If everything is equal, the round is replayed.
+**Picking the winner** – [`DetermineRoundWinner`](code:AChrisGameMode::DetermineRoundWinner) walks down a ladder and stops at the first rule that separates the teams: flags captured, then territory on the remaining flag, then total territory if nobody captured anything, then kills this round ([`ReportKill`](code:AChrisGameMode::ReportKill)). If everything is equal, the round is replayed.
 
-**Scoring.** Souls are paid to every player at the end of each round, then the winning team gets a round win. The first team to two wins ends the match; otherwise everyone goes to the shop.
+**Scoring** – souls are paid to every player at the end of each round ([`AwardRoundEndSouls`](code:AChrisGameMode::AwardRoundEndSouls)), then the winning team gets a round win ([`EndRound`](code:AChrisGameMode::EndRound)). The first team to two wins ends the match ([`EndMatch`](code:AChrisGameMode::EndMatch)); otherwise everyone goes to the shop.
 
 #### Why I designed it this way
 
@@ -227,7 +227,7 @@ TODO: alternatives considered and trade-offs.
 
 ## Challenges & bugs
 
-**Symptom → cause → fix → lesson.** TODO: Lobby animations froze because LobbyGameMode inherited from AGameMode instead of AGameModeBase (the world stayed in WaitingToStart).
+**Symptom → cause → fix → lesson** – TODO: Lobby animations froze because LobbyGameMode inherited from AGameMode instead of AGameModeBase (the world stayed in WaitingToStart).
 
 ## Optimisations
 
@@ -237,8 +237,8 @@ TODO: before/after, with numbers where possible.
 
 ### Match phase lives in the Game Mode, not the Game State
 
-The current match phase is stored in `AChrisGameMode`, which only exists on the server. Every phase change, and every second of the countdown, is pushed to each player with a `Client_` RPC on their Player Controller.
+The current match phase is stored in [`AChrisGameMode`](code:AChrisGameMode), which only exists on the server. Every phase change, and every second of the countdown ([`CountdownTick`](code:AChrisGameMode::CountdownTick)), is pushed to each player with a `Client_` RPC on their Player Controller.
 
 That works, but RPCs are one-off messages: a player who reconnects mid-round never learns which phase the match is in. It also sends a message every second to every player.
 
-**The fix:** replicate the phase and the time it ends (`PhaseEndServerTime`) on `AChrisGameState`. Each client works out the remaining time locally from the server clock, so there is one update per phase instead of one per second, and late joiners see the right state immediately.
+**The fix** – replicate the phase and the time it ends (`PhaseEndServerTime`) on `AChrisGameState`. Each client works out the remaining time locally from the server clock, so there is one update per phase instead of one per second, and late joiners see the right state immediately.

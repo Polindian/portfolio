@@ -189,7 +189,7 @@ TODO: alternatives considered and trade-offs.
 
 ## Challenges & bugs
 
-**Symptom → cause → fix → lesson.** TODO: UGA_Shoot fired multiple shots per press until input was debounced; the death effect needed Infinite duration for the respawn flow.
+**Symptom → cause → fix → lesson** – TODO: UGA_Shoot fired multiple shots per press until input was debounced; the death effect needed Infinite duration for the respawn flow.
 
 ## Optimisations
 

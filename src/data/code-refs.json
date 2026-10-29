@@ -1,0 +1,180 @@
+{
+  "ref": "v0.9.0",
+  "symbols": {
+    "AChrisCharacter::OnRep_TeamID": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 588,
+      "end": 596
+    },
+    "AChrisGameMode": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.h",
+      "start": 30,
+      "end": 257
+    },
+    "AChrisGameMode::AwardRoundEndSouls": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 475,
+      "end": 537
+    },
+    "AChrisGameMode::CountdownTick": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 271,
+      "end": 301
+    },
+    "AChrisGameMode::DetermineRoundWinner": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 539,
+      "end": 658
+    },
+    "AChrisGameMode::EndMatch": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 715,
+      "end": 761
+    },
+    "AChrisGameMode::EndRound": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 361,
+      "end": 471
+    },
+    "AChrisGameMode::FindNextStartSpotForTeam": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 150,
+      "end": 169
+    },
+    "AChrisGameMode::FinishLoadingHold": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 1081,
+      "end": 1110
+    },
+    "AChrisGameMode::GetTeamIDForPlayer": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 137,
+      "end": 148
+    },
+    "AChrisGameMode::HandleSeamlessTravelPlayer": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 101,
+      "end": 135
+    },
+    "AChrisGameMode::OnFlagCapturedCallback": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 660,
+      "end": 694
+    },
+    "AChrisGameMode::OnPlayerVoteContinue": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 846,
+      "end": 865
+    },
+    "AChrisGameMode::ReportKill": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 698,
+      "end": 711
+    },
+    "AChrisGameMode::ReportPlayerLoaded": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 1063,
+      "end": 1070
+    },
+    "AChrisGameMode::StartLoadingHold": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 1048,
+      "end": 1061
+    },
+    "AChrisGameMode::TryFinishLoadingHold": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 1072,
+      "end": 1079
+    },
+    "AChrisGameState::OnRep_PlayerSelectionArray": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
+      "start": 404,
+      "end": 407
+    },
+    "AChrisGameState::RequestPlayerReadyChange": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
+      "start": 146,
+      "end": 193
+    },
+    "AChrisGameState::RequestPlayerSelectionChange": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
+      "start": 29,
+      "end": 53
+    },
+    "AChrisPlayerController::BeginPlay": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerController.cpp",
+      "start": 290,
+      "end": 311
+    },
+    "AChrisPlayerController::OnPossess": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerController.cpp",
+      "start": 36,
+      "end": 46
+    },
+    "AChrisPlayerController::Server_ReportLoaded_Implementation": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerController.cpp",
+      "start": 270,
+      "end": 276
+    },
+    "AChrisPlayerState::CopyProperties": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerState.cpp",
+      "start": 39,
+      "end": 48
+    },
+    "AChrisPlayerState::GetTeamIdBasedOnSlot": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerState.cpp",
+      "start": 74,
+      "end": 77
+    },
+    "AChrisPlayerState::PlayerSelectionUpdated": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerState.cpp",
+      "start": 104,
+      "end": 113
+    },
+    "ALobbyPlayerController::Server_RequestSlotSelectionChange_Implementation": {
+      "path": "Source/AnimationTesting/Private/Player/LobbyPlayerController.cpp",
+      "start": 14,
+      "end": 23
+    },
+    "AMenuPlayerController": {
+      "path": "Source/AnimationTesting/Private/Player/MenuPlayerController.h",
+      "start": 13,
+      "end": 29
+    },
+    "AMenuPlayerController::BeginPlay": {
+      "path": "Source/AnimationTesting/Private/Player/MenuPlayerController.cpp",
+      "start": 8,
+      "end": 17
+    },
+    "AMenuPlayerController::OnRep_PlayerState": {
+      "path": "Source/AnimationTesting/Private/Player/MenuPlayerController.cpp",
+      "start": 20,
+      "end": 27
+    },
+    "AMenuPlayerController::SpawnWidget": {
+      "path": "Source/AnimationTesting/Private/Player/MenuPlayerController.cpp",
+      "start": 29,
+      "end": 46
+    },
+    "FPlayerSelection": {
+      "path": "Source/AnimationTesting/Private/Player/PlayerInfoTypes.h",
+      "start": 11,
+      "end": 62
+    },
+    "ULobbyWidget::ClearAndPopulateTeamSelectionSlots": {
+      "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
+      "start": 112,
+      "end": 152
+    },
+    "ULobbyWidget::SlotSelected": {
+      "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
+      "start": 155,
+      "end": 174
+    },
+    "UOverheadStatsGauge::ConfigureTeamColor": {
+      "path": "Source/AnimationTesting/Private/Widgets/OverheadStatsGauge.cpp",
+      "start": 24,
+      "end": 53
+    }
+  }
+}

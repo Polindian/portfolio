@@ -124,7 +124,7 @@ TODO: alternatives considered and trade-offs.
 
 ## Challenges & bugs
 
-**Symptom → cause → fix → lesson.** TODO: TODO: e.g. EOS P2P sockets failing to bind without login and the fallback to the menu map.
+**Symptom → cause → fix → lesson** – TODO: TODO: e.g. EOS P2P sockets failing to bind without login and the fallback to the menu map.
 
 ## Optimisations
 

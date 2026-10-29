@@ -89,7 +89,7 @@ TODO: alternatives considered and trade-offs.
 
 ## Challenges & bugs
 
-**Symptom → cause → fix → lesson.** TODO: TODO
+**Symptom → cause → fix → lesson** – TODO: TODO
 
 ## Optimisations
 

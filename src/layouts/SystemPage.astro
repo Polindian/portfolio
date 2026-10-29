@@ -1,6 +1,6 @@
 ---
 import Base from './Base.astro';
-import { codeUrl } from '../config';
+import { codeUrl, CODE } from '../config';
 
 interface Props {
   title: string;
@@ -32,6 +32,8 @@ const toc = headings.filter((h) => h.depth <= 3);
       <h2>At a glance</h2>
       <ul>{glance.map((g) => <li>{g}</li>)}</ul>
     </section>
+
+    <p class="code-note">Gold <code class="sample">function names</code> link to the exact lines on GitHub, frozen at release <code>{CODE.ref}</code>.</p>
 
     <div class="layout">
       <aside class="toc">
@@ -87,7 +89,15 @@ const toc = headings.filter((h) => h.depth <= 3);
     margin-top: 2.4em; padding-bottom: 0.35em; border-bottom: 1px solid var(--line);
   }
   .body :global(h4) { font-size: 1.05rem; color: var(--gold); margin: 1.6em 0 0.5em; }
-  .body :global(li > strong:first-child) { color: var(--gold); font-weight: 600; }
+  .body :global(li > strong:first-child),
+  .body :global(p > strong:first-child) { color: var(--gold); font-weight: 600; }
+  /* Code links: gold, with an arrow so they read as clickable */
+  .body :global(a.code-link) { text-decoration: none; white-space: nowrap; }
+  .body :global(a.code-link code) { color: var(--gold); border-color: rgba(217, 164, 65, 0.45); }
+  .body :global(a.code-link::after) { content: '↗'; font-size: 0.75em; margin-left: 0.15em; color: var(--gold); }
+  .body :global(a.code-link:hover code) { background: var(--gold-soft); }
+  .code-note { color: var(--text-dim); font-size: 0.88rem; margin: -1rem 0 2rem; }
+  .code-note .sample { color: var(--gold); border-color: rgba(217, 164, 65, 0.45); }
   .files { list-style: none; padding: 0; }
   .files li { padding: 0.35em 0; border-bottom: 1px solid var(--line); color: var(--text-dim); }
   .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 4rem; }

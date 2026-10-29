@@ -105,7 +105,7 @@ TODO: alternatives considered and trade-offs.
 
 ## Challenges & bugs
 
-**Symptom → cause → fix → lesson.** TODO: TODO: pick a replication bug — symptom, cause, fix, lesson.
+**Symptom → cause → fix → lesson** – TODO: TODO: pick a replication bug — symptom, cause, fix, lesson.
 
 ## Optimisations
 

@@ -1,3 +1,5 @@
+import codeRefs from './data/code-refs.json';
+
 // One place for links, so swapping to a showcase repo or custom domain is a one-line change.
 export const SITE = {
   name: 'Christopher Naglik',
@@ -13,7 +15,7 @@ export const SITE = {
 // Code links point at a tag, so they never break as the code changes.
 export const CODE = {
   repo: 'https://github.com/Polindian/AnimationTesting',
-  ref: 'v0.9.0',
+  ref: codeRefs.ref, // set by scripts/gen-code-refs.py from the game repo's tag
   sourceRoot: 'Source/AnimationTesting/Private',
 };
 
