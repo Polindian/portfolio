@@ -72,8 +72,23 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** "Loaded" means loaded; the minimum hold becomes purely a design choice (time to read the hint).
 
+## 6. Make the fallback team predictable
+
+- **System:** Gameplay Framework (teams)
+- **Found:** 2026-10-29
+- **Status:** Planned (confirm with a UE_LOG of the team first)
+
+**Now:** `AChrisGameMode::GetTeamIDForPlayer` falls back to `static int PlayerCount; return PlayerCount++ % 2;` when no hero was picked (solo PIE, practice mode). The function runs twice per player, and the `static` counter never resets, so it carries over between PIE sessions and practice runs.
+
+**Problem:** A solo player's team can differ from one session to the next, and the first call claims a start spot for the wrong team.
+
+**Plan:** Return a fixed team for the no-lobby case (e.g. team 0), or derive it from the player's index in the current match; never from a counter that outlives the match.
+
+**Benefit:** Solo and practice behave the same every time; one less source of "it worked last time" bugs.
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
 - **RPC validation accepts everything:** every `_Validate` in `ALobbyPlayerController` returns `true`. Reject impossible values (e.g. slot ID beyond the max, null hero on select) so tampered clients are kicked; keep normal rule checks (slot occupied) in `_Implementation`. (Networking page)
 - **Stale entries in `LoadedPlayers`:** if a player who already reported loaded leaves during the hold, their entry still counts in `LoadedPlayers.Num()`, so the hold could finish while someone else is still loading. Count only valid entries. (Match loop)
+- **Two definitions of a kill:** the round tiebreak (`ReportKill`) counts hero kills on anything, minions included; the leaderboard (`AddHeroKill`) counts heroes killing heroes only. Confirm this is intended and document it. (Rounds & scoring)
