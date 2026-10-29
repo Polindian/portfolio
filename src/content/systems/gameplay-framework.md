@@ -225,6 +225,25 @@ TODO: alternatives considered and trade-offs.
 - Networking — what replicates and who has authority
 - Online Backend — GameInstance holds login/session state
 
+## Built to extend
+
+How the framework copes with the changes a team would most likely ask for, and where it would need work first.
+
+#### Easy to add today
+
+- **A new hero** – no framework code changes. Heroes are `PA_CharacterDefinition` data assets that the asset manager finds and loads by type, the hero-select screen lists whatever it finds, and [`GetDefaultPawnClassForController`](code:AChrisGameMode::GetDefaultPawnClassForController_Implementation) spawns whichever one the player picked.
+- **New match rules** – round length, shop length, countdown, rounds to win, soul rewards, player count and the loading hold are all `EditDefaultsOnly` properties on [`AChrisGameMode`](code:AChrisGameMode). Designers tune them in `ChrisGameMode_BP` without a recompile, which is exactly how five-minute rounds were set.
+- **More or fewer flags** – the round recounts every flag in the level and works out the majority from the total ([`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback)), so a map with five flags needs no code changes, and even numbers are already handled.
+- **A new map or game mode** – each map picks its own Game Mode and controller in World Settings. A new mode is a new Game Mode class and Blueprint; nothing else has to know about it.
+- **A new menu screen** – a new controller can inherit from [`AMenuPlayerController`](code:AMenuPlayerController) and gets the cursor, focus and widget setup for free; it only names its widget in the Blueprint.
+- **A new match phase** – add a value to `EMatchPhase`, a function that starts it, and a timer on the shared phase handle. The phase guards and single "what comes next" timer keep the new phase as safe as the existing ones.
+
+#### Would need work first
+
+- **More than two teams** – two teams are built into the types: `EFlagOwnership` has `TeamOne` and `TeamTwo`, kills are counted in `TeamOneKills` and `TeamTwoKills`, and a slot becomes team 0 or 1. Supporting three teams would mean storing scores in a map keyed by team ID instead of a pair of variables, and the slot rule would divide slots by team size instead of halving them.
+- **Team size** – [`GetPlayerCountPerTeam`](code:UChrisNetStatics::GetPlayerCountPerTeam) drives the lobby slots, the session size and the team rule from one place, which is good, but it returns a hard-coded `5`. It should come from config so it can change per mode without a recompile.
+- **Bigger teams in the arena** – each player currently claims two start spots (see What I'd do differently), so larger teams need that fixed before they will spawn reliably.
+
 ## Challenges & bugs
 
 **Symptom → cause → fix → lesson** – TODO: Lobby animations froze because LobbyGameMode inherited from AGameMode instead of AGameModeBase (the world stayed in WaitingToStart).

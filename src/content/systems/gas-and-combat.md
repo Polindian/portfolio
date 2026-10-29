@@ -187,6 +187,16 @@ TODO: alternatives considered and trade-offs.
 - Gameplay Framework — ASC lives on the character/player state
 - Audio — gameplay tags trigger sounds
 
+## Built to extend
+
+#### Easy to add today
+
+TODO: what this system makes easy to add, and which part of the design makes it easy.
+
+#### Would need work first
+
+TODO: honest limits, and what would need changing to remove them.
+
 ## Challenges & bugs
 
 **Symptom → cause → fix → lesson** – TODO: UGA_Shoot fired multiple shots per press until input was debounced; the death effect needed Infinite duration for the respawn flow.

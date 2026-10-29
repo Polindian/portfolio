@@ -104,6 +104,16 @@ TODO: alternatives considered and trade-offs.
 - Online Backend — session search & leaderboard data
 - Gameplay Framework — menu player controllers
 
+## Built to extend
+
+#### Easy to add today
+
+TODO: what this system makes easy to add, and which part of the design makes it easy.
+
+#### Would need work first
+
+TODO: honest limits, and what would need changing to remove them.
+
 ## Challenges & bugs
 
 **Symptom → cause → fix → lesson** – TODO: TODO: e.g. BindToAnimationFinished stacking callbacks, or SetActiveWidget failing silently.

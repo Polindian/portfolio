@@ -122,6 +122,16 @@ TODO: alternatives considered and trade-offs.
 - Gameplay Framework — match end → stats
 - Networking — dedicated servers
 
+## Built to extend
+
+#### Easy to add today
+
+TODO: what this system makes easy to add, and which part of the design makes it easy.
+
+#### Would need work first
+
+TODO: honest limits, and what would need changing to remove them.
+
 ## Challenges & bugs
 
 **Symptom → cause → fix → lesson** – TODO: TODO: e.g. EOS P2P sockets failing to bind without login and the fallback to the menu map.

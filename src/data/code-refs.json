@@ -46,6 +46,11 @@
       "start": 1081,
       "end": 1110
     },
+    "AChrisGameMode::GetDefaultPawnClassForController_Implementation": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 74,
+      "end": 83
+    },
     "AChrisGameMode::GetTeamIDForPlayer": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
       "start": 137,
@@ -160,6 +165,11 @@
       "path": "Source/AnimationTesting/Private/Player/PlayerInfoTypes.h",
       "start": 11,
       "end": 62
+    },
+    "UChrisNetStatics::GetPlayerCountPerTeam": {
+      "path": "Source/AnimationTesting/Private/Network/ChrisNetStatics.cpp",
+      "start": 55,
+      "end": 58
     },
     "ULobbyWidget::ClearAndPopulateTeamSelectionSlots": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",

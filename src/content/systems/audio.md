@@ -102,6 +102,16 @@ TODO: alternatives considered and trade-offs.
 - GAS & Combat — abilities trigger sounds
 - Networking — routing depends on ownership
 
+## Built to extend
+
+#### Easy to add today
+
+TODO: what this system makes easy to add, and which part of the design makes it easy.
+
+#### Would need work first
+
+TODO: honest limits, and what would need changing to remove them.
+
 ## Challenges & bugs
 
 **Symptom → cause → fix → lesson** – TODO: TODO
