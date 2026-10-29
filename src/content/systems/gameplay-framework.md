@@ -137,19 +137,32 @@ Because Unreal runs gameplay on one thread, two of these events never truly happ
 
 ### Rounds, teams & scoring
 
-<div class="placeholder">GIF / screenshot: Rounds, teams & scoring</div>
+<figure class="diagram">
+  <img src="../../diagrams/framework-round-scoring.svg" alt="A round ends on a flag majority, every flag being taken, or the five-minute timer. DetermineRoundWinner then checks five rules in order: flags captured, territory on the remaining flag, total territory, kills this round, otherwise replay. The server pays souls, adds a round win, and either ends the match at two wins or moves to the shop." />
+  <figcaption>How a round ends, who wins it, and what happens next.</figcaption>
+</figure>
 
 #### What it does
 
-TODO: teams from lobby slots, ending a round, the tiebreak ladder, souls, winning the match.
+Players pick a team in the lobby, fight over three flags for up to five minutes, and the server decides each round's winner, pays out souls and keeps score until one team has won two rounds.
 
 #### How it works
 
-TODO
+**Teams.** Your team comes from the lobby slot you click: slots 0–4 are the red column and team 0, slots 5–9 the blue column and team 1. The same rule builds the lobby UI and sets your team in the arena, so the two can never disagree. On arrival the team is set on your Player Controller, copied to your hero when the controller possesses it, and replicated on the character. Each PC compares every character's team with its own player's team to colour health bars green for allies and red for enemies. Minions carry a team the same way, with no controller at all.
+
+**Ending a round.** Every flag capture triggers a recount of all flags. A round ends early as soon as one team holds a majority (2 of 3), because captured flags cannot be retaken, so the result can no longer change. If every flag is taken without a majority, which only happens with an even number of flags, the round also ends. Otherwise the five-minute timer ends it.
+
+**Picking the winner.** `DetermineRoundWinner` walks down a ladder and stops at the first rule that separates the teams: flags captured, then territory on the remaining flag, then total territory if nobody captured anything, then kills this round. If everything is equal, the round is replayed.
+
+**Scoring.** Souls are paid to every player at the end of each round, then the winning team gets a round win. The first team to two wins ends the match; otherwise everyone goes to the shop.
 
 #### Why I designed it this way
 
-TODO
+- **Recount the flags instead of keeping a tally** – the flags themselves are the single source of truth. A separate running score could drift out of sync after a missed event or a reset between rounds; a recount is always right and costs almost nothing with three flags.
+- **End the round on a majority** – once a team holds two of three flags it cannot be caught, so playing out the timer would just be waiting.
+- **A tiebreak ladder instead of draws** – rounds almost always produce a winner, and kills only matter when the objective is genuinely level. Kills reset every round so an early lead cannot decide a later tie.
+- **Losers earn more souls** – the losing team gets 100 and the winners 50, so falling behind buys a bigger upgrade in the shop and matches stay close. A rare draw pays both teams 100, so the replayed round plays differently.
+- **Team on the character, not just the controller** – other players' PCs never have your controller, and minions have none at all, so every character carries its own team.
 
 ### Flag capture
 
