@@ -86,9 +86,24 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** Solo and practice behave the same every time; one less source of "it worked last time" bugs.
 
+## 7. Make StartMatch run once
+
+- **System:** Gameplay Framework (lobby)
+- **Found:** 2026-10-29
+- **Status:** Planned (do together with improvement 2, when lobby rules move to `ALobbyGameMode`)
+
+**Now:** `AChrisGameState::StartMatch` is called from two routes: the last `RequestPlayerLockIn`, and the hero-selection timer reaching zero (which force-locks everyone). Nothing records that the match has already started.
+
+**Problem:** If the timer starts the match and a lock-in request already in flight arrives just after, `CanStartMatch()` is still true, so `StartMatch` runs again and calls `ServerTravel` a second time mid-travel.
+
+**Plan:** Add a `bMatchStarting` flag set on the first call; return early on any later call, and ignore lock-in requests once it is set. Same pattern as `bLoadingHoldFinished`.
+
+**Benefit:** Travel to the arena is triggered exactly once, whatever order requests arrive in.
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
 - **RPC validation accepts everything:** every `_Validate` in `ALobbyPlayerController` returns `true`. Reject impossible values (e.g. slot ID beyond the max, null hero on select) so tampered clients are kicked; keep normal rule checks (slot occupied) in `_Implementation`. (Networking page)
 - **Stale entries in `LoadedPlayers`:** if a player who already reported loaded leaves during the hold, their entry still counts in `LoadedPlayers.Num()`, so the hold could finish while someone else is still loading. Count only valid entries. (Match loop)
 - **Two definitions of a kill:** the round tiebreak (`ReportKill`) counts hero kills on anything, minions included; the leaderboard (`AddHeroKill`) counts heroes killing heroes only. Confirm this is intended and document it. (Rounds & scoring)
+- **No feedback when teams are uneven:** if everyone readies up with unequal teams, `CanStartHeroSelection` just returns false and nothing happens. Show a message such as "Teams must be even to start" to every player. (UI page)
