@@ -15,6 +15,9 @@ keyFiles:
   - { path: "Player/LobbyPlayerController.cpp", note: "Lobby requests: slot, ready, hero, lock-in" }
   - { path: "Player/ChrisPlayerController.cpp", note: "Per-player input & UI ownership" }
   - { path: "Player/ChrisPlayerState.cpp", note: "Per-player replicated stats" }
+  - { path: "Framework/Flag.cpp", note: "Capture zones, rates and progress" }
+  - { path: "Widgets/FlagCaptureGaugeWidget.cpp", note: "Zone gauges on the HUD" }
+  - { path: "Widgets/FlagProgressWidget.cpp", note: "Tug-of-war bar in a zone" }
   - { path: "Character/ChrisCharacter.cpp", note: "Base character" }
 status: draft
 ---
@@ -189,19 +192,38 @@ The team is set on the player's controller, used to claim one of that team's sta
 
 ### Flag capture
 
-<div class="placeholder">GIF / screenshot: Flag capture</div>
+<figure class="diagram">
+  <img src="../../diagrams/framework-flag-capture.svg" alt="Flag capture. On the server every frame: track who is in the zone, add up team rates with hero and minion weights, move capture progress by the net rate, and at 100 percent announce the capture to the Game Mode. Heroes in the zone earn XP. The flag replicates to every player, whose PCs show zone gauges, a tug-of-war bar and the banner." />
+  <figcaption>The server decides everything about a flag; each player's PC only shows it.</figcaption>
+</figure>
 
 #### What it does
 
-TODO: capture zones, hero and minion weighting, capture progress, replication and the on-screen gauges.
+Each of the three flags is a capture zone. Heroes and minions standing in it push it towards their team, heroes three times as hard as minions. A contested zone drains the other team's progress before it can build your own, and once a flag reaches 100% it is captured for the rest of the round. Every player sees all three zones' progress on their HUD, and a tug-of-war bar shows who is pushing harder in the zone they are standing in.
 
 #### How it works
 
-TODO
+**Who is in the zone** – the flag is a sphere that only reacts to pawns, so projectiles and props never trigger it. Enter and exit events ([`OnInfluencerEnter`](code:AFlag::OnInfluencerEnter), [`OnInfluencerExit`](code:AFlag::OnInfluencerExit)) keep two sets: every character that can say which team it is on, and the heroes on their own for rewards.
+
+**How hard each team pushes** – every frame of a round, the server adds up each team's weight in the zone ([`RecalculateCaptureRates`](code:AFlag::RecalculateCaptureRates)). A hero counts 3 plus any Dominion upgrade, a minion counts 1 ([`GetActorCaptureWeight`](code:AFlag::GetActorCaptureWeight)). Dead characters are skipped while their bodies still overlap the zone, and anything destroyed without an exit event is removed.
+
+**Moving the percentage** – the flag's [`Tick`](code:AFlag::Tick) runs only on the server, and only while capture is enabled for the round. It takes the difference between the two teams' rates and moves the percentage by that much per second, using `DeltaTime` so capture speed follows real time rather than the server's frame rate. A lone hero captures a neutral flag in about 33 seconds. If the other team owns some progress, it drains first; when it crosses zero, ownership flips and the leftover carries over. A perfectly balanced zone does not move. At 100% the flag is captured, tells the Game Mode through its `OnFlagCaptured` event, and slams its banner in the team's colour ([`PlayBannerSlam`](code:AFlag::PlayBannerSlam)).
+
+**Rewards** – while a flag is uncaptured, every living hero in the zone earns 50 XP for each 8 seconds spent in any zone, and capture time for the match stats. The timer lives on the hero, so time spent on different zones adds up.
+
+**What every player sees** – the flag replicates its percentage, owner, team rates, captured state and banner, and is always relevant, so every player gets updates for every zone however far away they are. The zone gauges ([`UFlagCaptureGaugeWidget::NativeTick`](code:UFlagCaptureGaugeWidget::NativeTick)) smooth the percentage between network updates so the fill glides instead of jumping. The tug-of-war bar ([`UFlagProgressWidget::NativeTick`](code:UFlagProgressWidget::NativeTick)) shows the share of red against blue weight, and appears when the player's own PC finds them inside a zone ([`FindLocalPlayerFlag`](code:UFlagProgressWidget::FindLocalPlayerFlag)). The banner plays from [`OnRep_BannerState`](code:AFlag::OnRep_BannerState) on clients, and is applied directly on the server, where an OnRep never fires.
+
+**Each round** – the Game Mode enables every flag and subscribes to its capture event when the round starts ([`StartRound`](code:AChrisGameMode::StartRound)), unsubscribes when it ends so captures are never counted twice in later rounds, and resets every flag during the black screen before the next one ([`ResetCapture`](code:AFlag::ResetCapture)).
 
 #### Why I designed it this way
 
-TODO
+- **Track membership by events, recompute rates every frame** – players die, respawn, get destroyed and buy upgrades while standing still, and none of that fires an exit event. Recounting a handful of characters on three flags costs almost nothing and is always right, where adding and subtracting on events would go wrong the first time one was missed.
+- **Heroes count three times as much as minions** – minions help hold ground, but a hero arriving should matter. Dominion lets players invest in becoming even stronger on objectives.
+- **Drain before you gain** – a team has to undo the enemy's progress before building its own, so a flag that is nearly lost can still be saved, and flips are earned.
+- **Rewards in contested zones too** – holding a contested zone is the hardest thing a player can do, even when the bar is not moving, so it pays the same XP as walking onto an empty one.
+- **Zone time carries across flags** – the XP timer is on the hero, not the flag, so players are rewarded for moving between objectives rather than camping one.
+- **The server decides, the PC only shows** – ownership, progress and rewards are all decided on the server. The client only works out whether to show the bar, which is safe because it changes nothing in the match.
+- **Poll the values for the HUD** – the gauges animate every frame anyway, so reading the replicated values while they do is simpler and cannot miss a change.
 
 ### Characters & hero data
 
@@ -233,6 +255,7 @@ How the framework copes with the changes a team would most likely ask for, and w
 
 - **A new hero** – no framework code changes. Heroes are `PA_CharacterDefinition` data assets that the asset manager finds and loads by type, the hero-select screen lists whatever it finds, and [`GetDefaultPawnClassForController`](code:AChrisGameMode::GetDefaultPawnClassForController_Implementation) spawns whichever one the player picked.
 - **New match rules** – round length, shop length, countdown, rounds to win, soul rewards, player count and the loading hold are all `EditDefaultsOnly` properties on [`AChrisGameMode`](code:AChrisGameMode). Designers tune them in `ChrisGameMode_BP` without a recompile, which is exactly how five-minute rounds were set.
+- **A new kind of unit on objectives** – a siege unit worth 2, or a hero ability that boosts capture, is one case in [`GetActorCaptureWeight`](code:AFlag::GetActorCaptureWeight); the rest of the flag does not change.
 - **More or fewer flags** – the round recounts every flag in the level and works out the majority from the total ([`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback)), so a map with five flags needs no code changes, and even numbers are already handled.
 - **A new map or game mode** – each map picks its own Game Mode and controller in World Settings. A new mode is a new Game Mode class and Blueprint; nothing else has to know about it.
 - **A new menu screen** – a new controller can inherit from [`AMenuPlayerController`](code:AMenuPlayerController) and gets the cursor, focus and widget setup for free; it only names its widget in the Blueprint.

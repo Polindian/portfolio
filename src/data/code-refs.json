@@ -86,6 +86,11 @@
       "start": 1048,
       "end": 1061
     },
+    "AChrisGameMode::StartRound": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 305,
+      "end": 358
+    },
     "AChrisGameMode::TryFinishLoadingHold": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
       "start": 1072,
@@ -136,6 +141,46 @@
       "start": 104,
       "end": 113
     },
+    "AFlag::GetActorCaptureWeight": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 236,
+      "end": 266
+    },
+    "AFlag::OnInfluencerEnter": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 316,
+      "end": 331
+    },
+    "AFlag::OnInfluencerExit": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 333,
+      "end": 344
+    },
+    "AFlag::OnRep_BannerState": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 56,
+      "end": 59
+    },
+    "AFlag::PlayBannerSlam": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 103,
+      "end": 114
+    },
+    "AFlag::RecalculateCaptureRates": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 268,
+      "end": 314
+    },
+    "AFlag::ResetCapture": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 143,
+      "end": 153
+    },
+    "AFlag::Tick": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 161,
+      "end": 234
+    },
     "ALobbyPlayerController::Server_RequestSlotSelectionChange_Implementation": {
       "path": "Source/AnimationTesting/Private/Player/LobbyPlayerController.cpp",
       "start": 14,
@@ -170,6 +215,21 @@
       "path": "Source/AnimationTesting/Private/Network/ChrisNetStatics.cpp",
       "start": 55,
       "end": 58
+    },
+    "UFlagCaptureGaugeWidget::NativeTick": {
+      "path": "Source/AnimationTesting/Private/Widgets/FlagCaptureGaugeWidget.cpp",
+      "start": 44,
+      "end": 116
+    },
+    "UFlagProgressWidget::FindLocalPlayerFlag": {
+      "path": "Source/AnimationTesting/Private/Widgets/FlagProgressWidget.cpp",
+      "start": 148,
+      "end": 182
+    },
+    "UFlagProgressWidget::NativeTick": {
+      "path": "Source/AnimationTesting/Private/Widgets/FlagProgressWidget.cpp",
+      "start": 42,
+      "end": 146
     },
     "ULobbyWidget::ClearAndPopulateTeamSelectionSlots": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
