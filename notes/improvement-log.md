@@ -100,6 +100,20 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 
 **Benefit:** Travel to the arena is triggered exactly once, whatever order requests arrive in.
 
+## 8. Banner state as an enum, chosen by team
+
+- **System:** Flag capture
+- **Found:** 2026-11-03
+- **Status:** Planned
+
+**Now:** `AFlag::BannerState` is a replicated number: 0 hidden, 1 neutral, 2 team one, 3 team two. `PlayBannerSlam` decides which by comparing the colour it was given against `TeamOneBannerColor` / `TeamTwoBannerColor`.
+
+**Problem:** Magic numbers are hard to read and easy to get wrong, and matching on colour breaks if a team's colour is changed in the Blueprint.
+
+**Plan:** Replace the number with `enum class EBannerState : uint8 { Hidden, Neutral, TeamOne, TeamTwo }`. Pass the team (or `EFlagOwnership`) into the banner functions and look the colour up from it.
+
+**Benefit:** Readable, compiler-checked states; colours can change freely; a step towards supporting more than two teams.
+
 ## Noted for later
 
 - **Countdown input lock is client-side only:** `Client_OnCountdownStart` calls `DisableInput` on the client. The server should also refuse actions during the countdown. (Networking page)
@@ -107,4 +121,4 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 - **Stale entries in `LoadedPlayers`:** if a player who already reported loaded leaves during the hold, their entry still counts in `LoadedPlayers.Num()`, so the hold could finish while someone else is still loading. Count only valid entries. (Match loop)
 - **Two definitions of a kill:** the round tiebreak (`ReportKill`) counts hero kills on anything, minions included; the leaderboard (`AddHeroKill`) counts heroes killing heroes only. Confirm this is intended and document it. (Rounds & scoring)
 - **No feedback when teams are uneven:** if everyone readies up with unequal teams, `CanStartHeroSelection` just returns false and nothing happens. Show a message such as "Teams must be even to start" to every player. (UI page)
-- **Unused flag delegate:** `AFlag::OnTeamInfluenceUpdated` is broadcast (only when rates change) but nothing binds to it; the gauges and AI read the replicated values directly. Remove it, or have the gauges use it instead of polling every frame. (Flag capture)
+- **Unused flag delegate:** `AFlag::OnTeamInfluenceUpdated` is broadcast (only when rates change) but nothing binds to it; the gauges and AI read the replicated values directly. Remove it: the gauges animate every frame anyway, so polling the replicated values is the right fit. (Flag capture)
