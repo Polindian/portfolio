@@ -6,10 +6,20 @@
       "start": 16,
       "end": 292
     },
+    "AChrisCharacter::ClientSideInit": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 60,
+      "end": 64
+    },
     "AChrisCharacter::OnRep_TeamID": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 588,
       "end": 596
+    },
+    "AChrisCharacter::ServerSideInit": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 54,
+      "end": 58
     },
     "AChrisGameMode": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.h",
@@ -130,6 +140,11 @@
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
       "start": 58,
       "end": 74
+    },
+    "AChrisGameState::StartMatch": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
+      "start": 251,
+      "end": 270
     },
     "AChrisPlayerCharacter": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.h",
@@ -261,6 +276,11 @@
       "start": 44,
       "end": 47
     },
+    "UChrisGameInstance::StartMatch": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameInstance.cpp",
+      "start": 19,
+      "end": 44
+    },
     "UChrisNetStatics::GetPlayerCountPerTeam": {
       "path": "Source/AnimationTesting/Private/Network/ChrisNetStatics.cpp",
       "start": 55,
@@ -296,10 +316,25 @@
       "start": 453,
       "end": 482
     },
+    "ULobbyWidget::HeroEntryHovered": {
+      "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
+      "start": 418,
+      "end": 421
+    },
+    "ULobbyWidget::NativeConstruct": {
+      "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
+      "start": 35,
+      "end": 71
+    },
     "ULobbyWidget::PreloadHeroAssets": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
       "start": 434,
       "end": 451
+    },
+    "ULobbyWidget::ShowHeroTooltip": {
+      "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
+      "start": 423,
+      "end": 432
     },
     "ULobbyWidget::SlotSelected": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
@@ -325,6 +360,11 @@
       "path": "Source/AnimationTesting/Private/Character/PA_CharacterDefinition.cpp",
       "start": 9,
       "end": 15
+    },
+    "UPA_CharacterDefinition::LoadCharacterClass": {
+      "path": "Source/AnimationTesting/Private/Character/PA_CharacterDefinition.cpp",
+      "start": 32,
+      "end": 41
     },
     "UPA_CharacterDefinition::LoadToolTip": {
       "path": "Source/AnimationTesting/Private/Character/PA_CharacterDefinition.cpp",

@@ -1,58 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 500" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Hero data. In the lobby each PC finds the hero data assets by type, loads them in the background to build the hero list, preloads everything heroes show in one batch, and sends the pick to the server. Hovering is instant because assets are already loaded. When everyone locks in or the timer ends, anyone without a hero gets a random one. Seamless travel carries the pick to the arena, where the server chooses and loads the hero class, spawns it with a team and start spot, and initialises it on the server and owning client.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 500" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Hero data in twelve steps. In the lobby on every PC: 1 the Asset Manager registers heroes by type using GetPrimaryAssetId, 2 LoadCharacterDefinitions loads them async, 3 CharacterDefinitionsLoaded shows one tile per hero, 4 PreloadHeroAssets loads every hero asset in one batch, 5 hovering shows the tooltip instantly. 6 HeroEntryClicked sends a server RPC, 7 the server records the pick with SetCharacterSelected and it replicates, 8 at the start AssignRandomCharactersToEmptySlots fills empty picks. After seamless travel, on the arena server: 9 CopyProperties keeps the pick, 10 GetDefaultPawnClassForController chooses and loads the class, 11 SpawnDefaultPawnFor spawns it with a team and start spot, 12 OnPossess and AcknowledgePossession initialise it.">
 <defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="hd9822b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9822b"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker></defs>
-<rect x="10" y="20" width="1030" height="250" rx="12" fill="rgba(217,164,65,0.04)" stroke="rgba(217,164,65,0.35)"/>
-<text x="30" y="46" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">IN THE LOBBY</text>
-<rect x="40" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="140.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hero data assets</text>
-<text x="140.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">one per hero, soft pointers</text>
-<text x="140.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">found by type, not loaded</text>
-<rect x="290" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="390.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hero list</text>
-<text x="390.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">load definitions async</text>
-<text x="390.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">one tile per hero</text>
-<rect x="540" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="640.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Preload batch</text>
-<text x="640.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">everything a hero shows</text>
-<text x="640.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">one async load, handle kept</text>
-<rect x="790" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9822b"/>
-<text x="890.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Pick a hero</text>
-<text x="890.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Server RPC → Game State</text>
-<text x="890.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">shown in every team slot</text>
-<path d="M242 105.0 L287 105.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M492 105.0 L537 105.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M742 105.0 L787 105.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<rect x="540" y="176" width="200" height="78" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="640.0" y="202" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hover or preview</text>
-<text x="640.0" y="223" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">LoadSynchronous finds it</text>
-<text x="640.0" y="240" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">already in memory: instant</text>
-<path d="M640.0 146 L640.0 173" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<rect x="790" y="176" width="200" height="78" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="890.0" y="202" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Everyone locked in</text>
-<text x="890.0" y="223" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">or the timer ends: random</text>
-<text x="890.0" y="240" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">hero for anyone without one</text>
-<path d="M890.0 146 L890.0 173" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
-<path d="M525 272 L525 324" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
-<text x="540" y="293" font-size="12" fill="#5fa8ff" font-weight="600" text-anchor="start">seamless travel to the arena</text>
-<text x="540" y="311" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">CopyProperties carries the pick to the new Player State</text>
-<rect x="10" y="328" width="1030" height="160" rx="12" fill="rgba(95,168,255,0.04)" stroke="rgba(95,168,255,0.35)"/>
-<text x="30" y="352" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">IN THE ARENA, ON THE SERVER</text>
-<rect x="40" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="140.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Choose the class</text>
-<text x="140.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">from the Player State's pick</text>
-<text x="140.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">fallback if none</text>
-<rect x="290" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#d9822b"/>
-<text x="390.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Load the class</text>
-<text x="390.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">LoadSynchronous, safe here:</text>
-<text x="390.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">behind the loading screen</text>
-<rect x="540" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="640.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Spawn the hero</text>
-<text x="640.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">team ID + start spot</text>
-<text x="640.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Blueprint hero class</text>
-<rect x="790" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="890.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Initialise</text>
-<text x="890.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">abilities set up on the</text>
-<text x="890.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">server and owning client</text>
-<path d="M242 409.0 L287 409.0" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
-<path d="M492 409.0 L537 409.0" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
-<path d="M742 409.0 L787 409.0" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<rect x="8" y="14" width="1034" height="276" rx="12" fill="rgba(217,164,65,0.04)" stroke="rgba(217,164,65,0.35)"/>
+<text x="26" y="40" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">IN THE LOBBY</text>
+<text x="130" y="40" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">1–5 on every PC · 6 sent by the PC · 7–8 on the server</text>
+<rect x="18" y="56" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="36" cy="77" r="11" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="36" y="81.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="140.0" y="82" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Register heroes</text>
+<text x="132.0" y="104" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">GetPrimaryAssetId</text>
+<text x="132.0" y="123" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Asset Manager scan, by type</text>
+<rect x="276" y="56" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="294" cy="77" r="11" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="294" y="81.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="398.0" y="82" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Load the definitions</text>
+<text x="390.0" y="104" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">LoadCharacterDefinitions</text>
+<text x="390.0" y="123" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">async, called by NativeConstruct</text>
+<rect x="534" y="56" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="552" cy="77" r="11" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="552" y="81.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="656.0" y="82" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Show the tiles</text>
+<text x="648.0" y="104" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">CharacterDefinitionsLoaded</text>
+<text x="648.0" y="123" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">callback: one tile per hero</text>
+<rect x="792" y="56" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="810" cy="77" r="11" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="810" y="81.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="914.0" y="82" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Preload the assets</text>
+<text x="906.0" y="104" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">PreloadHeroAssets</text>
+<text x="906.0" y="123" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">one async batch, handle kept</text>
+<path d="M248 96.0 L273 96.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M506 96.0 L531 96.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M764 96.0 L789 96.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M906.0 138 L906.0 163 L132.0 163 L132.0 187" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="18" y="190" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="36" cy="211" r="11" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="36" y="215.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="140.0" y="216" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hover a hero</text>
+<text x="132.0" y="238" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">ShowHeroTooltip</text>
+<text x="132.0" y="257" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">LoadToolTip: already loaded</text>
+<rect x="276" y="190" width="228" height="80" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="294" cy="211" r="11" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="294" y="215.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="398.0" y="216" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Click a hero</text>
+<text x="390.0" y="238" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">HeroEntryClicked</text>
+<text x="390.0" y="257" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">sends a Server RPC</text>
+<rect x="534" y="190" width="228" height="80" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="552" cy="211" r="11" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="552" y="215.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="656.0" y="216" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Server records it</text>
+<text x="648.0" y="238" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">SetCharacterSelected</text>
+<text x="648.0" y="257" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">replicates to every team slot</text>
+<rect x="792" y="190" width="228" height="80" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="810" cy="211" r="11" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="810" y="215.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">8</text>
+<text x="914.0" y="216" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Start the match</text>
+<text x="906.0" y="238" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">AssignRandomCharactersToEmptySlots</text>
+<text x="906.0" y="257" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">heroes for anyone without one</text>
+<path d="M248 230.0 L273 230.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M506 230.0 L531 230.0" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+<path d="M764 230.0 L789 230.0" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+<path d="M525 292 L525 338" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<text x="540" y="311" font-size="12" fill="#5fa8ff" font-weight="600" text-anchor="start">seamless travel to the arena</text>
+<text x="540" y="328" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">the pick goes with the player</text>
+<rect x="8" y="342" width="1034" height="146" rx="12" fill="rgba(95,168,255,0.04)" stroke="rgba(95,168,255,0.35)"/>
+<text x="26" y="368" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">IN THE ARENA</text>
+<text x="132" y="368" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">9–11 on the server · 12 on the server, then the owning client</text>
+<rect x="18" y="386" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="36" cy="407" r="11" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="36" y="411.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">9</text>
+<text x="140.0" y="412" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Keep the pick</text>
+<text x="132.0" y="434" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">CopyProperties</text>
+<text x="132.0" y="453" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">old Player State → new one</text>
+<rect x="276" y="386" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="294" cy="407" r="11" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="294" y="411.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">10</text>
+<text x="398.0" y="412" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Choose the class</text>
+<text x="390.0" y="434" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">GetDefaultPawnClassForController</text>
+<text x="390.0" y="453" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">loads it behind the loading screen</text>
+<rect x="534" y="386" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="552" cy="407" r="11" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="552" y="411.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">11</text>
+<text x="656.0" y="412" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Spawn the hero</text>
+<text x="648.0" y="434" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">SpawnDefaultPawnFor</text>
+<text x="648.0" y="453" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">team ID + start spot</text>
+<rect x="792" y="386" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="810" cy="407" r="11" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="810" y="411.5" font-size="11.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">12</text>
+<text x="914.0" y="412" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Initialise</text>
+<text x="906.0" y="434" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnPossess · AcknowledgePossession</text>
+<text x="906.0" y="453" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">abilities: server, then client</text>
+<path d="M248 426.0 L273 426.0" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<path d="M506 426.0 L531 426.0" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<path d="M764 426.0 L789 426.0" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
 </svg>

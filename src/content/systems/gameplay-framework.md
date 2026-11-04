@@ -228,13 +228,32 @@ Each of the three flags is a capture zone. Heroes and minions standing in it pus
 ### Characters & hero data
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-hero-data.svg" alt="Hero data. In the lobby each PC finds the hero data assets by type, loads them in the background to build the hero list, preloads everything heroes show in one batch, and sends the pick to the server. Hovering is instant because assets are already loaded. When everyone locks in or the timer ends, anyone without a hero gets a random one. Seamless travel carries the pick to the arena, where the server chooses and loads the hero class, spawns it with a team and start spot, and initialises it." />
+  <img src="../../diagrams/framework-hero-data.svg" alt="Hero data in twelve numbered steps, from registering heroes in the lobby to initialising the spawned hero in the arena. The table below lists the same steps with every function." />
   <figcaption>A hero is data until the arena: the lobby only needs to show it, and only the server ever spawns it.</figcaption>
 </figure>
 
 #### What it does
 
 Every hero is a data asset: its name, icon, tooltip card, how it poses on the hero-select screen, and which character Blueprint to spawn. The lobby lists whatever hero assets exist, players pick one (two players can pick the same hero), and anyone who has not picked when the timer runs out gets a random hero. In the arena each player spawns as the hero they picked. Heroes and AI minions share one character base class, so health, abilities, teams, stuns, death and respawn work the same for both.
+
+#### Step by step
+
+The numbers match the diagram. Each arrow is one function calling, or leading to, the next.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Register heroes | Asset Manager scans the hero folder → [`GetPrimaryAssetId`](code:UPA_CharacterDefinition::GetPrimaryAssetId) on each asset | Every machine, at startup |
+| 2 | Load the definitions | Lobby widget [`NativeConstruct`](code:ULobbyWidget::NativeConstruct) → asset manager [`LoadCharacterDefinitions`](code:UCAssetManager::LoadCharacterDefinitions) | Each PC |
+| 3 | Show the tiles | Callback [`CharacterDefinitionsLoaded`](code:ULobbyWidget::CharacterDefinitionsLoaded) → [`GetLoadedCharacterDefinitions`](code:UCAssetManager::GetLoadedCharacterDefinitions) → tile view `SetListItems` | Each PC |
+| 4 | Preload the assets | [`PreloadHeroAssets`](code:ULobbyWidget::PreloadHeroAssets) → [`GetPreloadAssetPaths`](code:UPA_CharacterDefinition::GetPreloadAssetPaths) for each hero → one `RequestAsyncLoad` | Each PC |
+| 5 | Hover a hero | [`HeroEntryHovered`](code:ULobbyWidget::HeroEntryHovered) → [`ShowHeroTooltip`](code:ULobbyWidget::ShowHeroTooltip) → [`LoadToolTip`](code:UPA_CharacterDefinition::LoadToolTip) | Each PC |
+| 6 | Click a hero | [`HeroEntryClicked`](code:ULobbyWidget::HeroEntryClicked) → Player State `Server_SetSelectedCharacterDefinition` (a Server RPC) | Sent by the PC |
+| 7 | Server records it | [`Server_SetSelectedCharacterDefinition`](code:AChrisPlayerState::Server_SetSelectedCharacterDefinition_Implementation) → Game State [`SetCharacterSelected`](code:AChrisGameState::SetCharacterSelected) → selection array replicates → [`OnRep_PlayerSelectionArray`](code:AChrisGameState::OnRep_PlayerSelectionArray) updates every PC's team slots | Server, then every PC |
+| 8 | Start the match | Game State [`StartMatch`](code:AChrisGameState::StartMatch) → [`AssignRandomCharactersToEmptySlots`](code:AChrisGameState::AssignRandomCharactersToEmptySlots) → Game Instance [`StartMatch`](code:UChrisGameInstance::StartMatch) travels to the arena | Server |
+| 9 | Keep the pick | Old Player State [`CopyProperties`](code:AChrisPlayerState::CopyProperties) → new Player State | Server |
+| 10 | Choose the class | Game Mode [`GetDefaultPawnClassForController`](code:AChrisGameMode::GetDefaultPawnClassForController_Implementation) → Player State [`GetSelectedPawnClass`](code:AChrisPlayerState::GetSelectedPawnClass) → [`LoadCharacterClass`](code:UPA_CharacterDefinition::LoadCharacterClass) | Server |
+| 11 | Spawn the hero | [`SpawnDefaultPawnFor`](code:AChrisGameMode::SpawnDefaultPawnFor_Implementation) → [`GetTeamIDForPlayer`](code:AChrisGameMode::GetTeamIDForPlayer) and [`FindNextStartSpotForTeam`](code:AChrisGameMode::FindNextStartSpotForTeam) | Server |
+| 12 | Initialise | Controller [`OnPossess`](code:AChrisPlayerController::OnPossess) → hero [`ServerSideInit`](code:AChrisCharacter::ServerSideInit); then on the owning client [`AcknowledgePossession`](code:AChrisPlayerController::AcknowledgePossession) → [`ClientSideInit`](code:AChrisCharacter::ClientSideInit) | Server, then owning client |
 
 #### How it works
 
