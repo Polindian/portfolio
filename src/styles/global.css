@@ -137,3 +137,5 @@ a.card:hover { border-color: var(--gold); text-decoration: none; }
 .diagram { margin: 0 0 1.5rem; overflow-x: auto; }
 .diagram img { display: block; width: 100%; min-width: 760px; border-radius: 0; }
 .diagram figcaption { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.5rem; }
+
+.diagram a { display: block; cursor: zoom-in; }

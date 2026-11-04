@@ -1,48 +1,80 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 440" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Match phases: waiting for players, loading hold, then a loop of round intro, countdown, in round, round end, transition to shop, shop, transition to arena and back to round intro, until a team has two round wins and the match ends.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 450" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Match phases: waiting for players, loading hold, then a loop of round intro, countdown, in round, round end, transition to shop, shop, transition to arena and back to round intro, until a team has two round wins and the match ends.">
 <defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="hd9822b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9822b"/></marker></defs>
-<rect x="20" y="20" width="170" height="76" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="105.0" y="51" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">WaitingForPlayers</text>
-<text x="105.0" y="72" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">until everyone joins</text>
-<rect x="225" y="20" width="170" height="76" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="310.0" y="51" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">Loading hold</text>
-<text x="310.0" y="72" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">all loaded + 15s, or 25s</text>
-<rect x="430" y="20" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="515.0" y="51" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">RoundIntro</text>
-<text x="515.0" y="72" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">round banner</text>
-<rect x="635" y="20" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="720.0" y="51" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">Countdown</text>
-<text x="720.0" y="72" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">10…1 · input locked</text>
-<rect x="840" y="20" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="925.0" y="51" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">InRound</text>
-<text x="925.0" y="72" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">5 min or flag majority</text>
-<rect x="840" y="220" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="925.0" y="251" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">RoundEnd</text>
-<text x="925.0" y="272" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">winner · souls paid</text>
-<rect x="635" y="220" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="720.0" y="251" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">TransitionToShop</text>
-<text x="720.0" y="272" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">fade to black</text>
-<rect x="430" y="220" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="515.0" y="251" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">ShopPhase</text>
-<text x="515.0" y="272" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">60s or all Continue</text>
-<rect x="225" y="220" width="170" height="76" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="310.0" y="251" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">TransitionToArena</text>
-<text x="310.0" y="272" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">fade back in</text>
-<rect x="840" y="350" width="170" height="76" rx="8" fill="#151922" stroke="#d9822b"/>
-<text x="925.0" y="381" font-size="14.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">MatchOver</text>
-<text x="925.0" y="402" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">stats → leaderboard</text>
-<path d="M192 58.0 L222 58.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M397 58.0 L427 58.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M602 58.0 L632 58.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M807 58.0 L837 58.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M925.0 98 L925.0 217" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M838 258.0 L808 258.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M633 258.0 L603 258.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M428 258.0 L398 258.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M310.0 218 L310.0 160 L515.0 160 L515.0 99" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
-<text x="412.5" y="152" font-size="12" fill="#d9a441" font-weight="600" text-anchor="middle">next round</text>
-<path d="M925.0 298 L925.0 347" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
-<text x="830" y="330" font-size="12" fill="#d9822b" font-weight="600" text-anchor="end">a team has 2 round wins</text>
-<text x="20" y="372" font-size="12.5" fill="#d9a441" font-weight="600" text-anchor="start">Gold boxes: the round loop, repeated every round.</text>
-<text x="20" y="394" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Every arrow is a timer firing or a game event</text>
-<text x="20" y="414" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="start">(players loading, flag capture, Continue votes).</text>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="14" y="20" width="176" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="30" cy="40" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="30" y="44" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="111.0" y="45" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">WaitingForPlayers</text>
+<text x="102.0" y="66" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">PostLogin</text>
+<text x="102.0" y="85" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">until everyone joins</text>
+<rect x="220" y="20" width="176" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="236" cy="40" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="236" y="44" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="317.0" y="45" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Loading hold</text>
+<text x="308.0" y="66" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartLoadingHold</text>
+<text x="308.0" y="85" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">all loaded + 15s, or 25s</text>
+<rect x="426" y="20" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="442" cy="40" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="442" y="44" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="523.0" y="45" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">RoundIntro</text>
+<text x="514.0" y="66" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartRoundIntro</text>
+<text x="514.0" y="85" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">round banner</text>
+<rect x="632" y="20" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="648" cy="40" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="648" y="44" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="729.0" y="45" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Countdown</text>
+<text x="720.0" y="66" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartCountdown</text>
+<text x="720.0" y="85" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">10…1 · input locked</text>
+<rect x="838" y="20" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="854" cy="40" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="44" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="935.0" y="45" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">InRound</text>
+<text x="926.0" y="66" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartRound</text>
+<text x="926.0" y="85" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">5 min or flag majority</text>
+<rect x="838" y="222" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="854" cy="242" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="246" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="935.0" y="247" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">RoundEnd</text>
+<text x="926.0" y="268" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">EndRound</text>
+<text x="926.0" y="287" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">winner · souls paid</text>
+<rect x="632" y="222" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="648" cy="242" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="648" y="246" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="729.0" y="247" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">TransitionToShop</text>
+<text x="720.0" y="268" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartTransitionToShop</text>
+<text x="720.0" y="287" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">fade to black</text>
+<rect x="426" y="222" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="442" cy="242" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="442" y="246" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">8</text>
+<text x="523.0" y="247" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">ShopPhase</text>
+<text x="514.0" y="268" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartShopPhase</text>
+<text x="514.0" y="287" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">60s or all Continue</text>
+<rect x="220" y="222" width="176" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="236" cy="242" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="236" y="246" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">9</text>
+<text x="317.0" y="247" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">TransitionToArena</text>
+<text x="308.0" y="268" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartTransitionToArena</text>
+<text x="308.0" y="287" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">flags reset · fade in</text>
+<rect x="838" y="356" width="176" height="80" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="854" cy="376" r="10" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="854" y="380" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">10</text>
+<text x="935.0" y="381" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">MatchOver</text>
+<text x="926.0" y="402" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">EndMatch</text>
+<text x="926.0" y="421" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">stats → leaderboard</text>
+<path d="M192 60.0 L217 60.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M398 60.0 L423 60.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M604 60.0 L629 60.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M810 60.0 L835 60.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M926.0 102 L926.0 219" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M836 262.0 L811 262.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M630 262.0 L605 262.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M424 262.0 L399 262.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M308.0 220 L308.0 160 L514.0 160 L514.0 103" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<text x="411.0" y="152" font-size="12" fill="#d9a441" font-weight="600" text-anchor="middle">next round</text>
+<path d="M926.0 304 L926.0 353" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+<text x="828" y="336" font-size="12" fill="#d9822b" font-weight="600" text-anchor="end">a team has 2 round wins</text>
+<text x="20" y="378" font-size="12.5" fill="#d9a441" font-weight="600" text-anchor="start">Gold boxes: the round loop, repeated every round.</text>
+<text x="20" y="400" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Every arrow is a timer firing or a game event</text>
+<text x="20" y="420" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="start">(players loading, flag capture, Continue votes).</text>
+<text x="20" y="442" font-size="12.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Each box names the function that runs that phase.</text>
 </svg>

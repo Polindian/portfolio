@@ -1,65 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 670" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Team journey. In the lobby a slot click becomes a Server RPC, updates the Game State array, redraws every lobby and is copied to your Player State. On travel CopyProperties carries it to a new Player State. In the arena the slot becomes team 0 or 1, is set on the controller, picks a start spot, is copied to the hero, and replicates so every PC colours health bars.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 676" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Team journey in thirteen numbered steps. Lobby: click a slot, request it with a Server RPC, the Game State array updates, every lobby redraws, and your Player State keeps a copy. Travel: seamless travel and CopyProperties carry the copy to a new Player State. Arena: the slot becomes team 0 or 1, is set on the controller, picks a start spot, is copied to the hero, and replicates so every PC colours health bars; everything else asks for the team. The table below lists every function.">
 <defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker></defs>
-<rect x="10" y="20" width="1030" height="220" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340"/>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="10" y="20" width="1030" height="228" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340"/>
 <text x="28" y="44" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">LOBBY</text>
-<rect x="10" y="252" width="1030" height="102" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340"/>
-<text x="28" y="276" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">TRAVEL</text>
-<rect x="10" y="366" width="1030" height="290" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340"/>
-<text x="28" y="390" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">ARENA</text>
-<rect x="150" y="44" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="250.0" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Click a slot</text>
-<text x="250.0" y="94" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">red 0–4 · blue 5–9</text>
-<rect x="372" y="44" width="200" height="70" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="472.0" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Request the slot</text>
-<text x="472.0" y="94" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">Server RPC on controller</text>
-<rect x="594" y="44" width="200" height="70" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="694.0" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Game State array</text>
-<text x="694.0" y="94" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">PlayerSelectionArray</text>
-<rect x="816" y="44" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="916.0" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Every lobby redraws</text>
-<text x="916.0" y="94" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnRep → widgets</text>
-<path d="M352 79.0 L369 79.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M574 79.0 L591 79.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M796 79.0 L813 79.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<rect x="594" y="150" width="200" height="70" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="694.0" y="179" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Player State copy</text>
-<text x="694.0" y="200" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">PlayerSelectionUpdated</text>
-<path d="M694.0 116 L694.0 147" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<text x="478.0" y="180" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">your own record, kept</text>
-<text x="478.0" y="197" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">because the Game State</text>
-<text x="478.0" y="214" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">won’t survive travel</text>
-<rect x="372" y="268" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="472.0" y="297" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Seamless travel</text>
-<text x="472.0" y="318" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartMatch → arena map</text>
-<rect x="594" y="268" width="200" height="70" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="694.0" y="297" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">CopyProperties</text>
-<text x="694.0" y="318" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">old Player State → new</text>
-<path d="M574 303.0 L591 303.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M694.0 222 L694.0 265" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<rect x="150" y="420" width="200" height="70" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="250.0" y="449" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Slot becomes a team</text>
-<text x="250.0" y="470" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">slot &lt; 5 ? 0 : 1</text>
-<rect x="372" y="420" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="472.0" y="449" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Controller team</text>
-<text x="472.0" y="470" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">SetGenericTeamId</text>
-<rect x="594" y="420" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="694.0" y="449" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Team start spot</text>
-<text x="694.0" y="470" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">FindNextStartSpotForTeam</text>
-<rect x="816" y="420" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="916.0" y="449" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hero gets the team</text>
-<text x="916.0" y="470" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnPossess</text>
-<path d="M352 455.0 L369 455.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M574 455.0 L591 455.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M796 455.0 L813 455.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M644.0 340 L644.0 396 L250.0 396 L250.0 417" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<text x="260.0" y="388" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">GetTeamIDForPlayer reads the new Player State (Cast)</text>
-<rect x="816" y="550" width="200" height="70" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="916.0" y="579" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Health bars coloured</text>
-<text x="916.0" y="600" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnRep_TeamID → green / red</text>
-<path d="M916.0 492 L916.0 547" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
-<text x="904.0" y="524" font-size="11.5" fill="#5fa8ff" font-weight="600" text-anchor="end">replicated to every PC</text>
-<rect x="372" y="550" width="200" height="70" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="472.0" y="579" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Everything else asks</text>
-<text x="472.0" y="600" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">flags · kills · AI · souls</text>
-<path d="M472.0 492 L472.0 547" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="10" y="258" width="1030" height="108" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340"/>
+<text x="28" y="282" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">TRAVEL</text>
+<rect x="10" y="376" width="1030" height="286" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340"/>
+<text x="28" y="400" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">ARENA</text>
+<rect x="146" y="44" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="162" cy="64" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="162" y="68" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="257.0" y="69" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Click a slot</text>
+<text x="248.0" y="90" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">SlotSelected</text>
+<text x="248.0" y="109" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">red 0–4 · blue 5–9</text>
+<rect x="370" y="44" width="204" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="386" cy="64" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="386" y="68" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="481.0" y="69" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Request the slot</text>
+<text x="472.0" y="90" font-size="9.538002980625931" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">Server_RequestSlotSelectionChange</text>
+<text x="472.0" y="109" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Server RPC on the controller</text>
+<rect x="594" y="44" width="204" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="610" cy="64" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="610" y="68" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="705.0" y="69" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Game State array</text>
+<text x="696.0" y="90" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">RequestPlayerSelectionChange</text>
+<text x="696.0" y="109" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">slot free? move or add record</text>
+<rect x="818" y="44" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="834" cy="64" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="834" y="68" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="929.0" y="69" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Every lobby redraws</text>
+<text x="920.0" y="90" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnRep_PlayerSelectionArray</text>
+<text x="920.0" y="109" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">on every PC</text>
+<path d="M352 84.0 L367 84.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M576 84.0 L591 84.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M800 84.0 L815 84.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="594" y="152" width="204" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="610" cy="172" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="610" y="176" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="705.0" y="177" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Player State copy</text>
+<text x="696.0" y="198" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">PlayerSelectionUpdated</text>
+<text x="696.0" y="217" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">keeps its own record</text>
+<path d="M696.0 126 L696.0 149" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<text x="478.0" y="184" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">your own record, kept</text>
+<text x="478.0" y="201" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">because the Game State</text>
+<text x="478.0" y="218" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">won’t survive travel</text>
+<rect x="370" y="278" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="386" cy="298" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="386" y="302" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="481.0" y="303" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Seamless travel</text>
+<text x="472.0" y="324" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">StartMatch</text>
+<text x="472.0" y="343" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">lobby → arena map</text>
+<rect x="594" y="278" width="204" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="610" cy="298" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="610" y="302" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="705.0" y="303" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Carry the record</text>
+<text x="696.0" y="324" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">CopyProperties</text>
+<text x="696.0" y="343" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">old Player State → new</text>
+<path d="M576 318.0 L591 318.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M696.0 234 L696.0 275" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="146" y="432" width="204" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="162" cy="452" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="162" y="456" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">8</text>
+<text x="257.0" y="457" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Slot becomes a team</text>
+<text x="248.0" y="478" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">GetTeamIdBasedOnSlot</text>
+<text x="248.0" y="497" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">slot &lt; 5 ? 0 : 1</text>
+<rect x="370" y="432" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="386" cy="452" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="386" y="456" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">9</text>
+<text x="481.0" y="457" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Controller team</text>
+<text x="472.0" y="478" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">SetGenericTeamId</text>
+<text x="472.0" y="497" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">set on the controller</text>
+<rect x="594" y="432" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="610" cy="452" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="610" y="456" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">10</text>
+<text x="705.0" y="457" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Team start spot</text>
+<text x="696.0" y="478" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">FindNextStartSpotForTeam</text>
+<text x="696.0" y="497" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">one of the team's spots</text>
+<rect x="818" y="432" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="834" cy="452" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="834" y="456" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">11</text>
+<text x="929.0" y="457" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Hero gets the team</text>
+<text x="920.0" y="478" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnPossess</text>
+<text x="920.0" y="497" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">copied to the character</text>
+<path d="M352 472.0 L367 472.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M576 472.0 L591 472.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M800 472.0 L815 472.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M646.0 360 L646.0 410 L248.0 410 L248.0 429" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<text x="258.0" y="402" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">HandleSeamlessTravelPlayer → GetTeamIDForPlayer reads the new Player State</text>
+<rect x="818" y="566" width="204" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="834" cy="586" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="834" y="590" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">12</text>
+<text x="929.0" y="591" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Health bars coloured</text>
+<text x="920.0" y="612" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnRep_TeamID</text>
+<text x="920.0" y="631" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">green ally · red enemy</text>
+<path d="M920.0 514 L920.0 563" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<text x="908.0" y="548" font-size="11.5" fill="#5fa8ff" font-weight="600" text-anchor="end">replicated to every PC</text>
+<rect x="370" y="566" width="204" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="386" cy="586" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="386" y="590" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">13</text>
+<text x="481.0" y="591" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Everything else asks</text>
+<text x="472.0" y="612" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">GetGenericTeamId</text>
+<text x="472.0" y="631" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">flags · kills · AI · souls</text>
+<path d="M472.0 514 L472.0 563" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
 </svg>

@@ -27,7 +27,7 @@ status: draft
 ### Class architecture
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-classes.svg" alt="Diagram showing which framework classes exist on the dedicated server and on each player's PC, with replication arrows from the server's Game State and Player States to the clients, and RPC arrows between each player's controller and its server copy." />
+  <a href="../../diagrams/framework-classes.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-classes.svg" alt="Diagram showing which framework classes exist on the dedicated server and on each player's PC, with replication arrows from the server's Game State and Player States to the clients, and RPC arrows between each player's controller and its server copy." /></a>
   <figcaption>Which classes exist on which machine, and how they talk to each other.</figcaption>
 </figure>
 
@@ -65,7 +65,7 @@ Going the other way, the server uses `Client_` RPCs on each controller for one-o
 ### Per-map game modes & controllers
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-per-map.svg" alt="Three rows, one per map. MainMenuLevel uses MainMenuGameMode, which uses MainMenuPlayerController_BP, which spawns the main menu UI. LobbyLevel uses LobbyGameMode, LobbyPlayerController_BP and the lobby UI. Lvl_ThirdPerson uses ChrisGameMode_BP, ChrisPlayerController and the hero and HUD." />
+  <a href="../../diagrams/framework-per-map.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-per-map.svg" alt="Three rows, one per map. MainMenuLevel uses MainMenuGameMode, which uses MainMenuPlayerController_BP, which spawns the main menu UI. LobbyLevel uses LobbyGameMode, LobbyPlayerController_BP and the lobby UI. Lvl_ThirdPerson uses ChrisGameMode_BP, ChrisPlayerController and the hero and HUD." /></a>
   <figcaption>Each map picks its rules, its controller and its UI.</figcaption>
 </figure>
 
@@ -82,7 +82,7 @@ The wiring is a chain set up in the editor:
 3. Each controller spawns its own UI. The menu controllers pick which widget to create through a `MenuWidgetClass` property set in their Blueprint.
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-controllers.svg" alt="Inheritance tree. APlayerController is the parent of AMenuPlayerController and AChrisPlayerController. AMenuPlayerController is the parent of AMainMenuPlayerController and ALobbyPlayerController." />
+  <a href="../../diagrams/framework-controllers.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-controllers.svg" alt="Inheritance tree. APlayerController is the parent of AMenuPlayerController and AChrisPlayerController. AMenuPlayerController is the parent of AMainMenuPlayerController and ALobbyPlayerController." /></a>
   <figcaption>The two menu controllers share one base class; the arena controller does not.</figcaption>
 </figure>
 
@@ -103,13 +103,30 @@ The main menu and lobby controllers both inherit from [`AMenuPlayerController`](
 ### The match loop
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-match-phases.svg" alt="Match phases. Waiting for players, then the loading hold, then a loop: round intro, countdown, in round, round end, transition to shop, shop, transition to arena, and back to round intro. From round end, a team with two round wins goes to match over." />
+  <a href="../../diagrams/framework-match-phases.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-match-phases.svg" alt="Match phases in ten numbered steps, each with the function that runs it: PostLogin while waiting for players, StartLoadingHold, then a loop of StartRoundIntro, StartCountdown, StartRound, EndRound, StartTransitionToShop, StartShopPhase and StartTransitionToArena, back to the round intro. From EndRound, a team with two round wins goes to EndMatch." /></a>
   <figcaption>Every phase of a match. The gold loop repeats until a team has won two rounds.</figcaption>
 </figure>
 
 #### What it does
 
 [`AChrisGameMode`](code:AChrisGameMode) runs the whole match as a **state machine**: one `EMatchPhase` value at a time, from players arriving, through a loading hold, into a loop of round intro, countdown, fight, result and shop, until one team has won two rounds.
+
+#### Step by step
+
+The numbers match the diagram. Every phase is started by one function, and ends with a timer or event that calls the next one.
+
+| # | Phase | Started by | Ends when → calls next |
+|---|---|---|---|
+| 1 | WaitingForPlayers | The default phase | Each join runs [`PostLogin`](code:AChrisGameMode::PostLogin); once everyone is in → `StartLoadingHold` |
+| 2 | Loading hold | [`StartLoadingHold`](code:AChrisGameMode::StartLoadingHold) | Each PC's [`Server_ReportLoaded`](code:AChrisPlayerController::Server_ReportLoaded_Implementation) → [`ReportPlayerLoaded`](code:AChrisGameMode::ReportPlayerLoaded) → [`TryFinishLoadingHold`](code:AChrisGameMode::TryFinishLoadingHold); the 15 s timer also tries, the 25 s timer forces it → [`FinishLoadingHold`](code:AChrisGameMode::FinishLoadingHold) → timer → `StartRoundIntro` |
+| 3 | RoundIntro | [`StartRoundIntro`](code:AChrisGameMode::StartRoundIntro) | Banner timer → `StartCountdown` |
+| 4 | Countdown | [`StartCountdown`](code:AChrisGameMode::StartCountdown) | [`CountdownTick`](code:AChrisGameMode::CountdownTick) every second; at zero → `StartRound` |
+| 5 | InRound | [`StartRound`](code:AChrisGameMode::StartRound) | Round timer → `EndRound`, or a capture → [`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback) clears the timer → `EndRound` |
+| 6 | RoundEnd | [`EndRound`](code:AChrisGameMode::EndRound) | [`AwardRoundEndSouls`](code:AChrisGameMode::AwardRoundEndSouls) scores the round; two wins → `EndMatch`, otherwise timer → `StartTransitionToShop` |
+| 7 | TransitionToShop | [`StartTransitionToShop`](code:AChrisGameMode::StartTransitionToShop) | Fade out → [`OnTransitionToShopMidpoint`](code:AChrisGameMode::OnTransitionToShopMidpoint) clears AI and resets players → [`OnTransitionToShopFadeIn`](code:AChrisGameMode::OnTransitionToShopFadeIn) → `StartShopPhase` |
+| 8 | ShopPhase | [`StartShopPhase`](code:AChrisGameMode::StartShopPhase) | 60 s timer, or every PC's [`Server_VoteContinue`](code:AChrisPlayerController::Server_VoteContinue_Implementation) → [`OnPlayerVoteContinue`](code:AChrisGameMode::OnPlayerVoteContinue) clears the timer → `StartTransitionToArena` |
+| 9 | TransitionToArena | [`StartTransitionToArena`](code:AChrisGameMode::StartTransitionToArena) | Fade out → [`OnTransitionToArenaMidpoint`](code:AChrisGameMode::OnTransitionToArenaMidpoint) resets the flags → [`OnTransitionToArenaFadeIn`](code:AChrisGameMode::OnTransitionToArenaFadeIn) → back to step 3 |
+| 10 | MatchOver | [`EndMatch`](code:AChrisGameMode::EndMatch) | Timer → [`ShowMatchResultBanner`](code:AChrisGameMode::ShowMatchResultBanner) → timer → [`ShowMatchStats`](code:AChrisGameMode::ShowMatchStats) |
 
 #### How it works
 
@@ -147,9 +164,27 @@ Players pick a team by clicking a slot in the lobby. That choice is carried into
 #### How it works: from lobby slot to arena team
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-team-journey.svg" alt="Team journey in three stages. Lobby: click a slot, request it with a Server RPC, the Game State array updates, every lobby redraws, and your Player State keeps a copy. Travel: seamless travel and CopyProperties carry the copy to a new Player State. Arena: the slot becomes team 0 or 1, is set on the controller, picks a start spot, is copied to the hero, and replicates so every PC colours health bars." />
+  <a href="../../diagrams/framework-team-journey.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-team-journey.svg" alt="Team journey in thirteen numbered steps across the lobby, travel and the arena. The table below lists every function." /></a>
   <figcaption>A team is just a slot number until the arena turns it into team 0 or team 1.</figcaption>
 </figure>
+
+**Step by step** – the numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Click a slot | Lobby widget [`SlotSelected`](code:ULobbyWidget::SlotSelected) | The PC |
+| 2 | Request the slot | Lobby controller `Server_RequestSlotSelectionChange` (a Server RPC) | Sent by the PC |
+| 3 | Game State array | [`Server_RequestSlotSelectionChange`](code:ALobbyPlayerController::Server_RequestSlotSelectionChange_Implementation) → Game State [`RequestPlayerSelectionChange`](code:AChrisGameState::RequestPlayerSelectionChange) moves or adds the record | Server |
+| 4 | Every lobby redraws | Array replicates → [`OnRep_PlayerSelectionArray`](code:AChrisGameState::OnRep_PlayerSelectionArray) → lobby widgets | Every PC |
+| 5 | Player State copy | `OnPlayerSelectionUpdated` → [`PlayerSelectionUpdated`](code:AChrisPlayerState::PlayerSelectionUpdated) copies its own record | Server and every PC |
+| 6 | Seamless travel | Game State [`StartMatch`](code:AChrisGameState::StartMatch) → Game Instance [`StartMatch`](code:UChrisGameInstance::StartMatch) | Server |
+| 7 | Carry the record | Old Player State [`CopyProperties`](code:AChrisPlayerState::CopyProperties) → new Player State | Server |
+| 8 | Slot becomes a team | [`HandleSeamlessTravelPlayer`](code:AChrisGameMode::HandleSeamlessTravelPlayer) → [`GetTeamIDForPlayer`](code:AChrisGameMode::GetTeamIDForPlayer) → [`GetTeamIdBasedOnSlot`](code:AChrisPlayerState::GetTeamIdBasedOnSlot) | Server |
+| 9 | Controller team | Controller [`SetGenericTeamId`](code:AChrisPlayerController::SetGenericTeamId) | Server |
+| 10 | Team start spot | [`FindNextStartSpotForTeam`](code:AChrisGameMode::FindNextStartSpotForTeam) | Server |
+| 11 | Hero gets the team | Controller [`OnPossess`](code:AChrisPlayerController::OnPossess) → hero [`SetGenericTeamId`](code:AChrisCharacter::SetGenericTeamId) | Server |
+| 12 | Health bars coloured | Team replicates → [`OnRep_TeamID`](code:AChrisCharacter::OnRep_TeamID) → [`ConfigureTeamColor`](code:UOverheadStatsGauge::ConfigureTeamColor) | Every PC |
+| 13 | Everything else asks | Cast to `IGenericTeamAgentInterface` → [`GetGenericTeamId`](code:AChrisCharacter::GetGenericTeamId) | Wherever it is needed |
 
 **In the lobby** – each player's choice is an [`FPlayerSelection`](code:FPlayerSelection) record: their slot (0–9), name, ready state, hero and lock-in. The lobby shows ten slots ([`ClearAndPopulateTeamSelectionSlots`](code:ULobbyWidget::ClearAndPopulateTeamSelectionSlots)), 0–4 in the red column and 5–9 in the blue. Clicking one ([`SlotSelected`](code:ULobbyWidget::SlotSelected)) sends [`Server_RequestSlotSelectionChange`](code:ALobbyPlayerController::Server_RequestSlotSelectionChange_Implementation) through the player's `LobbyPlayerController`. On the server, the Game State ([`RequestPlayerSelectionChange`](code:AChrisGameState::RequestPlayerSelectionChange)) refuses the request if the slot is taken, otherwise it moves the player's record to the new slot, or adds one on their first pick. Switching is blocked while the player is readied up.
 
@@ -170,20 +205,31 @@ The team is set on the player's controller, used to claim one of that team's sta
 #### How it works: ending and scoring a round
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-round-scoring.svg" alt="A round ends on a flag majority, every flag being taken, or the five-minute timer. DetermineRoundWinner then checks five rules in order: flags captured, territory on the remaining flag, total territory, kills this round, otherwise replay. The server pays souls, adds a round win, and either ends the match at two wins or moves to the shop." />
+  <a href="../../diagrams/framework-round-scoring.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-round-scoring.svg" alt="Round scoring in six numbered steps: the round ends and calls EndRound, DetermineRoundWinner checks five rules in order, AwardRoundEndSouls adds the round win and pays souls, EndRound checks for two wins, then EndMatch or StartTransitionToShop." /></a>
   <figcaption>How a round ends, who wins it, and what happens next.</figcaption>
 </figure>
+
+**Step by step** – the numbers match the diagram. All of it runs on the server.
+
+| # | Step | Calls, in order |
+|---|---|---|
+| 1 | The round ends | A capture → [`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback) recounts the flags and, on a majority or all flags taken, clears the timer; or the round timer from [`StartRound`](code:AChrisGameMode::StartRound) fires. Either way → [`EndRound`](code:AChrisGameMode::EndRound) |
+| 2 | Pick the winner | `EndRound` → [`AwardRoundEndSouls`](code:AChrisGameMode::AwardRoundEndSouls) → [`DetermineRoundWinner`](code:AChrisGameMode::DetermineRoundWinner), using kills counted during the round by [`ReportKill`](code:AChrisGameMode::ReportKill) |
+| 3 | Add a round win | Back in `AwardRoundEndSouls`, the winning team's round wins go up by one |
+| 4 | Pay souls | Still in `AwardRoundEndSouls`, every player's soul attribute is increased |
+| 5 | Check for two wins | Back in `EndRound` |
+| 6 | Match over, or shop | Two wins → [`EndMatch`](code:AChrisGameMode::EndMatch); otherwise timer → [`StartTransitionToShop`](code:AChrisGameMode::StartTransitionToShop) |
 
 **Ending a round** – every flag capture triggers a recount of all flags ([`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback)). A round ends early as soon as one team holds a majority (2 of 3), because captured flags cannot be retaken, so the result can no longer change. If every flag is taken without a majority, which only happens with an even number of flags, the round also ends. Otherwise the five-minute timer ends it.
 
 **Picking the winner** – [`DetermineRoundWinner`](code:AChrisGameMode::DetermineRoundWinner) walks down a ladder and stops at the first rule that separates the teams: flags captured, then territory on the remaining flag, then total territory if nobody captured anything, then kills this round ([`ReportKill`](code:AChrisGameMode::ReportKill)). If everything is equal, the round is replayed.
 
-**Scoring** – souls are paid to every player at the end of each round ([`AwardRoundEndSouls`](code:AChrisGameMode::AwardRoundEndSouls)), then the winning team gets a round win ([`EndRound`](code:AChrisGameMode::EndRound)). The first team to two wins ends the match ([`EndMatch`](code:AChrisGameMode::EndMatch)); otherwise everyone goes to the shop.
+**Scoring** – [`AwardRoundEndSouls`](code:AChrisGameMode::AwardRoundEndSouls) asks for the winner, gives that team a round win, then pays souls to every player. Back in [`EndRound`](code:AChrisGameMode::EndRound), the first team to two wins ends the match ([`EndMatch`](code:AChrisGameMode::EndMatch)); otherwise everyone goes to the shop.
 
 #### Why I designed it this way
 
 - **The slot is the team** – one number decides both the lobby column and the arena team, so the two can never disagree.
-- **A copy on the Player State** – the lobby only needs the Game State's array, but the Game State does not survive travel. The copy only ever flows one way, from the array to the Player State, so the two cannot drift apart.
+- **A copy on the Player State** – the lobby only needs the Game State's array, but the Game State does not survive travel. The slot only ever flows one way, from the array to the Player State, so the two cannot disagree about teams.
 - **Team on the character, not just the controller** – other players' PCs never have your controller, and minions have none at all, so every character carries its own team.
 - **Recount the flags instead of keeping a tally** – the flags themselves are the single source of truth. A separate running score could drift out of sync after a missed event or a reset between rounds; a recount is always right and costs almost nothing with three flags.
 - **End the round on a majority** – once a team holds two of three flags it cannot be caught, so playing out the timer would just be waiting.
@@ -193,13 +239,31 @@ The team is set on the player's controller, used to claim one of that team's sta
 ### Flag capture
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-flag-capture.svg" alt="Flag capture. On the server every frame: track who is in the zone, add up team rates with hero and minion weights, move capture progress by the net rate, and at 100 percent announce the capture to the Game Mode. Heroes in the zone earn XP. The flag replicates to every player, whose PCs show zone gauges, a tug-of-war bar and the banner." />
+  <a href="../../diagrams/framework-flag-capture.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-flag-capture.svg" alt="Flag capture in nine numbered steps: six on the server every frame, then three on each player PC. The table below lists every function." /></a>
   <figcaption>The server decides everything about a flag; each player's PC only shows it.</figcaption>
 </figure>
 
 #### What it does
 
 Each of the three flags is a capture zone. Heroes and minions standing in it push it towards their team, heroes three times as hard as minions. A contested zone drains the other team's progress before it can build your own, and once a flag reaches 100% it is captured for the rest of the round. Every player sees all three zones' progress on their HUD, and a tug-of-war bar shows who is pushing harder in the zone they are standing in.
+
+#### Step by step
+
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Who is in the zone | Sphere overlap → [`OnInfluencerEnter`](code:AFlag::OnInfluencerEnter) / [`OnInfluencerExit`](code:AFlag::OnInfluencerExit) | Server |
+| 2 | Team rates | [`Tick`](code:AFlag::Tick) → [`RecalculateCaptureRates`](code:AFlag::RecalculateCaptureRates) → [`GetActorCaptureWeight`](code:AFlag::GetActorCaptureWeight) for each character | Server, every frame |
+| 3 | Capture progress | Rest of `Tick`: net rate × `DeltaTime`, drain, flip, clamp | Server, every frame |
+| 4 | Captured at 100% | `Tick` → `OnFlagCaptured.Broadcast` and [`PlayTeamCaptureBanner`](code:AFlag::PlayTeamCaptureBanner) → [`PlayBannerSlam`](code:AFlag::PlayBannerSlam) | Server |
+| 5 | Zone rewards | `Tick` → Game State [`AddCaptureTime`](code:AChrisGameState::AddCaptureTime) and XP for each hero every 8 seconds | Server, every frame |
+| 6 | Majority check | Game Mode [`OnFlagCapturedCallback`](code:AChrisGameMode::OnFlagCapturedCallback) (see Rounds, teams & scoring) | Server |
+| 7 | Zone gauges | [`UFlagCaptureGaugeWidget::NativeTick`](code:UFlagCaptureGaugeWidget::NativeTick) reads the replicated percent and owner | Every PC, every frame |
+| 8 | Tug-of-war bar | [`UFlagProgressWidget::NativeTick`](code:UFlagProgressWidget::NativeTick) → [`FindLocalPlayerFlag`](code:UFlagProgressWidget::FindLocalPlayerFlag) | Every PC, every frame |
+| 9 | Banner | `BannerState` replicates → [`OnRep_BannerState`](code:AFlag::OnRep_BannerState) → [`ApplyBannerState`](code:AFlag::ApplyBannerState) | Every PC |
+
+Around all of this, the Game Mode switches every flag on and subscribes to step 4 in [`StartRound`](code:AChrisGameMode::StartRound) ([`SetCaptureEnabled`](code:AFlag::SetCaptureEnabled)), and resets them between rounds in [`OnTransitionToArenaMidpoint`](code:AChrisGameMode::OnTransitionToArenaMidpoint) ([`ResetCapture`](code:AFlag::ResetCapture)).
 
 #### How it works
 
@@ -228,7 +292,7 @@ Each of the three flags is a capture zone. Heroes and minions standing in it pus
 ### Characters & hero data
 
 <figure class="diagram">
-  <img src="../../diagrams/framework-hero-data.svg" alt="Hero data in twelve numbered steps, from registering heroes in the lobby to initialising the spawned hero in the arena. The table below lists the same steps with every function." />
+  <a href="../../diagrams/framework-hero-data.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/framework-hero-data.svg" alt="Hero data in twelve numbered steps, from registering heroes in the lobby to initialising the spawned hero in the arena. The table below lists the same steps with every function." /></a>
   <figcaption>A hero is data until the arena: the lobby only needs to show it, and only the server ever spawns it.</figcaption>
 </figure>
 

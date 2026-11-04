@@ -11,6 +11,11 @@
       "start": 60,
       "end": 64
     },
+    "AChrisCharacter::GetGenericTeamId": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 583,
+      "end": 586
+    },
     "AChrisCharacter::OnRep_TeamID": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 588,
@@ -20,6 +25,11 @@
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 54,
       "end": 58
+    },
+    "AChrisCharacter::SetGenericTeamId": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 578,
+      "end": 581
     },
     "AChrisGameMode": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.h",
@@ -86,6 +96,31 @@
       "start": 846,
       "end": 865
     },
+    "AChrisGameMode::OnTransitionToArenaFadeIn": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 933,
+      "end": 944
+    },
+    "AChrisGameMode::OnTransitionToArenaMidpoint": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 889,
+      "end": 913
+    },
+    "AChrisGameMode::OnTransitionToShopFadeIn": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 812,
+      "end": 824
+    },
+    "AChrisGameMode::OnTransitionToShopMidpoint": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 782,
+      "end": 808
+    },
+    "AChrisGameMode::PostLogin": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 222,
+      "end": 236
+    },
     "AChrisGameMode::ReportKill": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
       "start": 698,
@@ -96,10 +131,25 @@
       "start": 1063,
       "end": 1070
     },
+    "AChrisGameMode::ShowMatchResultBanner": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 182,
+      "end": 194
+    },
+    "AChrisGameMode::ShowMatchStats": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 196,
+      "end": 207
+    },
     "AChrisGameMode::SpawnDefaultPawnFor_Implementation": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
       "start": 85,
       "end": 99
+    },
+    "AChrisGameMode::StartCountdown": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 254,
+      "end": 269
     },
     "AChrisGameMode::StartLoadingHold": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
@@ -111,10 +161,35 @@
       "start": 305,
       "end": 358
     },
+    "AChrisGameMode::StartRoundIntro": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 915,
+      "end": 931
+    },
+    "AChrisGameMode::StartShopPhase": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 827,
+      "end": 843
+    },
+    "AChrisGameMode::StartTransitionToArena": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 868,
+      "end": 886
+    },
+    "AChrisGameMode::StartTransitionToShop": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 765,
+      "end": 780
+    },
     "AChrisGameMode::TryFinishLoadingHold": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
       "start": 1072,
       "end": 1079
+    },
+    "AChrisGameState::AddCaptureTime": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
+      "start": 665,
+      "end": 668
     },
     "AChrisGameState::AssignRandomCharactersToEmptySlots": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
@@ -171,6 +246,16 @@
       "start": 270,
       "end": 276
     },
+    "AChrisPlayerController::Server_VoteContinue_Implementation": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerController.cpp",
+      "start": 689,
+      "end": 698
+    },
+    "AChrisPlayerController::SetGenericTeamId": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerController.cpp",
+      "start": 89,
+      "end": 92
+    },
     "AChrisPlayerState::CopyProperties": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerState.cpp",
       "start": 39,
@@ -195,6 +280,11 @@
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerState.cpp",
       "start": 82,
       "end": 97
+    },
+    "AFlag::ApplyBannerState": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 61,
+      "end": 101
     },
     "AFlag::GetActorCaptureWeight": {
       "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
@@ -221,6 +311,11 @@
       "start": 103,
       "end": 114
     },
+    "AFlag::PlayTeamCaptureBanner": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 123,
+      "end": 141
+    },
     "AFlag::RecalculateCaptureRates": {
       "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
       "start": 268,
@@ -230,6 +325,11 @@
       "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
       "start": 143,
       "end": 153
+    },
+    "AFlag::SetCaptureEnabled": {
+      "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",
+      "start": 51,
+      "end": 54
     },
     "AFlag::Tick": {
       "path": "Source/AnimationTesting/Private/Framework/Flag.cpp",

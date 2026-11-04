@@ -1,56 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 500" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Flag capture. On the server every frame: track who is in the zone, add up team rates with hero and minion weights, move capture progress by the net rate, and at 100 percent announce the capture to the Game Mode. Heroes in the zone earn XP. The flag replicates to every player, whose PCs show zone gauges, a tug-of-war bar and the banner.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 500" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Flag capture in nine numbered steps. On the server every frame: 1 OnInfluencerEnter and Exit track who is in the zone, 2 RecalculateCaptureRates adds up team weights, 3 Tick moves capture progress, 4 at 100 percent OnFlagCaptured tells the Game Mode, 5 Tick also gives heroes in the zone XP and capture time, 6 OnFlagCapturedCallback recounts every flag. The flag replicates to every player, whose PCs show 7 the zone gauges, 8 the tug-of-war bar and 9 the banner. The table below lists every function.">
 <defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="hd9822b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9822b"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker></defs>
-<rect x="10" y="20" width="1030" height="250" rx="12" fill="rgba(217,164,65,0.04)" stroke="rgba(217,164,65,0.35)"/>
-<text x="30" y="46" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">ON THE SERVER, EVERY FRAME OF A ROUND</text>
-<rect x="40" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="140.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Who is in the zone</text>
-<text x="140.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">overlap enter / exit</text>
-<text x="140.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">all influencers + heroes</text>
-<rect x="290" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="390.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Team rates</text>
-<text x="390.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">hero 3 (+ Dominion), minion 1</text>
-<text x="390.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">skip dead · drop destroyed</text>
-<rect x="540" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9a441"/>
-<text x="640.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Capture progress</text>
-<text x="640.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">net rate × DeltaTime</text>
-<text x="640.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">drain, flip, carry over</text>
-<rect x="790" y="66" width="200" height="78" rx="8" fill="#151922" stroke="#d9822b"/>
-<text x="890.0" y="92" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Captured at 100%</text>
-<text x="890.0" y="113" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">OnFlagCaptured → Game Mode</text>
-<text x="890.0" y="130" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">banner slams team colour</text>
-<path d="M242 105.0 L287 105.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M492 105.0 L537 105.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<path d="M742 105.0 L787 105.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<rect x="290" y="176" width="200" height="78" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="390.0" y="202" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Zone rewards</text>
-<text x="390.0" y="223" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">50 XP per 8s in any zone</text>
-<text x="390.0" y="240" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">capture time for match stats</text>
-<path d="M140.0 146 L140.0 215.0 L287 215.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
-<text x="150.0" y="207.0" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">heroes only</text>
-<rect x="790" y="176" width="200" height="78" rx="8" fill="#151922" stroke="#2c3340"/>
-<text x="890.0" y="202" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Majority check</text>
-<text x="890.0" y="223" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Game Mode recounts</text>
-<text x="890.0" y="240" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">every flag (Rounds)</text>
-<path d="M890.0 146 L890.0 173" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="8" y="14" width="1034" height="256" rx="12" fill="rgba(217,164,65,0.04)" stroke="rgba(217,164,65,0.35)"/>
+<text x="26" y="40" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">ON THE SERVER, EVERY FRAME OF A ROUND</text>
+<rect x="18" y="54" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="34" cy="74" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="34" y="78" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="141.0" y="79" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Who is in the zone</text>
+<text x="132.0" y="100" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnInfluencerEnter / Exit</text>
+<text x="132.0" y="119" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">pawns only · two sets</text>
+<rect x="276" y="54" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="292" cy="74" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="292" y="78" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="399.0" y="79" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Team rates</text>
+<text x="390.0" y="100" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">RecalculateCaptureRates</text>
+<text x="390.0" y="119" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">hero 3 (+ Dominion), minion 1</text>
+<rect x="534" y="54" width="228" height="80" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="550" cy="74" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="550" y="78" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="657.0" y="79" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Capture progress</text>
+<text x="648.0" y="100" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">Tick</text>
+<text x="648.0" y="119" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">net rate × DeltaTime · drain, flip</text>
+<rect x="792" y="54" width="228" height="80" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="808" cy="74" r="10" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="808" y="78" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="915.0" y="79" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Captured at 100%</text>
+<text x="906.0" y="100" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnFlagCaptured</text>
+<text x="906.0" y="119" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">event to the Game Mode · banner</text>
+<path d="M248 94.0 L273 94.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M506 94.0 L531 94.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M764 94.0 L789 94.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="276" y="176" width="228" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="292" cy="196" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="292" y="200" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="399.0" y="201" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Zone rewards</text>
+<text x="390.0" y="222" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">Tick</text>
+<text x="390.0" y="241" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">50 XP per 8s · capture time</text>
+<path d="M132.0 136 L132.0 216.0 L273 216.0" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<text x="142.0" y="208.0" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">heroes only</text>
+<rect x="792" y="176" width="228" height="80" rx="8" fill="#151922" stroke="#2c3340"/>
+<circle cx="808" cy="196" r="10" fill="none" stroke="#9aa3b2" stroke-width="1.5"/>
+<text x="808" y="200" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="915.0" y="201" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Majority check</text>
+<text x="906.0" y="222" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnFlagCapturedCallback</text>
+<text x="906.0" y="241" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">Game Mode recounts every flag</text>
+<path d="M906.0 136 L906.0 173" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
 <path d="M525 272 L525 324" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
 <text x="540" y="293" font-size="12" fill="#5fa8ff" font-weight="600" text-anchor="start">replicated to every player, near or far (bAlwaysRelevant)</text>
 <text x="540" y="311" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">percent · owner · team rates · captured · banner</text>
-<rect x="10" y="328" width="1030" height="160" rx="12" fill="rgba(95,168,255,0.04)" stroke="rgba(95,168,255,0.35)"/>
-<text x="30" y="352" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">ON EACH PLAYER'S PC</text>
-<rect x="40" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="140.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Zone gauges (top right)</text>
-<text x="140.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">capture percent + owner</text>
-<text x="140.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">smoothed with FInterpTo</text>
-<rect x="290" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="390.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Tug-of-war bar</text>
-<text x="390.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">red rate vs blue rate</text>
-<text x="390.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">shown only while you are in a zone</text>
-<rect x="540" y="370" width="200" height="78" rx="8" fill="#151922" stroke="#5fa8ff"/>
-<text x="640.0" y="396" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Banner</text>
-<text x="640.0" y="417" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">OnRep_BannerState</text>
-<text x="640.0" y="434" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">colour slam on capture</text>
-<text x="800" y="394" font-size="12" fill="#9aa3b2" font-weight="600" text-anchor="start">The PC never decides anything:</text>
-<text x="800" y="414" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">it only shows what the server</text>
-<text x="800" y="432" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">sent, and checks its own</text>
-<text x="800" y="450" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">distance to show the bar.</text>
+<rect x="8" y="328" width="1034" height="160" rx="12" fill="rgba(95,168,255,0.04)" stroke="rgba(95,168,255,0.35)"/>
+<text x="26" y="354" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">ON EACH PLAYER'S PC</text>
+<rect x="18" y="372" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="34" cy="392" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="34" y="396" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="141.0" y="397" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Zone gauges</text>
+<text x="132.0" y="418" font-size="10.117096018735364" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">UFlagCaptureGaugeWidget::NativeTick</text>
+<text x="132.0" y="437" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">smoothed with FInterpTo</text>
+<rect x="276" y="372" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="292" cy="392" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="292" y="396" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">8</text>
+<text x="399.0" y="397" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Tug-of-war bar</text>
+<text x="390.0" y="418" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">UFlagProgressWidget::NativeTick</text>
+<text x="390.0" y="437" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">only while you are in a zone</text>
+<rect x="534" y="372" width="228" height="80" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="550" cy="392" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="550" y="396" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">9</text>
+<text x="657.0" y="397" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="middle">Banner</text>
+<text x="648.0" y="418" font-size="10.5" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">OnRep_BannerState</text>
+<text x="648.0" y="437" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">colour slam on capture</text>
+<text x="802" y="394" font-size="12" fill="#9aa3b2" font-weight="600" text-anchor="start">The PC never decides anything:</text>
+<text x="802" y="414" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">it only shows what the server</text>
+<text x="802" y="432" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">sent, and checks its own</text>
+<text x="802" y="450" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">distance to show the bar.</text>
 </svg>
