@@ -227,19 +227,36 @@ Each of the three flags is a capture zone. Heroes and minions standing in it pus
 
 ### Characters & hero data
 
-<div class="placeholder">GIF / screenshot: Characters & hero data</div>
+<figure class="diagram">
+  <img src="../../diagrams/framework-hero-data.svg" alt="Hero data. In the lobby each PC finds the hero data assets by type, loads them in the background to build the hero list, preloads everything heroes show in one batch, and sends the pick to the server. Hovering is instant because assets are already loaded. When everyone locks in or the timer ends, anyone without a hero gets a random one. Seamless travel carries the pick to the arena, where the server chooses and loads the hero class, spawns it with a team and start spot, and initialises it." />
+  <figcaption>A hero is data until the arena: the lobby only needs to show it, and only the server ever spawns it.</figcaption>
+</figure>
 
 #### What it does
 
-TODO: ChrisCharacter / ChrisPlayerCharacter and data-driven heroes via PA_CharacterDefinition.
+Every hero is a data asset: its name, icon, tooltip card, how it poses on the hero-select screen, and which character Blueprint to spawn. The lobby lists whatever hero assets exist, players pick one (two players can pick the same hero), and anyone who has not picked when the timer runs out gets a random hero. In the arena each player spawns as the hero they picked. Heroes and AI minions share one character base class, so health, abilities, teams, stuns, death and respawn work the same for both.
 
 #### How it works
 
-TODO
+**One base class for every character** – [`AChrisCharacter`](code:AChrisCharacter) owns the Ability System Component and attributes, the team ID (through `IGenericTeamAgentInterface`, so anything can ask which side a character is on), stun, death and respawn, and the overhead health bar. [`AChrisPlayerCharacter`](code:AChrisPlayerCharacter) adds the camera and input, and the skeleton minion adds AI. Each hero is a Blueprint child of the player character, with its mesh and abilities set in the editor.
+
+**Heroes as data** – [`UPA_CharacterDefinition`](code:UPA_CharacterDefinition) is a primary data asset. Every field that points at something large is a soft pointer: a path that is only loaded when asked for, so knowing about a hero costs almost nothing. The project's Asset Manager settings register a "Character Definition" type and the folder it lives in, and [`GetPrimaryAssetId`](code:UPA_CharacterDefinition::GetPrimaryAssetId) gives each asset an ID of that type plus its name. The game can then ask for every hero by type, with no hand-kept list to forget to update.
+
+**Building the hero list** – when the lobby widget is created it asks the custom asset manager to load every Character Definition in the background ([`LoadCharacterDefinitions`](code:UCAssetManager::LoadCharacterDefinitions)). When that finishes, [`CharacterDefinitionsLoaded`](code:ULobbyWidget::CharacterDefinitionsLoaded) gets the loaded heroes ([`GetLoadedCharacterDefinitions`](code:UCAssetManager::GetLoadedCharacterDefinitions)) and hands them to the tile view, which makes one tile per hero.
+
+**Preloading so hovering is instant** – straight after, [`PreloadHeroAssets`](code:ULobbyWidget::PreloadHeroAssets) asks every hero for the paths of everything it shows ([`GetPreloadAssetPaths`](code:UPA_CharacterDefinition::GetPreloadAssetPaths), which skips empty fields) and loads them all in one background batch. The widget keeps the handle that batch returns; while it holds it, the assets stay in memory instead of being garbage collected. Hovering and previewing still call `LoadSynchronous` ([`LoadToolTip`](code:UPA_CharacterDefinition::LoadToolTip)), but it now finds the asset already loaded and returns immediately.
+
+**Picking** – clicking a tile ([`HeroEntryClicked`](code:ULobbyWidget::HeroEntryClicked)) is rejected on the spot if the player is locked in or clicks the hero they already have. Otherwise it sends a server RPC ([`Server_SetSelectedCharacterDefinition`](code:AChrisPlayerState::Server_SetSelectedCharacterDefinition_Implementation)), and the Game State records the hero in that player's replicated selection ([`SetCharacterSelected`](code:AChrisGameState::SetCharacterSelected)), so every player's team slots show it. When the hero-select timer runs out, [`AssignRandomCharactersToEmptySlots`](code:AChrisGameState::AssignRandomCharactersToEmptySlots) fills in anyone without a hero.
+
+**Spawning in the arena** – seamless travel creates a new Player State on the arena map, and [`CopyProperties`](code:AChrisPlayerState::CopyProperties) carries the selection across. The arena Game Mode overrides [`GetDefaultPawnClassForController`](code:AChrisGameMode::GetDefaultPawnClassForController_Implementation) to spawn the class from that selection ([`GetSelectedPawnClass`](code:AChrisPlayerState::GetSelectedPawnClass)), with a backup pawn if there is none. The dedicated server never ran the lobby widget, so this is where the hero class is really loaded from disk, during the loading screen when nobody is playing yet. [`SpawnDefaultPawnFor`](code:AChrisGameMode::SpawnDefaultPawnFor_Implementation) then gives the player their team and a start spot. Once possessed, the hero sets up its abilities on the server ([`OnPossess`](code:AChrisPlayerController::OnPossess)) and on the owning client ([`AcknowledgePossession`](code:AChrisPlayerController::AcknowledgePossession)).
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
+- **Data assets instead of a class per hero** – a new hero is a data asset and a Blueprint, with no C++ and no list to edit. Designers can add or rebalance heroes without a programmer.
+- **Soft pointers everywhere** – hard pointers would load every hero's meshes, grooms and textures the moment the hero list loaded, even on the server and even for heroes nobody picks. Soft pointers let me choose when each cost is paid.
+- **Load early, in the background** – the lobby has a natural quiet moment while players pick slots, so that is when the hero assets load. By the time anyone hovers a hero there is nothing left to wait for.
+- **The pick is data, the spawn is the server's** – the lobby only stores which definition a player chose. Only the arena server turns it into a character, so a client can never spawn something itself.
+- **One base class for heroes and minions** – the Game Mode, flags, combat and AI all deal with `AChrisCharacter` and its team interface, so they treat a minion and a hero the same way unless they choose not to.
 
 ## How it connects
 
@@ -269,11 +286,22 @@ How the framework copes with the changes a team would most likely ask for, and w
 
 ## Challenges & bugs
 
+### Hero tooltips froze the lobby on first hover
+
+- **Symptom** – the first time a player hovered a hero, the lobby hitched before the tooltip card appeared. Picking a hero for the first time did the same before the preview model showed.
+- **Cause** – the tooltip and preview use `LoadSynchronous`. The textures and meshes were not in memory yet, so each call read them from disk on the game thread, and the whole game waited for it.
+- **Fix** – the lobby now preloads every hero's display assets in one background batch as soon as the hero list arrives, and keeps the handle so they stay loaded ([commit](https://github.com/Polindian/AnimationTesting/commit/3346368)). The `LoadSynchronous` calls did not change: they now find everything already loaded and return immediately.
+- **Lesson** – `LoadSynchronous` is only slow when the asset is not loaded yet. Soft pointers decide when you pay for loading, so pay early and in the background, at a moment the player is busy with something else.
+
 **Symptom → cause → fix → lesson** – TODO: Lobby animations froze because LobbyGameMode inherited from AGameMode instead of AGameModeBase (the world stayed in WaitingToStart).
 
 ## Optimisations
 
-TODO: before/after, with numbers where possible.
+### The hero list was rebuilt once per hero
+
+`CharacterDefinitionsLoaded` used to call `SetListItems` inside the loop over heroes, so the tile view replaced and refreshed its whole list once for each hero instead of once in total. Moving the call out of the loop sets the list once, however many heroes the roster grows to.
+
+TODO: more before/after, with numbers where possible.
 
 ## What I'd do differently
 
