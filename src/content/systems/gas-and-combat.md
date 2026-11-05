@@ -1,6 +1,6 @@
 ---
 title: "GAS & Combat"
-summary: "Combat built on Unreal's Gameplay Ability System: combos, light and heavy attacks, projectiles, area damage, upgrades and consumables."
+summary: "Combat built on Unreal's Gameplay Ability System, and the systems that shape every hit: weapon equip, a shop with skill trees, ability levelling and consumables."
 order: 2
 tags: ["GAS", "Gameplay Effects", "Attributes", "Anim Notifies", "Gameplay Tags"]
 glance:
@@ -19,15 +19,19 @@ keyFiles:
 status: draft
 ---
 
-## Features
+## Foundations
 
-### Ability architecture
+### GAS foundations
 
-<div class="placeholder">GIF / screenshot: Ability architecture</div>
+<div class="placeholder">Diagram: GAS foundations</div>
 
 #### What it does
 
-TODO: base ChrisGameplayAbility, custom ASC, input binding and default abilities per hero (PA_GenericAbilitySystem).
+TODO
+
+#### Step by step
+
+TODO
 
 #### How it works
 
@@ -35,15 +39,19 @@ TODO
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
+TODO
 
 ### Attributes & levelling
 
-<div class="placeholder">GIF / screenshot: Attributes & levelling</div>
+<div class="placeholder">Diagram: Attributes & levelling</div>
 
 #### What it does
 
-TODO: ChrisAttributeSet / CHeroAttributeSet and level scaling via MMC_LevelBased.
+TODO
+
+#### Step by step
+
+TODO
 
 #### How it works
 
@@ -51,127 +59,23 @@ TODO
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
-
-### Melee combos
-
-<div class="placeholder">GIF / screenshot: Melee combos</div>
-
-#### What it does
-
-TODO: GA_Combo and the light/heavy attacks (Swipe, Thrust, Stab).
-
-#### How it works
-
 TODO
 
-#### Why I designed it this way
+## Systems that change a hero
 
-TODO: alternatives considered and trade-offs.
-
-### Animation-driven hit detection
-
-<div class="placeholder">GIF / screenshot: Animation-driven hit detection</div>
-
-#### What it does
-
-TODO: anim notifies (AN_SendTargetGroup, AN_SendGameplayEvent) and socket traces that apply damage.
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO: alternatives considered and trade-offs.
-
-### Damage calculation
-
-<div class="placeholder">GIF / screenshot: Damage calculation</div>
-
-#### What it does
-
-TODO: the MMCs for base/light/heavy damage and the BlindBomb execution calculation.
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO: alternatives considered and trade-offs.
-
-### Projectiles & area abilities
-
-<div class="placeholder">GIF / screenshot: Projectiles & area abilities</div>
-
-#### What it does
-
-TODO: GA_Shoot + ProjectileActor, TargetActor_Around, GA_BlindBomb.
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO: alternatives considered and trade-offs.
-
-### Death & knockback
-
-<div class="placeholder">GIF / screenshot: Death & knockback</div>
-
-#### What it does
-
-TODO: passive abilities GAP_Dead and GAP_Launched.
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO: alternatives considered and trade-offs.
-
-### Upgrades, skill tree & souls
-
-<div class="placeholder">GIF / screenshot: Upgrades, skill tree & souls</div>
-
-#### What it does
-
-TODO: earning souls, spending upgrade points, ability upgrades.
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO: alternatives considered and trade-offs.
-
-### Shop, inventory & consumables
-
-<div class="placeholder">GIF / screenshot: Shop, inventory & consumables</div>
-
-#### What it does
-
-TODO: PA_ShopItem, InventoryComponent, using items in the arena.
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO: alternatives considered and trade-offs.
+Each of these is a system in its own right, and each one switches on conditions that decide what a hit does later. Every section ends with where it plugs into the hit.
 
 ### Weapon equip
 
-<div class="placeholder">GIF / screenshot: Weapon equip</div>
+<div class="placeholder">Diagram: Weapon equip</div>
 
 #### What it does
 
-TODO: GA_EquipToggle and SwordEquipComponent.
+TODO
+
+#### Step by step
+
+TODO
 
 #### How it works
 
@@ -179,23 +83,213 @@ TODO
 
 #### Why I designed it this way
 
-TODO: alternatives considered and trade-offs.
+TODO
+
+### Shop & inventory
+
+<div class="placeholder">Diagram: Shop & inventory</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Skill trees
+
+<div class="placeholder">Diagram: Skill trees</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Ability levelling & upgrades
+
+<div class="placeholder">Diagram: Ability levelling & upgrades</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Consumables
+
+<div class="placeholder">Diagram: Consumables</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+## The hit
+
+### The life of a hit
+
+<div class="placeholder">Diagram: the five stages of a hit, with every condition coloured by the system that controls it</div>
+
+TODO: can I attack → where does it hit → how hard → how much is taken → what happens next.
+
+### Melee combos
+
+<div class="placeholder">Diagram: Melee combos</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Hit detection
+
+<div class="placeholder">Diagram: Hit detection</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Ranged & area abilities
+
+<div class="placeholder">Diagram: Ranged & area abilities</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### The damage pipeline
+
+<div class="placeholder">Diagram: The damage pipeline</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Death, stun, knockback & rewards
+
+<div class="placeholder">Diagram: Death, stun, knockback & rewards</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
 
 ## How it connects
 
-- Networking — GAS prediction and replication modes
-- Gameplay Framework — ASC lives on the character/player state
-- Audio — gameplay tags trigger sounds
+- Gameplay Framework — the ASC lives on the character; souls come from the Game Mode; flags read Dominion
+- Networking — what runs on the server, what is predicted, what replicates
+- UI — ability gauges, the shop widget, the skill tree
+- AI — minions use the same ASC and attribute set, and press abilities through a behaviour tree task
+- Audio — cooldown and low-health sounds driven by tags
 
 ## Built to extend
 
 #### Easy to add today
 
-TODO: what this system makes easy to add, and which part of the design makes it easy.
+TODO
 
 #### Would need work first
 
-TODO: honest limits, and what would need changing to remove them.
+TODO
 
 ## Challenges & bugs
 
@@ -207,4 +301,4 @@ TODO: before/after, with numbers where possible.
 
 ## What I'd do differently
 
-TODO: honest self-critique and planned refactors.
+TODO
