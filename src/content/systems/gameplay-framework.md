@@ -281,7 +281,7 @@ Around all of this, the Game Mode switches every flag on and subscribes to step 
 
 #### Why I designed it this way
 
-- **Track membership by events, recompute rates every frame** – players die, respawn, get destroyed and buy upgrades while standing still, and none of that fires an exit event. Recounting a handful of characters on three flags costs almost nothing and is always right, where adding and subtracting on events would go wrong the first time one was missed.
+- **Track membership by events, recompute rates every frame** – players die, respawn and get destroyed while standing in a zone, and none of that fires an exit event. Recounting a handful of characters on three flags costs almost nothing and is always right, where adding and subtracting on events would go wrong the first time one was missed.
 - **Heroes count three times as much as minions** – minions help hold ground, but a hero arriving should matter. Dominion lets players invest in becoming even stronger on objectives.
 - **Drain before you gain** – a team has to undo the enemy's progress before building its own, so a flag that is nearly lost can still be saved, and flips are earned.
 - **Rewards in contested zones too** – holding a contested zone is the hardest thing a player can do, even when the bar is not moving, so it pays the same XP as walking onto an empty one.
