@@ -66,20 +66,6 @@ The numbers match the diagram.
 - **Stats in a data table, abilities in Blueprint maps** – balancing a hero means editing a row or a map, not C++. A new hero needs a table row and its two ability maps.
 - **Input IDs instead of one function per key** – one handler serves every ability. Rebinding a key or swapping an ability is an editor change.
 
-#### The C++ behind it
-
-| Roadmap topic | Where it is here |
-|---|---|
-| Composition ("has a") | The character *has an* ASC and attribute sets as components. Any actor can get abilities by adding the component; nothing has to inherit from an "ability character". |
-| Inheritance ("is a") | `AChrisPlayerCharacter` *is an* `AChrisCharacter`, which *is an* `ACharacter`. `UChrisAbilitySystemComponent` *is a* `UAbilitySystemComponent` with my functions added. |
-| Interfaces (pure virtual) | `IAbilitySystemInterface` and `IGenericTeamAgentInterface` are promises with no data. Engine code written before my class existed can ask any actor for its ASC or team without knowing what it is. |
-| `virtual`, `override`, `const` | `GetAbilitySystemComponent() const override`: overrides the interface's virtual function, the compiler checks it matches, and `const` promises calling it doesn't change the character. |
-| `Super::` | `PossessedBy`, `OnPossess` and `AcknowledgePossession` call `Super::` first so the engine's own version still runs. |
-| Constructors | Components are made in the constructor so every character, and its Blueprint defaults, has them before anything else runs. That's why each hero's ability maps can be set in the editor. |
-| `enum class` and casting | `EChrisAbilityInputID` is a scoped enum, which never turns into an `int` by itself. GAS stores input IDs as plain `int32`, so `(int32)AbilityPair.Key` converts it. |
-| `TMap` and pairs | `for (auto& AbilityPair : Abilities)`: each pair's `.Key` is the input ID and `.Value` is the ability class. |
-| Heap and garbage collection (Phase 3) | `CreateDefaultSubobject` creates the ASC on the heap. I never `delete` it: Unreal's garbage collector frees it once nothing references it, which is why UObject pointers are `UPROPERTY()`. |
-
 ### Attributes & levelling
 
 <div class="placeholder">Diagram: Attributes & levelling</div>
@@ -97,10 +83,6 @@ TODO
 TODO
 
 #### Why I designed it this way
-
-TODO
-
-#### The C++ behind it
 
 TODO
 
@@ -128,10 +110,6 @@ TODO
 
 TODO
 
-#### The C++ behind it
-
-TODO
-
 ### Shop & inventory
 
 <div class="placeholder">Diagram: Shop & inventory</div>
@@ -149,10 +127,6 @@ TODO
 TODO
 
 #### Why I designed it this way
-
-TODO
-
-#### The C++ behind it
 
 TODO
 
@@ -176,10 +150,6 @@ TODO
 
 TODO
 
-#### The C++ behind it
-
-TODO
-
 ### Ability levelling & upgrades
 
 <div class="placeholder">Diagram: Ability levelling & upgrades</div>
@@ -200,10 +170,6 @@ TODO
 
 TODO
 
-#### The C++ behind it
-
-TODO
-
 ### Consumables
 
 <div class="placeholder">Diagram: Consumables</div>
@@ -221,10 +187,6 @@ TODO
 TODO
 
 #### Why I designed it this way
-
-TODO
-
-#### The C++ behind it
 
 TODO
 
@@ -256,10 +218,6 @@ TODO
 
 TODO
 
-#### The C++ behind it
-
-TODO
-
 ### Hit detection
 
 <div class="placeholder">Diagram: Hit detection</div>
@@ -277,10 +235,6 @@ TODO
 TODO
 
 #### Why I designed it this way
-
-TODO
-
-#### The C++ behind it
 
 TODO
 
@@ -304,10 +258,6 @@ TODO
 
 TODO
 
-#### The C++ behind it
-
-TODO
-
 ### The damage pipeline
 
 <div class="placeholder">Diagram: The damage pipeline</div>
@@ -328,10 +278,6 @@ TODO
 
 TODO
 
-#### The C++ behind it
-
-TODO
-
 ### Death, stun, knockback & rewards
 
 <div class="placeholder">Diagram: Death, stun, knockback & rewards</div>
@@ -349,10 +295,6 @@ TODO
 TODO
 
 #### Why I designed it this way
-
-TODO
-
-#### The C++ behind it
 
 TODO
 
