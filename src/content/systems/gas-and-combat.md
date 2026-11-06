@@ -23,27 +23,62 @@ status: draft
 
 ### GAS foundations
 
-<div class="placeholder">Diagram: GAS foundations</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-foundations.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-foundations.svg" alt="GAS foundations in ten numbered steps: the constructor creates the ability system on every machine, the server sets it up and gives abilities on possession, and the owning client wires up its copy and turns key presses into abilities. The table below lists every function." /></a>
+  <figcaption>Every machine builds the ability system, only the server fills it, and the owning client presses it.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Every character in the game, heroes and skeleton minions alike, carries Unreal's Gameplay Ability System. It holds the character's attributes (health, mana, attack damage, armour), the effects acting on it, its gameplay tags and the abilities it can use. When a hero spawns, the server gives it base stats for that hero and its abilities: light attacks ready to use, heavy abilities waiting to be learnt, and passives like death that never need a key. Pressing an ability key finds the matching ability and tries to activate it, with the server deciding whether it really happens.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Character built | Constructor → `CreateDefaultSubobject` for the ASC and [`UChrisAttributeSet`](code:UChrisAttributeSet); player characters also make [`UCHeroAttributeSet`](code:UCHeroAttributeSet) | Every machine |
+| 2 | Possessed | Player: [`OnPossess`](code:AChrisPlayerController::OnPossess) → [`ServerSideInit`](code:AChrisCharacter::ServerSideInit). Minion: [`PossessedBy`](code:AChrisCharacter::PossessedBy) → `ServerSideInit` | Server |
+| 3 | Wire it up | `InitAbilityActorInfo(this, this)`, then the ASC's own [`ServerSideInit`](code:UChrisAbilitySystemComponent::ServerSideInit) | Server |
+| 4 | Base stats | [`InitializeBaseAttributes`](code:UChrisAbilitySystemComponent::InitializeBaseAttributes) finds this class's row in the base stats data table | Server |
+| 5 | Initial effects | [`ApplyInitialEffects`](code:UChrisAbilitySystemComponent::ApplyInitialEffects) | Server |
+| 6 | Give abilities | [`GiveInitialAbilities`](code:UChrisAbilitySystemComponent::GiveInitialAbilities): heavy at level 0, light at level 1, passives with no input | Server |
+| 7 | Possession arrives | [`AcknowledgePossession`](code:AChrisPlayerController::AcknowledgePossession) → [`ClientSideInit`](code:AChrisCharacter::ClientSideInit) | Owning client |
+| 8 | Wire it up | `InitAbilityActorInfo(this, this)` on the client's copy | Owning client |
+| 9 | Press a key | Enhanced Input → [`HandleAbilityInput`](code:AChrisPlayerCharacter::HandleAbilityInput) with that key's `EChrisAbilityInputID` | Owning client |
+| 10 | Find the ability | `AbilityLocalInputPressed(InputID)` activates the ability given with that input ID | Owning client, confirmed by the server |
 
 #### How it works
 
-TODO
+**On the character, not the Player State** – [`AChrisCharacter`](code:AChrisCharacter) creates its [`UChrisAbilitySystemComponent`](code:UChrisAbilitySystemComponent) and combat attribute set in its constructor, and implements `IAbilitySystemInterface` so any GAS code can find them ([`GetAbilitySystemComponent`](code:AChrisCharacter::GetAbilitySystemComponent)). Heroes are never destroyed when they die: they respawn in place, so cooldowns, effects and levels stay on the same ASC. Minions use the same class, and AI controllers have no Player State, so the character is the one place both can share.
+
+**Set up on both sides** – the server and the owning client each have their own copy of the character and its ASC, so each calls `InitAbilityActorInfo` to tell its copy who owns it and which body it drives. Only the server then fills it in: base stats from a data table row matched by class, the initial effects, and every ability. Granting abilities is server-only and replicates down. Minions are set up from `PossessedBy`, because their AI controller exists only on the server and no client ever acknowledges possessing them.
+
+**Abilities as data** – each hero's Blueprint lists its abilities in two maps of input ID to ability class: heavy `Abilities` and light `BasicAbilities`. The shared [`UPA_GenericAbilitySystem`](code:UPA_GenericAbilitySystem) data asset holds what every hero has in common: the passive abilities, the initial effects and the base stats table. `GiveAbility` takes a level and an input ID. Heavy abilities start at level 0, which the tutorial calls "not learnt": they can't be cast until an upgrade point buys level 1. Passives get input ID −1, because they are triggered by tags and events, never by a key.
+
+**From key to ability** – the player character maps each Enhanced Input action to an `EChrisAbilityInputID` ([`SetupPlayerInputComponent`](code:AChrisPlayerCharacter::SetupPlayerInputComponent)). Pressing it calls `AbilityLocalInputPressed` with that ID, and the ASC activates the ability that was given with the same ID. Light attacks also send a gameplay event, locally and to the server, which the combo ability listens for to chain the next hit.
 
 #### Why I designed it this way
 
-TODO
+- **The ASC on the character** – the common reason to put it on the Player State is that the pawn is destroyed on death and a fresh one would lose its cooldowns and buffs. My heroes respawn without being destroyed, and minions need the same system with no Player State, so the character is simpler and fits both.
+- **A second attribute set only for heroes** – XP, level, souls, upgrade points and growth rates only matter to players. Every skeleton carrying and replicating them would be waste, so they live in `UCHeroAttributeSet`, created only by `AChrisPlayerCharacter`.
+- **Stats in a data table, abilities in Blueprint maps** – balancing a hero means editing a row or a map, not C++. A new hero needs a table row and its two ability maps.
+- **Input IDs instead of one function per key** – one handler serves every ability. Rebinding a key or swapping an ability is an editor change.
 
 #### The C++ behind it
 
-TODO
+| Roadmap topic | Where it is here |
+|---|---|
+| Composition ("has a") | The character *has an* ASC and attribute sets as components. Any actor can get abilities by adding the component; nothing has to inherit from an "ability character". |
+| Inheritance ("is a") | `AChrisPlayerCharacter` *is an* `AChrisCharacter`, which *is an* `ACharacter`. `UChrisAbilitySystemComponent` *is a* `UAbilitySystemComponent` with my functions added. |
+| Interfaces (pure virtual) | `IAbilitySystemInterface` and `IGenericTeamAgentInterface` are promises with no data. Engine code written before my class existed can ask any actor for its ASC or team without knowing what it is. |
+| `virtual`, `override`, `const` | `GetAbilitySystemComponent() const override`: overrides the interface's virtual function, the compiler checks it matches, and `const` promises calling it doesn't change the character. |
+| `Super::` | `PossessedBy`, `OnPossess` and `AcknowledgePossession` call `Super::` first so the engine's own version still runs. |
+| Constructors | Components are made in the constructor so every character, and its Blueprint defaults, has them before anything else runs. That's why each hero's ability maps can be set in the editor. |
+| `enum class` and casting | `EChrisAbilityInputID` is a scoped enum, which never turns into an `int` by itself. GAS stores input IDs as plain `int32`, so `(int32)AbilityPair.Key` converts it. |
+| `TMap` and pairs | `for (auto& AbilityPair : Abilities)`: each pair's `.Key` is the input ID and `.Value` is the ability class. |
+| Heap and garbage collection (Phase 3) | `CreateDefaultSubobject` creates the ASC on the heap. I never `delete` it: Unreal's garbage collector frees it once nothing references it, which is why UObject pointers are `UPROPERTY()`. |
 
 ### Attributes & levelling
 

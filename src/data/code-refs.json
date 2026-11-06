@@ -11,6 +11,11 @@
       "start": 60,
       "end": 64
     },
+    "AChrisCharacter::GetAbilitySystemComponent": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 115,
+      "end": 118
+    },
     "AChrisCharacter::GetGenericTeamId": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 583,
@@ -20,6 +25,11 @@
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 588,
       "end": 596
+    },
+    "AChrisCharacter::PossessedBy": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 71,
+      "end": 79
     },
     "AChrisCharacter::ServerSideInit": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
@@ -226,6 +236,16 @@
       "start": 14,
       "end": 178
     },
+    "AChrisPlayerCharacter::HandleAbilityInput": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.cpp",
+      "start": 104,
+      "end": 255
+    },
+    "AChrisPlayerCharacter::SetupPlayerInputComponent": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.cpp",
+      "start": 60,
+      "end": 87
+    },
     "AChrisPlayerController::AcknowledgePossession": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerController.cpp",
       "start": 48,
@@ -376,6 +396,41 @@
       "start": 44,
       "end": 47
     },
+    "UCHeroAttributeSet": {
+      "path": "Source/AnimationTesting/Private/GAS/CHeroAttributeSet.h",
+      "start": 18,
+      "end": 113
+    },
+    "UChrisAbilitySystemComponent": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.h",
+      "start": 74,
+      "end": 292
+    },
+    "UChrisAbilitySystemComponent::ApplyInitialEffects": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 97,
+      "end": 109
+    },
+    "UChrisAbilitySystemComponent::GiveInitialAbilities": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 111,
+      "end": 128
+    },
+    "UChrisAbilitySystemComponent::InitializeBaseAttributes": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 32,
+      "end": 83
+    },
+    "UChrisAbilitySystemComponent::ServerSideInit": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 85,
+      "end": 90
+    },
+    "UChrisAttributeSet": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.h",
+      "start": 76,
+      "end": 292
+    },
     "UChrisGameInstance::StartMatch": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameInstance.cpp",
       "start": 19,
@@ -470,6 +525,11 @@
       "path": "Source/AnimationTesting/Private/Character/PA_CharacterDefinition.cpp",
       "start": 74,
       "end": 82
+    },
+    "UPA_GenericAbilitySystem": {
+      "path": "Source/AnimationTesting/Private/AI/SkeletonAI.h",
+      "start": 52,
+      "end": 95
     }
   }
 }
