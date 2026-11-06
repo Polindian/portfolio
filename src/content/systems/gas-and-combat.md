@@ -41,6 +41,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### Attributes & levelling
 
 <div class="placeholder">Diagram: Attributes & levelling</div>
@@ -58,6 +62,10 @@ TODO
 TODO
 
 #### Why I designed it this way
+
+TODO
+
+#### The C++ behind it
 
 TODO
 
@@ -85,6 +93,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### Shop & inventory
 
 <div class="placeholder">Diagram: Shop & inventory</div>
@@ -102,6 +114,10 @@ TODO
 TODO
 
 #### Why I designed it this way
+
+TODO
+
+#### The C++ behind it
 
 TODO
 
@@ -125,6 +141,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### Ability levelling & upgrades
 
 <div class="placeholder">Diagram: Ability levelling & upgrades</div>
@@ -145,6 +165,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### Consumables
 
 <div class="placeholder">Diagram: Consumables</div>
@@ -162,6 +186,10 @@ TODO
 TODO
 
 #### Why I designed it this way
+
+TODO
+
+#### The C++ behind it
 
 TODO
 
@@ -193,6 +221,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### Hit detection
 
 <div class="placeholder">Diagram: Hit detection</div>
@@ -210,6 +242,10 @@ TODO
 TODO
 
 #### Why I designed it this way
+
+TODO
+
+#### The C++ behind it
 
 TODO
 
@@ -233,6 +269,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### The damage pipeline
 
 <div class="placeholder">Diagram: The damage pipeline</div>
@@ -253,6 +293,10 @@ TODO
 
 TODO
 
+#### The C++ behind it
+
+TODO
+
 ### Death, stun, knockback & rewards
 
 <div class="placeholder">Diagram: Death, stun, knockback & rewards</div>
@@ -270,6 +314,10 @@ TODO
 TODO
 
 #### Why I designed it this way
+
+TODO
+
+#### The C++ behind it
 
 TODO
 
