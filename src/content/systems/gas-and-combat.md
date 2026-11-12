@@ -68,23 +68,49 @@ The numbers match the diagram.
 
 ### Attributes, XP & levelling
 
-<div class="placeholder">Diagram: XP to levels, stat growth and upgrade points spent on heavy abilities</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-levelling.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-levelling.svg" alt="Levelling in numbered steps: XP from kills and flag zones changes the Experience attribute, the server works out the level and upgrade points, stats grow with level, and the owning client spends points on heavy abilities through a server RPC. The table below lists every function." /></a>
+  <figcaption>XP only ever changes on the server. Everything a player sees, and every upgrade they ask for, goes through it.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Every character has combat attributes: health, mana, attack damage, armour, speed, plus the values the shop's skills and upgrades switch on. Heroes also have a second set for progression: experience, level (1 to 10), souls and upgrade points. Kills and standing in a flag zone earn XP. Each new level raises the hero's stats by that hero's own growth rates and gives upgrade points, which are spent on the four heavy abilities: 1 point to learn one, then 2, 3 and 4 points for levels 2, 3 and 4.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| A | Subscribe | ASC [constructor](code:UChrisAbilitySystemComponent::UChrisAbilitySystemComponent) puts `ExperienceUpdated` on Experience's value-change delegate | Every machine |
+| B | Starting values | [`InitializeBaseAttributes`](code:UChrisAbilitySystemComponent::InitializeBaseAttributes): growth rates from the data table, max level from the XP curve, level 1, then one `ExperienceUpdated` call to set the gauge's first target | Server |
+| 1a | XP from a kill | [`UGAP_Dead::ActivateAbility`](code:UGAP_Dead::ActivateAbility) applies a reward effect carrying XP and souls (set-by-caller values) | Server |
+| 1b | XP from a flag zone | [`AFlag::Tick`](code:AFlag::Tick) → `ApplyModToAttribute`, +50 XP every 8 seconds | Server |
+| 2 | Experience changes | The delegate from A calls [`ExperienceUpdated`](code:UChrisAbilitySystemComponent::ExperienceUpdated) with the new total XP | Server |
+| 3 | Work out the level | Same function: walk the XP curve to the first threshold above the total, add the levels gained to upgrade points, save level, previous and next XP | Server |
+| 4 | Stats grow | [`MMC_LevelBased`](code:UMMC_LevelBased::CalculateBaseMagnitude_Implementation) recalculates `(Level − 1) × GrowthRate` because it watches Level live | Server |
+| 5 | Shown on the HUD | Level, XP and points replicate → the XP gauge and upgrade buttons update | Owning client |
+| 5b | Press upgrade | [`UpgradeAbilityWithInputID`](code:AChrisCharacter::UpgradeAbilityWithInputID) → `Server_UpgradeAbilityWithID` (a Server RPC on the ASC) | Sent by the owning client |
+| 6 | Pay and upgrade | [`Server_UpgradeAbilityWithID`](code:UChrisAbilitySystemComponent::Server_UpgradeAbilityWithID_Implementation): find the ability by input ID, refuse if level 4 ([`IsAbilityAtMaxLevel`](code:UChrisAbilitySystemStatics::IsAbilityAtMaxLevel)) or unaffordable, pay `Level + 1` points, raise the level, `MarkAbilitySpecDirty` | Server |
+| 7 | Upgrade arrives | [`Client_AbilitySpecLevelUpdated`](code:UChrisAbilitySystemComponent::Client_AbilitySpecLevelUpdated_Implementation): set the level now, broadcast to the UI, play the upgrade sound | Owning client |
 
 #### How it works
 
-TODO
+**Two attribute sets** – [`UChrisAttributeSet`](code:UChrisAttributeSet) is on every character and holds the combat values. [`UCHeroAttributeSet`](code:UCHeroAttributeSet) is only created by the player character and holds intelligence, strength, the growth rates, experience, level, souls and upgrade points. Health and mana are clamped between 0 and their maximum in [`PreAttributeChange`](code:UChrisAttributeSet::PreAttributeChange), which edits the incoming value before it is applied.
+
+**XP is a running total** – the XP curve in the shared data asset stores the total XP needed to reach each level. `ExperienceUpdated` walks it until it finds the first threshold the hero hasn't reached: everything below is a level gained, that threshold is the next target. It saves the previous and next thresholds too, so the HUD can show progress within the level. It only runs on the server, because the same delegate also fires on clients when the replicated XP arrives.
+
+**Stats grow without being told** – a Gameplay Effect applied at setup uses `MMC_LevelBased`, which captures the hero's Level and returns `(Level − 1) × GrowthRate`. Level 1 adds nothing, because the base stats already apply. Each hero's growth rates come from its data table row, which is how Christos gains more intelligence per level than Yuri.
+
+**Spending points** – the client can only ask. The server checks the points from its own copy, charges the level being bought, raises the ability's level and marks it dirty so it replicates. A Client RPC follows so the owning player hears the upgrade sound and sees the notch straight away, instead of waiting for replication. Heavy abilities start at level 0, so the first purchase is what makes them castable.
 
 #### Why I designed it this way
 
-TODO
+- **Levels from a curve, not from code** – the thresholds are a curve asset, so rebalancing how fast players level is an editor change. Max level is simply the number of keys.
+- **Event-driven, not polled** – nothing checks XP every frame. The delegate calls `ExperienceUpdated` only when XP actually changes, from any source.
+- **The server owns progression** – XP, level and points are only ever written on the server, and an upgrade is a request the server checks. A modified client can't give itself points.
+- **Rising costs** – charging the level being bought makes level 4 cost four times as much as learning the ability, so players choose between maxing one heavy ability or spreading points across all four.
 
 ## Systems that change a hero
 
@@ -237,6 +263,13 @@ TODO
 TODO
 
 ## Challenges & bugs
+
+### Heroes started with a free upgrade point
+
+- **Symptom** – every hero spawned with one upgrade point they hadn't earned.
+- **Cause** – Level started at 0. The first `ExperienceUpdated` call worked out level 1 and counted the jump from 0 to 1 as a level gained.
+- **Fix** – `InitializeBaseAttributes` sets Level to 1 before the first call, so the starting level is never counted as progress.
+- **Lesson** – when something is calculated as a difference (new minus old), the starting "old" value matters as much as the formula.
 
 **Symptom → cause → fix → lesson** – TODO: UGA_Shoot fired multiple shots per press until input was debounced; the death effect needed Infinite duration for the respawn flow.
 

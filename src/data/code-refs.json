@@ -41,6 +41,11 @@
       "start": 578,
       "end": 581
     },
+    "AChrisCharacter::UpgradeAbilityWithInputID": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 133,
+      "end": 139
+    },
     "AChrisGameMode": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.h",
       "start": 30,
@@ -411,6 +416,16 @@
       "start": 97,
       "end": 109
     },
+    "UChrisAbilitySystemComponent::Client_AbilitySpecLevelUpdated_Implementation": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 236,
+      "end": 249
+    },
+    "UChrisAbilitySystemComponent::ExperienceUpdated": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 439,
+      "end": 488
+    },
     "UChrisAbilitySystemComponent::GiveInitialAbilities": {
       "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
       "start": 111,
@@ -426,10 +441,30 @@
       "start": 85,
       "end": 90
     },
+    "UChrisAbilitySystemComponent::Server_UpgradeAbilityWithID_Implementation": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 208,
+      "end": 229
+    },
+    "UChrisAbilitySystemComponent::UChrisAbilitySystemComponent": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 22,
+      "end": 30
+    },
+    "UChrisAbilitySystemStatics::IsAbilityAtMaxLevel": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemStatics.cpp",
+      "start": 245,
+      "end": 248
+    },
     "UChrisAttributeSet": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.h",
       "start": 76,
       "end": 292
+    },
+    "UChrisAttributeSet::PreAttributeChange": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAttributeSet.cpp",
+      "start": 12,
+      "end": 22
     },
     "UChrisGameInstance::StartMatch": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameInstance.cpp",
@@ -455,6 +490,11 @@
       "path": "Source/AnimationTesting/Private/Widgets/FlagProgressWidget.cpp",
       "start": 42,
       "end": 146
+    },
+    "UGAP_Dead::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/GAP_Dead.cpp",
+      "start": 26,
+      "end": 133
     },
     "ULobbyWidget::CharacterDefinitionsLoaded": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
@@ -495,6 +535,11 @@
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
       "start": 155,
       "end": 174
+    },
+    "UMMC_LevelBased::CalculateBaseMagnitude_Implementation": {
+      "path": "Source/AnimationTesting/Private/GAS/MMC_LevelBased.cpp",
+      "start": 17,
+      "end": 36
     },
     "UOverheadStatsGauge::ConfigureTeamColor": {
       "path": "Source/AnimationTesting/Private/Widgets/OverheadStatsGauge.cpp",
