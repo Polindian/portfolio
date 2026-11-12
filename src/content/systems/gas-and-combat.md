@@ -66,9 +66,9 @@ The numbers match the diagram.
 - **Stats in a data table, abilities in Blueprint maps** – balancing a hero means editing a row or a map, not C++. A new hero needs a table row and its two ability maps.
 - **Input IDs instead of one function per key** – one handler serves every ability. Rebinding a key or swapping an ability is an editor change.
 
-### Attributes & levelling
+### Attributes, XP & levelling
 
-<div class="placeholder">Diagram: Attributes & levelling</div>
+<div class="placeholder">Diagram: XP to levels, stat growth and upgrade points spent on heavy abilities</div>
 
 #### What it does
 
@@ -110,69 +110,9 @@ TODO
 
 TODO
 
-### Shop & inventory
+### The shop: skills, ability upgrades & consumables
 
-<div class="placeholder">Diagram: Shop & inventory</div>
-
-#### What it does
-
-TODO
-
-#### Step by step
-
-TODO
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO
-
-### Skill trees
-
-<div class="placeholder">Diagram: Skill trees</div>
-
-#### What it does
-
-TODO
-
-#### Step by step
-
-TODO
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO
-
-### Ability levelling & upgrades
-
-<div class="placeholder">Diagram: Ability levelling & upgrades</div>
-
-#### What it does
-
-TODO
-
-#### Step by step
-
-TODO
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO
-
-### Consumables
-
-<div class="placeholder">Diagram: Consumables</div>
+<div class="placeholder">Diagram: buying an item, the three item kinds, and what each one changes</div>
 
 #### What it does
 
@@ -198,29 +138,9 @@ TODO
 
 TODO: can I attack → where does it hit → how hard → how much is taken → what happens next.
 
-### Melee combos
+### Melee combos & hit detection
 
-<div class="placeholder">Diagram: Melee combos</div>
-
-#### What it does
-
-TODO
-
-#### Step by step
-
-TODO
-
-#### How it works
-
-TODO
-
-#### Why I designed it this way
-
-TODO
-
-### Hit detection
-
-<div class="placeholder">Diagram: Hit detection</div>
+<div class="placeholder">Diagram: a combo from key press to anim notify sweep to gameplay event</div>
 
 #### What it does
 
