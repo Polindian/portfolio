@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 846" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Weapon equip in numbered steps. The equip ability runs on the server and owning client, decides the direction and plays a replicated montage. On every machine, anim notifies call ExecutePhaseAction, the swords fly through Throw, Hover and Snap, and FinalizeEquip attaches them and sets the WeaponsEquipped tag, which melee abilities require and Shoot is blocked by. Between rounds the server bumps a replicated ResetCount so every client resets the swords. The table below lists every function.">
+<defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="hd9822b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9822b"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker><marker id="h5cc28a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5cc28a"/></marker></defs>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<g transform="translate(0,-34)">
+<rect x="10" y="46" width="1080" height="150" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9a441" stroke-opacity="0.45"/>
+<text x="28" y="70" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">WHERE THE ABILITY RUNS</text>
+<text x="222.60000000000002" y="70" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">server + the owning client</text>
+<rect x="28" y="80" width="250" height="104" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="44" cy="100" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="44" y="104" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="62" y="105" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Press equip</text>
+<text x="42" y="128" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">input ID → ASC</text>
+<text x="42" y="146" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">activates GA_EquipToggle</text>
+<rect x="300" y="80" width="360" height="104" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="316" cy="100" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="316" y="104" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="334" y="105" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Decide which way</text>
+<text x="314" y="128" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">FindComponentByClass&lt;USwordEquipComponent></text>
+<text x="314" y="146" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Unequipped → BeginEquip + equip montage</text>
+<text x="314" y="164" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Equipped → BeginUnequip + unequip montage</text>
+<rect x="682" y="80" width="390" height="104" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="698" cy="100" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="698" y="104" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="716" y="105" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Play the montage</text>
+<text x="696" y="128" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">PlayMontageAndWait</text>
+<text x="696" y="146" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">GAS replicates the montage to EVERY machine,</text>
+<text x="696" y="164" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">so the next steps run everywhere</text>
+<path d="M280 132 L298 132" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<path d="M662 132 L680 132" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<rect x="10" y="210" width="1080" height="340" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5fa8ff" stroke-opacity="0.45"/>
+<text x="28" y="234" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">ON EVERY MACHINE</text>
+<rect x="28" y="246" width="330" height="122" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="44" cy="266" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="44" y="270" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="62" y="271" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Anim notify fires</text>
+<text x="42" y="294" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">AN_SwordPhase::Notify</text>
+<text x="42" y="312" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">→ ExecutePhaseAction(DetachAndThrow)</text>
+<text x="42" y="330" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">not mid-transition here? (other players)</text>
+<text x="42" y="348" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ work out the direction from the state</text>
+<rect x="386" y="246" width="330" height="122" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="402" cy="266" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="402" y="270" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="420" y="271" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Throw → Hover → Snap</text>
+<text x="400" y="294" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">StartPhase sets start + end transforms</text>
+<text x="400" y="312" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">TickComponent: Alpha += DeltaTime / Duration</text>
+<text x="400" y="330" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Lerp position, Slerp rotation</text>
+<text x="400" y="348" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Alpha reaches 1 → AdvanceToNextPhase</text>
+<rect x="744" y="246" width="328" height="122" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="760" cy="266" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="760" y="270" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="778" y="271" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Swords arrive</text>
+<text x="758" y="294" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">FinalizeEquip</text>
+<text x="758" y="312" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">attach to hand sockets</text>
+<text x="758" y="330" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">EquipState = Equipped</text>
+<text x="758" y="348" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">UpdateEquippedTag</text>
+<path d="M360 307 L384 307" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<path d="M718 307 L742 307" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<path d="M877 186 L877 214 L193 214 L193 244" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<text x="886" y="205" font-size="11" fill="#5fa8ff" font-weight="600" text-anchor="start">replicated montage</text>
+<text x="28" y="400" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Two state machines inside USwordEquipComponent</text>
+<rect x="28" y="414" width="230" height="56" rx="28" fill="#151922" stroke="#5cc28a"/>
+<text x="143" y="438" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">Unequipped</text>
+<text x="143" y="457" font-size="11" fill="#5cc28a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">tag: WeaponsUnequipped</text>
+<rect x="290" y="414" width="230" height="56" rx="28" fill="#151922" stroke="#9aa3b2"/>
+<text x="405" y="438" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">Equipping</text>
+<text x="405" y="457" font-size="11" fill="#9aa3b2" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">no weapon tag</text>
+<rect x="552" y="414" width="230" height="56" rx="28" fill="#151922" stroke="#5cc28a"/>
+<text x="667" y="438" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">Equipped</text>
+<text x="667" y="457" font-size="11" fill="#5cc28a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">tag: WeaponsEquipped</text>
+<rect x="814" y="414" width="230" height="56" rx="28" fill="#151922" stroke="#9aa3b2"/>
+<text x="929" y="438" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="middle">Unequipping</text>
+<text x="929" y="457" font-size="11" fill="#9aa3b2" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">no weapon tag</text>
+<path d="M260 442 L288 442" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M522 442 L550 442" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M784 442 L812 442" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M929 472 L929 492 L143 492 L143 474" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<text x="560" y="512" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="middle">ESwordEquipState: where the swords are</text>
+<text x="560" y="538" font-size="12" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">ESwordFlyPhase (only while Equipping or Unequipping):   None → Throw (ease out) → Hover → Snap (ease in) → None</text>
+<rect x="10" y="566" width="1080" height="150" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5cc28a" stroke-opacity="0.45"/>
+<text x="28" y="590" font-size="12.5" fill="#5cc28a" font-weight="700" text-anchor="start">WHAT THE TAGS ALLOW</text>
+<rect x="28" y="600" width="520" height="104" rx="8" fill="#151922" stroke="#5cc28a"/>
+<text x="42" y="625" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">WeaponsEquipped</text>
+<text x="42" y="648" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Stab, light combos and Thrust can activate</text>
+<text x="42" y="666" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">(ActivationRequiredTags)</text>
+<text x="42" y="684" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Shoot is blocked (ActivationBlockedTags)</text>
+<rect x="572" y="600" width="500" height="104" rx="8" fill="#151922" stroke="#5cc28a"/>
+<text x="586" y="625" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">WeaponsUnequipped</text>
+<text x="586" y="648" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Shoot can activate</text>
+<text x="586" y="666" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">(ActivationRequiredTags)</text>
+<text x="586" y="684" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Mid-transition: neither tag → no attacks at all</text>
+<rect x="10" y="730" width="1080" height="134" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9822b" stroke-opacity="0.45"/>
+<text x="28" y="754" font-size="12.5" fill="#d9822b" font-weight="700" text-anchor="start">BETWEEN ROUNDS</text>
+<rect x="28" y="764" width="330" height="88" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="44" cy="784" r="10" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="44" y="788" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="62" y="789" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Server</text>
+<text x="42" y="812" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GameMode::ResetAllPlayerSwords</text>
+<text x="42" y="830" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">→ ServerResetToUnequipped: ++ResetCount</text>
+<rect x="386" y="764" width="330" height="88" rx="8" fill="#151922" stroke="#d9822b"/>
+<circle cx="402" cy="784" r="10" fill="none" stroke="#d9822b" stroke-width="1.5"/>
+<text x="402" y="788" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">8</text>
+<text x="420" y="789" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Every client</text>
+<text x="400" y="812" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">ResetCount replicates</text>
+<text x="400" y="830" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">→ OnRep_ResetCount → ResetToUnequipped</text>
+<rect x="744" y="764" width="328" height="88" rx="8" fill="#151922" stroke="#d9822b"/>
+<text x="758" y="789" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Result</text>
+<text x="758" y="812" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">swords snapped back to the sheaths,</text>
+<text x="758" y="830" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">glow off, Unequipped tag</text>
+<path d="M360 808 L384 808" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+<path d="M718 808 L742 808" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+</g>
+</svg>

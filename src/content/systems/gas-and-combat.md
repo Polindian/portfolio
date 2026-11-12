@@ -118,23 +118,48 @@ Each of these is a system in its own right, and each one switches on conditions 
 
 ### Weapon equip
 
-<div class="placeholder">Diagram: Weapon equip</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-weapon-equip.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-weapon-equip.svg" alt="Weapon equip in numbered steps: the equip ability decides the direction and plays a replicated montage, anim notifies on every machine fly the swords through Throw, Hover and Snap, and the final state sets the tag that decides which attacks can be used. Between rounds a replicated counter resets every player's swords. The table below lists every function." /></a>
+  <figcaption>Only the animation crosses the network. Every machine flies its own swords, and one tag tells the attacks what's allowed.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Every hero carries two swords on their back. Pressing equip throws them over the shoulders, holds them in the air for a moment, then snaps them into the hands; pressing it again sends them back to the sheaths. With swords out a hero can use their light combos, Stab and Thrust. With swords away they can Shoot instead. While the swords are in the air, no attack can start. Every player sees the same flight, and every round starts with swords sheathed.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Press equip | Input ID → ASC activates [`GA_EquipToggle`](code:UGA_EquipToggle::ActivateAbility); blocked while aiming | Server and owning client |
+| 2 | Decide which way | `K2_CommitAbility` → `FindComponentByClass<USwordEquipComponent>` → [`BeginEquip`](code:USwordEquipComponent::BeginEquip) or [`BeginUnequip`](code:USwordEquipComponent::BeginUnequip); a press mid-flight is ignored | Server and owning client |
+| 3 | Play the montage | `PlayMontageAndWait`; the ability ends when the montage completes, blends out, is interrupted or is cancelled | Server and owning client, replicated to everyone |
+| 4 | Anim notify fires | [`UAN_SwordPhase::Notify`](code:UAN_SwordPhase::Notify) → [`ExecutePhaseAction`](code:USwordEquipComponent::ExecutePhaseAction)`(DetachAndThrow)`; other players' machines work out the direction from the current state | Every machine |
+| 5 | Throw, Hover, Snap | [`DetachSwordsToMeshRoot`](code:USwordEquipComponent::DetachSwordsToMeshRoot) → [`StartPhase`](code:USwordEquipComponent::StartPhase) → [`TickComponent`](code:USwordEquipComponent::TickComponent) moves the swords ([`UpdateSwordTransforms`](code:USwordEquipComponent::UpdateSwordTransforms)) → [`AdvanceToNextPhase`](code:USwordEquipComponent::AdvanceToNextPhase) | Every machine |
+| 6 | Swords arrive | [`FinalizeEquip`](code:USwordEquipComponent::FinalizeEquip) or [`FinalizeUnequip`](code:USwordEquipComponent::FinalizeUnequip) → [`AttachSwordsToSockets`](code:USwordEquipComponent::AttachSwordsToSockets) → [`UpdateEquippedTag`](code:USwordEquipComponent::UpdateEquippedTag) | Every machine |
+| 7 | Reset, server | [`ResetAllPlayerSwords`](code:AChrisGameMode::ResetAllPlayerSwords) → [`ServerResetToUnequipped`](code:USwordEquipComponent::ServerResetToUnequipped): `++ResetCount`, then reset its own copy | Server |
+| 8 | Reset, clients | `ResetCount` replicates → [`OnRep_ResetCount`](code:USwordEquipComponent::OnRep_ResetCount) → [`ResetToUnequipped`](code:USwordEquipComponent::ResetToUnequipped) | Every client |
 
 #### How it works
 
-TODO
+**An ability and a component** – [`UGA_EquipToggle`](code:UGA_EquipToggle::ActivateAbility) is a Gameplay Ability, so it gets GAS's cooldown, blocking tags and replicated montages for free. It only decides the direction and plays the right montage. [`USwordEquipComponent`](code:USwordEquipComponent) owns everything about the swords: where they are, the flight, the glow and the tag.
+
+**The animation drives the timing** – anim notifies placed on the montage call `ExecutePhaseAction` with one of three commands: start the throw, jump to the snap, or attach now. The last two keep the swords locked to the animation even if the flight durations in the editor don't quite match it. Because GAS replicates the montage, the notifies fire on every machine, and each one flies its own copy of the swords. On other players' machines `BeginEquip` was never called, so the throw command works out the direction from where the swords currently are.
+
+**Two state machines** – `ESwordEquipState` says where the swords are: unequipped, equipping, equipped or unequipping. `ESwordFlyPhase` runs only during the two transitions: Throw to an apex over the shoulder (easing out), Hover there, then Snap into the hands or sheaths (easing in). Each phase records a start and end transform, and the tick moves both swords by `Alpha += DeltaTime / Duration`, lerping position and slerping rotation. In flight the swords are attached to the character's root rather than a bone, so they follow the character but not the arms. Ticking is only switched on during the flight.
+
+**Tags as the contract** – when the swords land, `UpdateEquippedTag` adds `stats.weapon.equipped` or `stats.weapon.unequipped`, and removes both while they're in the air. The attack abilities never ask the component anything: melee abilities require the equipped tag, and Shoot requires unequipped and is blocked by equipped. The tags are loose and not replicated, which works because every machine sets them itself at the end of its own flight.
+
+**Resetting between rounds** – a function only runs on the machine that calls it, so the Game Mode can't sheath everyone's swords directly. Instead the server increments a replicated `ResetCount`. Each client sees the number change and resets its own swords in `OnRep_ResetCount`. The server resets its copy straight away, because `OnRep` never fires on the server.
 
 #### Why I designed it this way
 
-TODO
+- **Replicate the animation, not the swords** – sending the swords' positions every frame would cost bandwidth for something purely visual. One replicated montage gives every machine the same flight for free.
+- **The tag decouples equip from combat** – adding a new attack only needs the right required tag. The equip system doesn't know which attacks exist, and the attacks don't know how equipping works.
+- **The component is reusable** – the lobby's hero preview uses a display version of the same flight, and the anim notify drives whichever one the character has.
+- **A counter, not a bool, for the reset** – `OnRep` only fires when a value changes. A bool set to true would stay true after the first round, so the second reset would never arrive. A counter changes every time.
 
 ### The shop: skills, ability upgrades & consumables
 

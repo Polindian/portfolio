@@ -146,6 +146,11 @@
       "start": 1063,
       "end": 1070
     },
+    "AChrisGameMode::ResetAllPlayerSwords": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
+      "start": 1011,
+      "end": 1023
+    },
     "AChrisGameMode::ShowMatchResultBanner": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameMode.cpp",
       "start": 182,
@@ -391,6 +396,11 @@
       "start": 11,
       "end": 62
     },
+    "UAN_SwordPhase::Notify": {
+      "path": "Source/AnimationTesting/Private/Weapon/AN_SwordPhase.cpp",
+      "start": 7,
+      "end": 28
+    },
     "UCAssetManager::GetLoadedCharacterDefinitions": {
       "path": "Source/AnimationTesting/Private/Framework/CAssetManager.cpp",
       "start": 49,
@@ -496,6 +506,11 @@
       "start": 26,
       "end": 133
     },
+    "UGA_EquipToggle::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/Weapon/GA_EquipToggle.cpp",
+      "start": 20,
+      "end": 84
+    },
     "ULobbyWidget::CharacterDefinitionsLoaded": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
       "start": 285,
@@ -575,6 +590,86 @@
       "path": "Source/AnimationTesting/Private/AI/SkeletonAI.h",
       "start": 52,
       "end": 95
+    },
+    "USwordEquipComponent": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.h",
+      "start": 39,
+      "end": 178
+    },
+    "USwordEquipComponent::AdvanceToNextPhase": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 362,
+      "end": 385
+    },
+    "USwordEquipComponent::AttachSwordsToSockets": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 279,
+      "end": 291
+    },
+    "USwordEquipComponent::BeginEquip": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 136,
+      "end": 141
+    },
+    "USwordEquipComponent::BeginUnequip": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 143,
+      "end": 148
+    },
+    "USwordEquipComponent::DetachSwordsToMeshRoot": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 293,
+      "end": 308
+    },
+    "USwordEquipComponent::ExecutePhaseAction": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 150,
+      "end": 193
+    },
+    "USwordEquipComponent::FinalizeEquip": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 195,
+      "end": 205
+    },
+    "USwordEquipComponent::FinalizeUnequip": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 207,
+      "end": 219
+    },
+    "USwordEquipComponent::OnRep_ResetCount": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 87,
+      "end": 90
+    },
+    "USwordEquipComponent::ResetToUnequipped": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 221,
+      "end": 239
+    },
+    "USwordEquipComponent::ServerResetToUnequipped": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 241,
+      "end": 247
+    },
+    "USwordEquipComponent::StartPhase": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 314,
+      "end": 360
+    },
+    "USwordEquipComponent::TickComponent": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 391,
+      "end": 435
+    },
+    "USwordEquipComponent::UpdateEquippedTag": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 493,
+      "end": 517
+    },
+    "USwordEquipComponent::UpdateSwordTransforms": {
+      "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
+      "start": 437,
+      "end": 451
     }
   }
 }
