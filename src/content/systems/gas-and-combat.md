@@ -161,9 +161,9 @@ The numbers match the diagram.
 - **The component is reusable** – the lobby's hero preview uses a display version of the same flight, and the anim notify drives whichever one the character has.
 - **A counter, not a bool, for the reset** – `OnRep` only fires when a value changes. A bool set to true would stay true after the first round, so the second reset would never arrive. A counter changes every time.
 
-### The shop: skills, ability upgrades & consumables
+### The shop: buying an item
 
-<div class="placeholder">Diagram: buying an item, the three item kinds, and what each one changes</div>
+<div class="placeholder">Diagram: one item asset, three kinds of item, and the purchase flow on the server</div>
 
 #### What it does
 
@@ -180,6 +180,47 @@ TODO
 #### Why I designed it this way
 
 TODO
+
+### Skill trees & ability upgrades
+
+<div class="placeholder">Diagram: four trees of three tiers, the lock rule, and what each skill switches on</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
+### Inventory & consumables
+
+<div class="placeholder">Diagram: the five-slot grid, stacking, purchase limits, and using a potion from a slot</div>
+
+#### What it does
+
+TODO
+
+#### Step by step
+
+TODO
+
+#### How it works
+
+TODO
+
+#### Why I designed it this way
+
+TODO
+
 
 ## The hit
 
