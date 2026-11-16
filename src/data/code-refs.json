@@ -521,6 +521,21 @@
       "start": 20,
       "end": 84
     },
+    "UInventoryComponent": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.h",
+      "start": 23,
+      "end": 124
+    },
+    "UInventoryComponent::Client_ItemAdded_Implementation": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 437,
+      "end": 449
+    },
+    "UInventoryComponent::Client_ItemRemoved_Implementation": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 405,
+      "end": 420
+    },
     "UInventoryComponent::Client_PurchaseFailed_Implementation": {
       "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
       "start": 380,
@@ -530,6 +545,26 @@
       "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
       "start": 392,
       "end": 403
+    },
+    "UInventoryComponent::ConsumeItem": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 343,
+      "end": 365
+    },
+    "UInventoryComponent::GetAvailableStackForItem": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 117,
+      "end": 131
+    },
+    "UInventoryComponent::GetConsumablePurchaseCount": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 145,
+      "end": 149
+    },
+    "UInventoryComponent::GetInventoryItemByHandle": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 90,
+      "end": 98
     },
     "UInventoryComponent::GetSoul": {
       "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
@@ -541,15 +576,75 @@
       "start": 306,
       "end": 341
     },
+    "UInventoryComponent::IsFullFor": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 100,
+      "end": 109
+    },
+    "UInventoryComponent::Server_ActivateItem_Implementation": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 284,
+      "end": 299
+    },
     "UInventoryComponent::Server_Purchase_Implementation": {
       "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
       "start": 185,
       "end": 253
     },
+    "UInventoryComponent::TryActivateItemInSlot": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 133,
+      "end": 143
+    },
     "UInventoryComponent::TryPurchase": {
       "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
       "start": 32,
       "end": 65
+    },
+    "UInventoryItem": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.h",
+      "start": 46,
+      "end": 91
+    },
+    "UInventoryItem::AddStackCount": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 57,
+      "end": 65
+    },
+    "UInventoryItem::ApplyConsumeEffect": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 151,
+      "end": 161
+    },
+    "UInventoryItem::ApplyGASModifications": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 205,
+      "end": 225
+    },
+    "UInventoryItem::GetAbilityCooldownTimeRemaining": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 179,
+      "end": 187
+    },
+    "UInventoryItem::InitItem": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 126,
+      "end": 133
+    },
+    "UInventoryItem::IsOnCooldown": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 200,
+      "end": 203
+    },
+    "UInventoryItem::ReduceStackCount": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 67,
+      "end": 75
+    },
+    "UInventoryItem::TryActivateGrantedAbility": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.cpp",
+      "start": 137,
+      "end": 149
     },
     "ULobbyWidget::CharacterDefinitionsLoaded": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",

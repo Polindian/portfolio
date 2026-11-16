@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 536" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Inventory and consumables in numbered steps. In the shop the server checks for room, then stacks the potion or creates a new inventory item with a handle. The inventory is a map from handle to item with five slots. In the arena a slot key sends the handle to the server, which checks the cooldown, activates a granted ability or applies the consumed effect, reduces the stack, and tells the HUD. The table below lists every function.">
+<defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="hd9822b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9822b"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker></defs>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="10" y="14" width="1080" height="210" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9a441" stroke-opacity="0.45"/>
+<text x="28" y="38" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">IN THE SHOP (server, after Server_Purchase approves)</text>
+<rect x="28" y="48" width="330" height="160" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="44" cy="68" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="44" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="62" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Room for it?</text>
+<text x="42" y="96" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">IsFullFor</text>
+<text x="42" y="114" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">a stack of this item with room → fine</text>
+<text x="42" y="132" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">otherwise a free slot of the 5 → fine</text>
+<text x="42" y="150" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">bought 3 this match already → refused</text>
+<text x="42" y="168" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">(ConsumablesPurchasedThisMatch)</text>
+<rect x="386" y="48" width="330" height="160" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="402" cy="68" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="402" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2a</text>
+<text x="420" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Stack it</text>
+<text x="400" y="96" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GetAvailableStackForItem</text>
+<text x="400" y="114" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">→ AddStackCount (max 3)</text>
+<text x="400" y="132" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Client_ItemStackCountChanged</text>
+<rect x="744" y="48" width="328" height="160" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="760" cy="68" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="760" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2b</text>
+<text x="778" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">New item</text>
+<text x="758" y="96" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">NewObject&lt;UInventoryItem></text>
+<text x="758" y="114" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">FInventoryItemHandle::CreateHandle</text>
+<text x="758" y="132" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">InventoryMap.Add(handle, item)</text>
+<text x="758" y="150" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Nightflare: GiveAbility(GA_BlindBomb)</text>
+<text x="758" y="168" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Client_ItemAdded(handle, asset)</text>
+<path d="M360 128 L384 128" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<path d="M360 128 L372 128 L372 40 L908 40 L908 46" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<text x="28" y="262" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">The inventory</text>
+<text x="140" y="262" font-size="11" fill="#9aa3b2" font-weight="400" text-anchor="start">TMap&lt;FInventoryItemHandle, UInventoryItem*> · 5 slots · a handle is a ticket both machines share</text>
+<rect x="28" y="274" width="196" height="40" rx="6" fill="#151922" stroke="#d9a441"/>
+<text x="126" y="299" font-size="12" fill="#e6e8ee" font-weight="600" text-anchor="middle">Blood Serum ×2</text>
+<text x="36" y="286" font-size="9.5" fill="#9aa3b2" font-weight="500" text-anchor="start">slot 0</text>
+<rect x="240" y="274" width="196" height="40" rx="6" fill="#151922" stroke="#d9a441"/>
+<text x="338" y="299" font-size="12" fill="#e6e8ee" font-weight="600" text-anchor="middle">Elixir ×1</text>
+<text x="248" y="286" font-size="9.5" fill="#9aa3b2" font-weight="500" text-anchor="start">slot 1</text>
+<rect x="452" y="274" width="196" height="40" rx="6" fill="#151922" stroke="#d9822b"/>
+<text x="550" y="299" font-size="12" fill="#e6e8ee" font-weight="600" text-anchor="middle">Nightflare ×1</text>
+<text x="460" y="286" font-size="9.5" fill="#9aa3b2" font-weight="500" text-anchor="start">slot 2</text>
+<rect x="664" y="274" width="196" height="40" rx="6" fill="#151922" stroke="#2c3340"/>
+<text x="762" y="299" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">empty</text>
+<text x="672" y="286" font-size="9.5" fill="#9aa3b2" font-weight="500" text-anchor="start">slot 3</text>
+<rect x="876" y="274" width="196" height="40" rx="6" fill="#151922" stroke="#2c3340"/>
+<text x="974" y="299" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="middle">empty</text>
+<text x="884" y="286" font-size="9.5" fill="#9aa3b2" font-weight="500" text-anchor="start">slot 4</text>
+<rect x="10" y="332" width="1080" height="196" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5fa8ff" stroke-opacity="0.45"/>
+<text x="28" y="356" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">IN THE ARENA</text>
+<rect x="28" y="366" width="300" height="150" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="44" cy="386" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="44" y="390" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="62" y="391" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Press a slot key</text>
+<text x="42" y="414" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">TryActivateItemInSlot(slot)</text>
+<text x="42" y="432" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">find the item in that slot</text>
+<text x="42" y="450" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">→ Server_ActivateItem(handle)</text>
+<text x="42" y="468" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">a Server RPC carrying the ticket,</text>
+<text x="42" y="486" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">never a pointer</text>
+<rect x="356" y="366" width="340" height="150" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="372" cy="386" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="372" y="390" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="390" y="391" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Server checks and uses it</text>
+<text x="370" y="414" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GetInventoryItemByHandle</text>
+<text x="370" y="432" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">IsOnCooldown? → return</text>
+<text x="370" y="450" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">TryActivateGrantedAbility (Nightflare)</text>
+<text x="370" y="468" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">ConsumeItem → ApplyConsumeEffect (potion)</text>
+<text x="370" y="486" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">ReduceStackCount: 0 left → remove</text>
+<rect x="724" y="366" width="348" height="150" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="740" cy="386" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="740" y="390" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="758" y="391" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Back on the HUD</text>
+<text x="738" y="414" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Client RPCs:</text>
+<text x="738" y="432" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Client_ItemStackCountChanged</text>
+<text x="738" y="450" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">or Client_ItemRemoved</text>
+<text x="738" y="468" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">cooldown shown from</text>
+<text x="738" y="486" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GetAbilityCooldownTimeRemaining</text>
+<path d="M330 441 L354 441" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<path d="M698 441 L722 441" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+</svg>
