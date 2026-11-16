@@ -476,6 +476,11 @@
       "start": 76,
       "end": 292
     },
+    "UChrisAttributeSet::PostGameplayEffectExecute": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAttributeSet.cpp",
+      "start": 24,
+      "end": 304
+    },
     "UChrisAttributeSet::PreAttributeChange": {
       "path": "Source/AnimationTesting/Private/GAS/ChrisAttributeSet.cpp",
       "start": 12,
@@ -586,10 +591,20 @@
       "start": 155,
       "end": 174
     },
+    "UMMC_HeavyAttackBuffDamage::CalculateBaseMagnitude_Implementation": {
+      "path": "Source/AnimationTesting/Private/GAS/MMC_HeavyAttackBuffDamage.cpp",
+      "start": 15,
+      "end": 28
+    },
     "UMMC_LevelBased::CalculateBaseMagnitude_Implementation": {
       "path": "Source/AnimationTesting/Private/GAS/MMC_LevelBased.cpp",
       "start": 17,
       "end": 36
+    },
+    "UMMC_LightAttackBuffDamage::CalculateBaseMagnitude_Implementation": {
+      "path": "Source/AnimationTesting/Private/GAS/MMC_LightAttackBuffDamage.cpp",
+      "start": 27,
+      "end": 47
     },
     "UOverheadStatsGauge::ConfigureTeamColor": {
       "path": "Source/AnimationTesting/Private/Widgets/OverheadStatsGauge.cpp",
@@ -631,6 +646,11 @@
       "start": 12,
       "end": 60
     },
+    "UShopWidget::FindSkillIndices": {
+      "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
+      "start": 446,
+      "end": 469
+    },
     "UShopWidget::OnItemPurchaseRequested": {
       "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
       "start": 126,
@@ -645,6 +665,16 @@
       "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
       "start": 69,
       "end": 124
+    },
+    "UShopWidget::UpdateAbilityUpgradeStates": {
+      "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
+      "start": 305,
+      "end": 336
+    },
+    "UShopWidget::UpdateSkillLockStates": {
+      "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
+      "start": 259,
+      "end": 289
     },
     "USwordEquipComponent": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.h",

@@ -206,23 +206,49 @@ The numbers match the diagram.
 
 ### Skill trees & ability upgrades
 
-<div class="placeholder">Diagram: four trees of three tiers, the lock rule, and what each skill switches on</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-skill-trees.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-skill-trees.svg" alt="The four skill trees, Assassin, Gambler, Tank and Magician, three tiers each at 20, 30 and 50 souls, each tier locked until the one above is owned, with the attribute each skill sets. Below them the four ability upgrades at 50 souls each." /></a>
+  <figcaption>Every skill is a switch on the hero's attribute set. The shop flips it; combat reads it.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Twelve skills sit in four trees of three tiers: Assassin (stealth and attack power), Gambler (chance), Tank (health and heavy damage) and Magician (support and objectives). A tier can't be bought until the one above it is owned, and prices rise from 20 to 30 to 50 souls, so finishing a tree means committing to it. Four premium ability upgrades at 50 souls each give one heavy ability a unique twist: Bonebreaker for Smash, Shockwave for Stun, Scorched for Thrust and Deadeye for Shoot. All sixteen are bought once and last the match.
 
 #### Step by step
 
-TODO
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Lock state | [`UpdateSkillLockStates`](code:UShopWidget::UpdateSkillLockStates): for each tree, tier 1 is open; tier n is locked unless tier n−1 is owned. [`UpdateAbilityUpgradeStates`](code:UShopWidget::UpdateAbilityUpgradeStates): never locked, only owned or not | Owning client |
+| 2 | Purchase | The buying flow above; the server applies the item's `EquippedEffect` to the hero | Server |
+| 3 | The effect sets an attribute | An infinite Gameplay Effect adds to one [`UChrisAttributeSet`](code:UChrisAttributeSet) attribute, e.g. `LoadedDiceActive = 1`, `HeavyAttackBuffDamage = 0.2` | Server, replicated |
+| 4 | Relock | `Client_SkillPurchased` → [`OnSkillPurchasedCallback`](code:UShopWidget::OnSkillPurchasedCallback) → [`FindSkillIndices`](code:UShopWidget::FindSkillIndices) finds the tree and tier → the branch fills with the tree's colour and the next tier unlocks | Owning client |
+| 5 | Combat reads it | Attack damage: [`MMC_LightAttackBuffDamage`](code:UMMC_LightAttackBuffDamage::CalculateBaseMagnitude_Implementation) and [`MMC_HeavyAttackBuffDamage`](code:UMMC_HeavyAttackBuffDamage::CalculateBaseMagnitude_Implementation). After a hit: [`PostGameplayEffectExecute`](code:UChrisAttributeSet::PostGameplayEffectExecute). Flags: [`GetActorCaptureWeight`](code:AFlag::GetActorCaptureWeight). Kills: `GAP_Dead` | Server |
 
 #### How it works
 
-TODO
+**A skill is an attribute** – no C++ knows that Loaded Dice exists. Its asset points at a Gameplay Effect with infinite duration and one modifier, `LoadedDiceActive +1`. Buying it applies that effect to the hero's ASC and it stays there for the match. The combat code only ever asks the attribute set: is `LoadedDiceActive` above zero? What is `HeavyAttackBuffDamage`? The table below is the whole contract between the shop and combat.
+
+| Skill | Attribute it sets | Read by |
+|---|---|---|
+| Bladed Edge, Juggernaut | `LightAttackBuffDamage`, `HeavyAttackBuffDamage` | The buff MMCs, while the damage is calculated |
+| Fleetfoot, Iron Clad | `MoveSpeed`, `MaxHealth` | Movement and the health clamp |
+| Double Down, Loaded Dice, Stealth Strike | `DoubleDownChance`, `LoadedDiceActive`, `StealthStrikeActive` | `PostGameplayEffectExecute`, attacker's side |
+| Bulwark, Stasis Ward, Arcane Aegis | `DamageReduction`, `StasisWardReduction`, `HeavyDamageReduction` | `PostGameplayEffectExecute`, target's side |
+| Stacked Odds | `StackedOddsChance` | `GAP_Dead`, when rewards are paid |
+| Dominion | `DominionBonus` | `AFlag::GetActorCaptureWeight`, every frame in a zone |
+| Bonebreaker, Shockwave, Scorched, Deadeye | `SmashDamageBonus`, `StunSweepRadius`, `ScorchedActive`, `DeadeyeActive` | The heavy abilities and the damage pipeline |
+
+**The lock rule lives in the widget** – the shop keeps each tree as an ordered list of tiers. After every purchase it walks each list: tier 1 is always open, and each later tier is locked unless the previous one is owned. The upgrades have no prerequisite, so their widgets only switch between owned and available. The server does not currently check the order; that's on the improvement list.
+
+**Cost per hit is negligible** – every hit reads a dozen attributes and runs a few branches. That's nanoseconds against a 16 ms frame, far below the sweep, montage and replication the same hit already pays for.
 
 #### Why I designed it this way
 
-TODO
+- **Trees force a build** – with roughly 100 souls a round, finishing one tree means skipping the others. Rising prices and the lock rule turn twelve skills into four playstyles.
+- **Attributes instead of code** – adding a skill is a data asset, a Gameplay Effect and one attribute. Balancing it is editing a number in the effect. The shop and combat never change.
+- **Switches, not handlers** – one damage function checks every switch in a fixed order. Scattering each skill into its own handler would hide that order, which matters: Stealth Strike applies before reductions, and burn damage skips every bonus.
+- **Upgrades as premium flat purchases** – the four ability upgrades change how an ability feels rather than a number, so they sit outside the trees at one price.
 
 ### Inventory & consumables
 
