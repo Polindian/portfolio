@@ -163,23 +163,46 @@ The numbers match the diagram.
 
 ### The shop: buying an item
 
-<div class="placeholder">Diagram: one item asset, three kinds of item, and the purchase flow on the server</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-shop-buying.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-shop-buying.svg" alt="Buying a shop item in numbered steps: the shelf is loaded from item assets, a click is checked on the player's PC, the server checks the phase and souls again, pays, and either applies a permanent effect or puts a consumable in the inventory, then tells the player it succeeded or failed. The table below lists every function." /></a>
+  <figcaption>The player's PC answers instantly; the server is the one that actually sells.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Between rounds the shop opens for 60 seconds. Players spend the souls they earned on 21 items: 12 skills in four trees, 4 premium ability upgrades, and 5 potions. Skills and upgrades are bought once and last the whole match. Potions go into a five-slot inventory to be used in the arena. The shop refuses anything the player can't afford, already owns, or has bought too many of, and closes the moment the phase ends.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Items on the shelf | [`LoadShopItems`](code:UCAssetManager::LoadShopItems) loads every [`UPA_ShopItem`](code:UPA_ShopItem) by asset type → [`ShopItemLoadFinished`](code:UShopWidget::ShopItemLoadFinished) fills the shop | Owning client |
+| 2 | Click an item | [`OnItemPurchaseRequested`](code:UShopWidget::OnItemPurchaseRequested): refuse if the shop is closing → [`TryPurchase`](code:UInventoryComponent::TryPurchase): refuse if owned, out of stock or unaffordable ([`GetSoul`](code:UInventoryComponent::GetSoul)) | Owning client |
+| 3 | Ask the server | `TryPurchase` marks the item owned locally, then sends `Server_Purchase` | Owning client → server |
+| 4 | Check again | [`Server_Purchase`](code:UInventoryComponent::Server_Purchase_Implementation): still the shop phase (`IsInShopPhase`)? enough souls? If not → `Client_PurchaseFailed` | Server |
+| 5a | Permanent item | Pay with `ApplyModToAttribute` on Soul → apply `EquippedEffect` to self, or `GiveAbility` for a `GrantedAbility` → `Client_SkillPurchased` | Server |
+| 5b | Consumable | Slot free and stock left? → [`GrantItem`](code:UInventoryComponent::GrantItem) → pay → count the purchase (see Inventory & consumables) | Server |
+| 6 | Confirmed | [`Client_SkillPurchased`](code:UInventoryComponent::Client_SkillPurchased_Implementation) → `OnSkillPurchased` → the widget relocks the trees ([`OnSkillPurchasedCallback`](code:UShopWidget::OnSkillPurchasedCallback)) and plays the unlock sound | Owning client |
+| 6b | Refused | [`Client_PurchaseFailed`](code:UInventoryComponent::Client_PurchaseFailed_Implementation) un-marks the item → `OnPurchaseFailed` → reject sound | Owning client |
 
 #### How it works
 
-TODO
+**One asset class for every item** – [`UPA_ShopItem`](code:UPA_ShopItem) is a primary data asset with an icon, tooltip, price and stock settings, and three optional payloads: an `EquippedEffect` (a Gameplay Effect applied once and kept for the match), a `ConsumedEffect` (applied when the item is used), or a `GrantedAbility` (an ability given on purchase and activated when the item is used). Each item sets exactly one. Skills and upgrades use the equipped effect, potions the consumed effect, and Nightflare a granted ability, because a thrown bomb needs targeting and a projectile that an effect can't provide. The Asset Manager registers a "ShopItem" type, so the shop finds every item by type, like the hero definitions.
+
+**Two rounds of checks** – the widget and `TryPurchase` check everything the client can know: the shop isn't closing, the item isn't owned, stock is left, souls are enough. A failure plays the reject sound and sends nothing. `Server_Purchase` then repeats the checks that matter, the phase and the souls, because the client's values could be stale or dishonest. Only the server pays, by subtracting the price from the Soul attribute, and only the server applies effects or grants abilities.
+
+**Permanent or consumable** – the single branch in `Server_Purchase` is `bIsConsumable`. Permanent items never touch the inventory: the effect is applied to the hero's ASC and the item is remembered in `PurchasedItems`, so it can't be bought twice. Consumables go through `GrantItem` into the inventory grid instead.
+
+**Answering the client** – the server replies with a Client RPC either way. `Client_SkillPurchased` confirms the purchase, and the widget's callback unlocks the next tier. `Client_PurchaseFailed` removes the optimistic local mark, so the item can be tried again, and plays the reject sound.
 
 #### Why I designed it this way
 
-TODO
+- **Items as data** – a new potion or skill is one asset and one Gameplay Effect, no C++. The shop screen and purchase code never change.
+- **Optimistic marking on the client** – marking an item owned before the server answers stops rapid double-clicks sending two purchases, without waiting a round trip. The failure RPC undoes it if the server disagrees.
+- **The server owns souls** – souls are an attribute only the server modifies, and the purchase is a request. A client can't give itself items or skip the bill.
+- **Same reject for every failure** – one sound for closed, unaffordable, owned or out of stock keeps the shop quick to read in the 60 seconds players have. Showing the reason is a UI improvement I'd add.
 
 ### Skill trees & ability upgrades
 

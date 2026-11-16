@@ -411,6 +411,11 @@
       "start": 44,
       "end": 47
     },
+    "UCAssetManager::LoadShopItems": {
+      "path": "Source/AnimationTesting/Private/Framework/CAssetManager.cpp",
+      "start": 20,
+      "end": 23
+    },
     "UCHeroAttributeSet": {
       "path": "Source/AnimationTesting/Private/GAS/CHeroAttributeSet.h",
       "start": 18,
@@ -511,6 +516,36 @@
       "start": 20,
       "end": 84
     },
+    "UInventoryComponent::Client_PurchaseFailed_Implementation": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 380,
+      "end": 390
+    },
+    "UInventoryComponent::Client_SkillPurchased_Implementation": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 392,
+      "end": 403
+    },
+    "UInventoryComponent::GetSoul": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 67,
+      "end": 80
+    },
+    "UInventoryComponent::GrantItem": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 306,
+      "end": 341
+    },
+    "UInventoryComponent::Server_Purchase_Implementation": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 185,
+      "end": 253
+    },
+    "UInventoryComponent::TryPurchase": {
+      "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
+      "start": 32,
+      "end": 65
+    },
     "ULobbyWidget::CharacterDefinitionsLoaded": {
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
       "start": 285,
@@ -590,6 +625,26 @@
       "path": "Source/AnimationTesting/Private/AI/SkeletonAI.h",
       "start": 52,
       "end": 95
+    },
+    "UPA_ShopItem": {
+      "path": "Source/AnimationTesting/Private/Inventory/PA_ShopItem.h",
+      "start": 12,
+      "end": 60
+    },
+    "UShopWidget::OnItemPurchaseRequested": {
+      "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
+      "start": 126,
+      "end": 168
+    },
+    "UShopWidget::OnSkillPurchasedCallback": {
+      "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
+      "start": 291,
+      "end": 303
+    },
+    "UShopWidget::ShopItemLoadFinished": {
+      "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
+      "start": 69,
+      "end": 124
     },
     "USwordEquipComponent": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.h",

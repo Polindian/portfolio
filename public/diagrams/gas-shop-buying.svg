@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Buying a shop item in numbered steps. On the player PC: the shelf is loaded from shop item assets, a click is checked locally (locked tier, shop closing, owned, stock, souls), then Server_Purchase is sent. On the server: the shop phase and souls are checked again, souls are paid, a permanent item applies its equipped effect or grants its ability, and a consumable goes into the inventory. Client_SkillPurchased or Client_PurchaseFailed tells the player. The table below lists every function.">
+<defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker><marker id="hd9822b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9822b"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker></defs>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="10" y="14" width="1080" height="200" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5fa8ff" stroke-opacity="0.45"/>
+<text x="28" y="38" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">ON THE BUYING PLAYER'S PC</text>
+<rect x="28" y="48" width="300" height="150" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="44" cy="68" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="44" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="62" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Items on the shelf</text>
+<text x="42" y="96" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">one UPA_ShopItem asset per item</text>
+<text x="42" y="114" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">LoadShopItems (by asset type)</text>
+<text x="42" y="132" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">icon · tooltip · price · stock</text>
+<text x="42" y="150" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">EquippedEffect | ConsumedEffect |</text>
+<text x="42" y="168" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GrantedAbility — one is set</text>
+<rect x="356" y="48" width="340" height="150" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="372" cy="68" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="372" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="390" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Click an item</text>
+<text x="370" y="96" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">OnItemPurchaseRequested</text>
+<text x="370" y="114" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">locked tier → not clickable</text>
+<text x="370" y="132" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">shop closing → reject sound</text>
+<text x="370" y="150" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">TryPurchase: owned? stock? souls?</text>
+<text x="370" y="168" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">fail → reject sound, nothing sent</text>
+<rect x="724" y="48" width="348" height="150" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="740" cy="68" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="740" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="758" y="73" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Ask the server</text>
+<text x="738" y="96" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">mark owned locally (no double-clicks)</text>
+<text x="738" y="114" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Server_Purchase(Item)</text>
+<text x="738" y="132" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">a Server RPC on the Inventory Component,</text>
+<text x="738" y="150" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">which the hero owns</text>
+<path d="M330 123 L354 123" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<path d="M698 123 L722 123" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<rect x="10" y="238" width="1080" height="190" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9a441" stroke-opacity="0.45"/>
+<text x="28" y="262" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="start">ON THE SERVER</text>
+<rect x="28" y="272" width="300" height="140" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="44" cy="292" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="44" y="296" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="62" y="297" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Check again</text>
+<text x="42" y="320" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Server_Purchase_Implementation</text>
+<text x="42" y="338" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">IsInShopPhase? (Game Mode)</text>
+<text x="42" y="356" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GetSoul() >= Price?</text>
+<text x="42" y="374" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">no → Client_PurchaseFailed</text>
+<rect x="356" y="272" width="340" height="140" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="372" cy="292" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="372" y="296" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5a</text>
+<text x="390" y="297" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Permanent item (skill, upgrade)</text>
+<text x="370" y="320" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Soul −= Price (ApplyModToAttribute)</text>
+<text x="370" y="338" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">EquippedEffect → apply to self, forever</text>
+<text x="370" y="356" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GrantedAbility → GiveAbility</text>
+<text x="370" y="374" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Client_SkillPurchased</text>
+<rect x="724" y="272" width="348" height="140" rx="8" fill="#151922" stroke="#d9a441"/>
+<circle cx="740" cy="292" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="740" y="296" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5b</text>
+<text x="758" y="297" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Consumable (potion)</text>
+<text x="738" y="320" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">slot free? stock left? → GrantItem</text>
+<text x="738" y="338" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Soul −= Price</text>
+<text x="738" y="356" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">count this match +1</text>
+<text x="738" y="374" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ Inventory &amp; consumables</text>
+<path d="M330 342 L354 342" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<path d="M330 342 L344 342 L344 250 L898 250 L898 270" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<path d="M898 200 L898 236" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<text x="906" y="222" font-size="11" fill="#5fa8ff" font-weight="600" text-anchor="start">Server RPC</text>
+<rect x="10" y="470" width="1080" height="94" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5fa8ff" stroke-opacity="0.45"/>
+<text x="28" y="494" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">BACK ON THE PLAYER'S PC</text>
+<rect x="28" y="504" width="500" height="56" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="44" cy="524" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="44" y="528" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="62" y="529" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Client_SkillPurchased</text>
+<text x="42" y="552" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">OnSkillPurchased → the widget unlocks the next tier · unlock sound</text>
+<rect x="556" y="504" width="516" height="56" rx="8" fill="#151922" stroke="#5fa8ff"/>
+<circle cx="572" cy="524" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="572" y="528" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6b</text>
+<text x="590" y="529" font-size="14" fill="#e6e8ee" font-weight="600" text-anchor="start">Client_PurchaseFailed</text>
+<text x="570" y="552" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">un-mark it locally → OnPurchaseFailed → reject sound</text>
+<path d="M526 412 L526 436 L278 436 L278 502" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<text x="300" y="430" font-size="11" fill="#d9a441" font-weight="600" text-anchor="start">Client RPC</text>
+<path d="M178 412 L178 456 L814 456 L814 502" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#hd9822b)"/>
+<text x="822" y="476" font-size="11" fill="#d9822b" font-weight="600" text-anchor="start">Client RPC</text>
+</svg>
