@@ -207,13 +207,13 @@ The numbers match the diagram.
 ### Skill trees & ability upgrades
 
 <figure class="diagram">
-  <a href="../../diagrams/gas-skill-trees.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-skill-trees.svg" alt="The four skill trees, Assassin, Gambler, Tank and Magician, three tiers each at 20, 30 and 50 souls, each tier locked until the one above is owned, with the attribute each skill sets. Below them the four ability upgrades at 50 souls each." /></a>
+  <a href="../../diagrams/gas-skill-trees.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-skill-trees.svg" alt="The four skill trees, Assassin, Gambler, Tank and Magician, three tiers each costing 20 to 50 souls, each tier locked until the one above is owned, with the attribute each skill sets. Below them the four ability upgrades at 50 souls each." /></a>
   <figcaption>Every skill is a switch on the hero's attribute set. The shop flips it; combat reads it.</figcaption>
 </figure>
 
 #### What it does
 
-Twelve skills sit in four trees of three tiers: Assassin (stealth and attack power), Gambler (chance), Tank (health and heavy damage) and Magician (support and objectives). A tier can't be bought until the one above it is owned, and prices rise from 20 to 30 to 50 souls, so finishing a tree means committing to it. Four premium ability upgrades at 50 souls each give one heavy ability a unique twist: Bonebreaker for Smash, Shockwave for Stun, Scorched for Thrust and Deadeye for Shoot. All sixteen are bought once and last the match.
+Twelve skills sit in four trees of three tiers: Assassin (stealth and attack power), Gambler (chance), Tank (health and heavy damage) and Magician (support and objectives). A tier can't be bought until the one above it is owned, and each skill costs between 20 and 50 souls, rising through the tree, so finishing a tree means committing to it. Four premium ability upgrades at 50 souls each give one heavy ability a unique twist: Bonebreaker for Smash, Shockwave for Stun, Scorched for Thrust and Deadeye for Shoot. All sixteen are bought once and last the match.
 
 #### Step by step
 
@@ -245,7 +245,7 @@ Twelve skills sit in four trees of three tiers: Assassin (stealth and attack pow
 
 #### Why I designed it this way
 
-- **Trees force a build** – with roughly 100 souls a round, finishing one tree means skipping the others. Rising prices and the lock rule turn twelve skills into four playstyles.
+- **Trees force a build** – with roughly 100 souls a round, finishing one tree means skipping the others. Higher prices further down each tree and the lock rule turn twelve skills into four playstyles.
 - **Attributes instead of code** – adding a skill is a data asset, a Gameplay Effect and one attribute. Balancing it is editing a number in the effect. The shop and combat never change.
 - **Switches, not handlers** – one damage function checks every switch in a fixed order. Scattering each skill into its own handler would hide that order, which matters: Stealth Strike applies before reductions, and burn damage skips every bonus.
 - **Upgrades as premium flat purchases** – the four ability upgrades change how an ability feels rather than a number, so they sit outside the trees at one price.
