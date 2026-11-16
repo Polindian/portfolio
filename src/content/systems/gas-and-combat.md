@@ -253,43 +253,45 @@ Twelve skills sit in four trees of three tiers: Assassin (stealth and attack pow
 ### Inventory & consumables
 
 <figure class="diagram">
-  <a href="../../diagrams/gas-inventory.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-inventory.svg" alt="Inventory and consumables in numbered steps: in the shop the server checks for room and stacks the potion or creates a new inventory item with a handle; the inventory is a five-slot map from handle to item; in the arena a slot key sends the handle to the server, which checks the cooldown, uses the item and tells the HUD. The table below lists every function." /></a>
-  <figcaption>Items are tickets. The client presses a slot, the server does everything else.</figcaption>
+  <a href="../../diagrams/gas-inventory.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-inventory.svg" alt="Inventory in six jobs. Buying: the player's PC clicks, the server makes the item with a new ticket, and the player's PC copies it under the same ticket while its widget picks a slot. Both machines keep a map of ticket to item. Using: a key press finds the ticket in that slot and sends it to the server, the server uses the item, and the player's PC removes it or updates the stack." /></a>
+  <figcaption>Six jobs, two copies of the inventory, and one ticket number that both machines agree on.</figcaption>
 </figure>
 
 #### What it does
 
-Potions bought in the shop go into a five-slot inventory. Buying the same potion again stacks it, up to three, and each potion can only be bought three times a match. In the arena a slot key uses one: a potion applies its buff and the stack goes down by one, and the empty stack disappears. Nightflare works the same way from the player's side, but instead of a buff it fires the blind-bomb ability it granted when it was bought.
+Potions bought in the shop go into a five-slot inventory. Buying the same potion again stacks it, up to three, and each potion can only be bought three times a match. In the arena a number key uses the potion in that slot: it applies its buff, the stack goes down by one, and an empty stack disappears. Nightflare works the same way from the player's side, but instead of a buff it throws the blind bomb it granted when it was bought.
 
 #### Step by step
 
-The numbers match the diagram.
+Six jobs, numbered as in the diagram. The first function in each row carries the job; the rest are helpers it calls.
 
-| # | Step | Calls, in order | Runs on |
+| # | Job | Functions | Runs on |
 |---|---|---|---|
-| 1 | Room for it? | `Server_Purchase` → [`IsFullFor`](code:UInventoryComponent::IsFullFor): a stack with room, or a free slot; and [`GetConsumablePurchaseCount`](code:UInventoryComponent::GetConsumablePurchaseCount) under the per-match limit | Server |
-| 2a | Stack it | [`GrantItem`](code:UInventoryComponent::GrantItem) → [`GetAvailableStackForItem`](code:UInventoryComponent::GetAvailableStackForItem) → [`AddStackCount`](code:UInventoryItem::AddStackCount) → `Client_ItemStackCountChanged` | Server |
-| 2b | New item | `GrantItem` → `NewObject<UInventoryItem>` + `CreateHandle` → [`InitItem`](code:UInventoryItem::InitItem) ([`ApplyGASModifications`](code:UInventoryItem::ApplyGASModifications) grants Nightflare's ability) → `InventoryMap.Add` → [`Client_ItemAdded`](code:UInventoryComponent::Client_ItemAdded_Implementation) | Server |
-| 3 | Press a slot key | [`TryActivateItemInSlot`](code:UInventoryComponent::TryActivateItemInSlot) finds the item in that slot → `Server_ActivateItem(handle)` | Owning client → server |
-| 4 | Use it | [`Server_ActivateItem`](code:UInventoryComponent::Server_ActivateItem_Implementation): [`GetInventoryItemByHandle`](code:UInventoryComponent::GetInventoryItemByHandle) → [`IsOnCooldown`](code:UInventoryItem::IsOnCooldown)? → [`TryActivateGrantedAbility`](code:UInventoryItem::TryActivateGrantedAbility) → [`ConsumeItem`](code:UInventoryComponent::ConsumeItem) → [`ApplyConsumeEffect`](code:UInventoryItem::ApplyConsumeEffect) → [`ReduceStackCount`](code:UInventoryItem::ReduceStackCount) | Server |
-| 5 | Back on the HUD | `Client_ItemStackCountChanged` or [`Client_ItemRemoved`](code:UInventoryComponent::Client_ItemRemoved_Implementation); the cooldown ring reads [`GetAbilityCooldownTimeRemaining`](code:UInventoryItem::GetAbilityCooldownTimeRemaining) | Owning client |
+| 1 | Click | [`TryPurchase`](code:UInventoryComponent::TryPurchase): souls, already owned, three bought this match → `Server_Purchase` | Owning client |
+| 2 | Make it | [`GrantItem`](code:UInventoryComponent::GrantItem): a stack of this potion with room ([`GetAvailableStackForItem`](code:UInventoryComponent::GetAvailableStackForItem)) gets +1 ([`AddStackCount`](code:UInventoryItem::AddStackCount)); otherwise a new ticket (`CreateHandle`), a new [`UInventoryItem`](code:UInventoryItem) ([`InitItem`](code:UInventoryItem::InitItem)) and `InventoryMap.Add`. Then pay and [`AddConsumablePurchase`](code:UInventoryComponent::AddConsumablePurchase) | Server |
+| 3 | Show it | [`Client_ItemAdded`](code:UInventoryComponent::Client_ItemAdded_Implementation): the client makes its own copy under the same ticket → `OnItemAdded` → the inventory widget picks the first free slot → [`ItemSlotChanged`](code:UInventoryComponent::ItemSlotChanged) | Owning client |
+| 4 | Press a key | [`TryActivateItemInSlot`](code:UInventoryComponent::TryActivateItemInSlot): find the item in that slot → `Server_ActivateItem(ticket)` | Owning client |
+| 5 | Use it | [`Server_ActivateItem`](code:UInventoryComponent::Server_ActivateItem_Implementation): [`GetInventoryItemByHandle`](code:UInventoryComponent::GetInventoryItemByHandle) → [`IsOnCooldown`](code:UInventoryItem::IsOnCooldown)? → [`TryActivateGrantedAbility`](code:UInventoryItem::TryActivateGrantedAbility) → [`ConsumeItem`](code:UInventoryComponent::ConsumeItem): [`ApplyConsumeEffect`](code:UInventoryItem::ApplyConsumeEffect), [`ReduceStackCount`](code:UInventoryItem::ReduceStackCount) | Server |
+| 6 | Remove it | Stack empty → `InventoryMap.Remove` → [`Client_ItemRemoved`](code:UInventoryComponent::Client_ItemRemoved_Implementation); stack left → `Client_ItemStackCountChanged` | Server, then owning client |
 
 #### How it works
 
-**A map of tickets** – [`UInventoryComponent`](code:UInventoryComponent) on the hero keeps `TMap<FInventoryItemHandle, UInventoryItem*>`. Each [`UInventoryItem`](code:UInventoryItem) knows its shop asset, stack count, slot, and the handles of whatever it applied to the ASC. The handle is a number handed out by `CreateHandle`. It's what the client and server use to talk about one item, because a pointer only means something on the machine it came from, and a slot number can shift when another item is removed.
+**Tickets** – every inventory item gets an [`FInventoryItemHandle`](code:FInventoryItemHandle): a number from a counter that only goes up, so it never repeats. The inventory is a `TMap` from ticket to item, which finds an item straight from its ticket. The handle defines equality and a hash so it can be a map key.
 
-**Three limits** – a stack holds `MaxStackCount` (3); the grid holds `Capacity` (5) stacks; and `ConsumablesPurchasedThisMatch` caps each potion at three purchases for the whole match, so using one doesn't let you buy a fourth. `IsFullFor` decides whether a new purchase fits: if every slot is taken, only something that stacks onto an existing stack can be bought.
+**Two copies, one set of tickets** – the inventory isn't replicated. The server keeps its own map, and the owning client keeps another, kept in step by Client RPCs that name items by ticket: added, stack changed, removed. Only the server creates tickets, so both maps always use the same numbers.
 
-**Grant on purchase, use in the arena** – when a new item is created, `ApplyGASModifications` applies any `EquippedEffect` and grants any `GrantedAbility`, keeping the handles so they can be removed later. Nightflare is the one consumable with a granted ability. Using an item is one server function for every kind: find it by handle, refuse if on cooldown, try its ability, then consume it, which applies any `ConsumedEffect` and reduces the stack. A stack that reaches zero is removed from the map and the client is told to clear the slot.
+**Slots live on the client** – which slot an item sits in is decided by the inventory widget, which only exists on the player's machine. The server never knows slots. So pressing a key turns a slot into a ticket on the client, and the ticket is what crosses the network: the one name for an item that both machines share.
 
-**The client only presses** – the slot key runs on the owning client and sends the handle. Every decision, from the cooldown to the effect to the removal, happens on the server, and the HUD updates from the Client RPCs that follow.
+**Three limits** – a stack holds three; the grid holds five stacks; and each potion can be bought three times a match, so using one doesn't let you buy another. With five potion types and stacking, the grid can't fill up today; the capacity check is there for when more consumables are added.
+
+**One use path for every consumable** – using an item is the same server function whether it holds a potion or Nightflare. The item asset decides what happens: a granted ability is activated, a consumed effect is applied. Nightflare's ability is granted when the item is created, so pressing its slot only has to activate it.
 
 #### Why I designed it this way
 
-- **Handles over pointers or slots** – a small integer survives the trip to the server and back and stays valid when slots shift. It's the same idea as the ability spec handle GAS uses.
-- **One activate path for potions and the bomb** – the shop item decides what happens (effect or ability), not the inventory code, so a new kind of consumable needs no new inventory logic.
-- **Limits in three places on purpose** – stack size keeps slots meaningful, capacity makes the inventory a choice, and the per-match cap stops one potion being spammed across every round.
-- **Grant on purchase, not on use** – granting Nightflare's ability when it's bought means pressing the slot only has to activate it, so the use path is the same for every item.
+- **Tickets instead of pointers or slots** – a pointer is a memory address that means nothing on another machine, and the server doesn't know slots. A small number created by the server works on both.
+- **Only the client knows slots** – slot order is presentation. Keeping it out of the server keeps the server's job to rules: does the item exist, is it on cooldown, use it.
+- **Pay after granting** – `GrantItem` runs before the souls are taken, so a purchase that can't be placed never costs anything.
+- **The item decides, not the inventory** – a new kind of consumable is a new asset with an effect or an ability; the inventory code doesn't change.
 
 
 ## The hit
