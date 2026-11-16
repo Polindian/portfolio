@@ -253,8 +253,8 @@ Twelve skills sit in four trees of three tiers: Assassin (stealth and attack pow
 ### Inventory & consumables
 
 <figure class="diagram">
-  <a href="../../diagrams/gas-inventory.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-inventory.svg" alt="Inventory in six jobs. Buying: the player's PC clicks, the server makes the item with a new ticket, and the player's PC copies it under the same ticket while its widget picks a slot. Both machines keep a map of ticket to item. Using: a key press finds the ticket in that slot and sends it to the server, the server uses the item, and the player's PC removes it or updates the stack." /></a>
-  <figcaption>Six jobs, two copies of the inventory, and one ticket number that both machines agree on.</figcaption>
+  <a href="../../diagrams/gas-inventory.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-inventory.svg" alt="Inventory in six jobs. Buying: the player's PC clicks, the server makes the item with a new handle, and the player's PC copies it under the same handle while its widget picks a slot. Both machines keep a map of handle to item. Using: a key press finds the handle in that slot and sends it to the server, the server uses the item, and the player's PC removes it or updates the stack." /></a>
+  <figcaption>Six jobs, two copies of the inventory, and one handle number that both machines agree on.</figcaption>
 </figure>
 
 #### What it does
@@ -268,19 +268,19 @@ Six jobs, numbered as in the diagram. The first function in each row carries the
 | # | Job | Functions | Runs on |
 |---|---|---|---|
 | 1 | Click | [`TryPurchase`](code:UInventoryComponent::TryPurchase): souls, already owned, three bought this match → `Server_Purchase` | Owning client |
-| 2 | Make it | [`GrantItem`](code:UInventoryComponent::GrantItem): a stack of this potion with room ([`GetAvailableStackForItem`](code:UInventoryComponent::GetAvailableStackForItem)) gets +1 ([`AddStackCount`](code:UInventoryItem::AddStackCount)); otherwise a new ticket (`CreateHandle`), a new [`UInventoryItem`](code:UInventoryItem) ([`InitItem`](code:UInventoryItem::InitItem)) and `InventoryMap.Add`. Then pay and [`AddConsumablePurchase`](code:UInventoryComponent::AddConsumablePurchase) | Server |
-| 3 | Show it | [`Client_ItemAdded`](code:UInventoryComponent::Client_ItemAdded_Implementation): the client makes its own copy under the same ticket → `OnItemAdded` → the inventory widget picks the first free slot → [`ItemSlotChanged`](code:UInventoryComponent::ItemSlotChanged) | Owning client |
-| 4 | Press a key | [`TryActivateItemInSlot`](code:UInventoryComponent::TryActivateItemInSlot): find the item in that slot → `Server_ActivateItem(ticket)` | Owning client |
+| 2 | Make it | [`GrantItem`](code:UInventoryComponent::GrantItem): a stack of this potion with room ([`GetAvailableStackForItem`](code:UInventoryComponent::GetAvailableStackForItem)) gets +1 ([`AddStackCount`](code:UInventoryItem::AddStackCount)); otherwise a new handle (`CreateHandle`), a new [`UInventoryItem`](code:UInventoryItem) ([`InitItem`](code:UInventoryItem::InitItem)) and `InventoryMap.Add`. Then pay and [`AddConsumablePurchase`](code:UInventoryComponent::AddConsumablePurchase) | Server |
+| 3 | Show it | [`Client_ItemAdded`](code:UInventoryComponent::Client_ItemAdded_Implementation): the client makes its own copy under the same handle → `OnItemAdded` → the inventory widget picks the first free slot → [`ItemSlotChanged`](code:UInventoryComponent::ItemSlotChanged) | Owning client |
+| 4 | Press a key | [`TryActivateItemInSlot`](code:UInventoryComponent::TryActivateItemInSlot): find the item in that slot → `Server_ActivateItem(handle)` | Owning client |
 | 5 | Use it | [`Server_ActivateItem`](code:UInventoryComponent::Server_ActivateItem_Implementation): [`GetInventoryItemByHandle`](code:UInventoryComponent::GetInventoryItemByHandle) → [`IsOnCooldown`](code:UInventoryItem::IsOnCooldown)? → [`TryActivateGrantedAbility`](code:UInventoryItem::TryActivateGrantedAbility) → [`ConsumeItem`](code:UInventoryComponent::ConsumeItem): [`ApplyConsumeEffect`](code:UInventoryItem::ApplyConsumeEffect), [`ReduceStackCount`](code:UInventoryItem::ReduceStackCount) | Server |
 | 6 | Remove it | Stack empty → `InventoryMap.Remove` → [`Client_ItemRemoved`](code:UInventoryComponent::Client_ItemRemoved_Implementation); stack left → `Client_ItemStackCountChanged` | Server, then owning client |
 
 #### How it works
 
-**Tickets** – every inventory item gets an [`FInventoryItemHandle`](code:FInventoryItemHandle): a number from a counter that only goes up, so it never repeats. The inventory is a `TMap` from ticket to item, which finds an item straight from its ticket. The handle defines equality and a hash so it can be a map key.
+**Handles** – every inventory item gets an [`FInventoryItemHandle`](code:FInventoryItemHandle): a number from a counter that only goes up, so it never repeats. The inventory is a `TMap` from handle to item, which finds an item straight from its handle. The handle defines equality and a hash so it can be a map key.
 
-**Two copies, one set of tickets** – the inventory isn't replicated. The server keeps its own map, and the owning client keeps another, kept in step by Client RPCs that name items by ticket: added, stack changed, removed. Only the server creates tickets, so both maps always use the same numbers.
+**Two copies, one set of handles** – the inventory isn't replicated. The server keeps its own map, and the owning client keeps another, kept in step by Client RPCs that name items by handle: added, stack changed, removed. Only the server creates handles, so both maps always use the same numbers.
 
-**Slots live on the client** – which slot an item sits in is decided by the inventory widget, which only exists on the player's machine. The server never knows slots. So pressing a key turns a slot into a ticket on the client, and the ticket is what crosses the network: the one name for an item that both machines share.
+**Slots live on the client** – which slot an item sits in is decided by the inventory widget, which only exists on the player's machine. The server never knows slots. So pressing a key turns a slot into a handle on the client, and the handle is what crosses the network: the one name for an item that both machines share.
 
 **Three limits** – a stack holds three; the grid holds five stacks; and each potion can be bought three times a match, so using one doesn't let you buy another. With five potion types and stacking, the grid can't fill up today; the capacity check is there for when more consumables are added.
 
@@ -288,7 +288,7 @@ Six jobs, numbered as in the diagram. The first function in each row carries the
 
 #### Why I designed it this way
 
-- **Tickets instead of pointers or slots** – a pointer is a memory address that means nothing on another machine, and the server doesn't know slots. A small number created by the server works on both.
+- **Handles instead of pointers or slots** – a pointer is a memory address that means nothing on another machine, and the server doesn't know slots. A small number created by the server works on both.
 - **Only the client knows slots** – slot order is presentation. Keeping it out of the server keeps the server's job to rules: does the item exist, is it on cooldown, use it.
 - **Pay after granting** – `GrantItem` runs before the souls are taken, so a purchase that can't be placed never costs anything.
 - **The item decides, not the inventory** – a new kind of consumable is a new asset with an effect or an ability; the inventory code doesn't change.
