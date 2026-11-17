@@ -4,8 +4,8 @@ summary: "Combat built on Unreal's Gameplay Ability System, and the systems that
 order: 2
 tags: ["GAS", "Gameplay Effects", "Attributes", "Anim Notifies", "Gameplay Tags"]
 glance:
-  - "TODO: e.g. Every action is a Gameplay Ability, so it gets prediction and replication for free"
-  - "TODO: e.g. Animation notifies open hit windows; socket traces find targets"
+  - "Every attack is a Gameplay Ability, so it gets prediction and replication for free"
+  - "Montage notifies open combo windows and sweep the sword's sockets; only the server turns hits into damage"
   - "TODO: e.g. Damage is data-driven via Modifier Magnitude Calculations"
 keyFiles:
   - { path: "GAS/ChrisGameplayAbility.cpp", note: "Base ability class" }
@@ -298,29 +298,83 @@ Six jobs, numbered as in the diagram. The first function in each row carries the
 
 ### The life of a hit
 
-<div class="placeholder">Diagram: the five stages of a hit, with every condition coloured by the system that controls it</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-life-of-a-hit.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-life-of-a-hit.svg" alt="The life of a hit in five stages, each condition coloured by the section that controls it. 1 Can I attack: weapon equipped tag, cost and cooldown, not stunned, combo window. 2 Where does it hit: melee socket sweep, projectiles and radius sweeps, hostile targets only, each hit once. 3 How hard: damage effect and MMC reading Attack Damage, stats and ability level, skill tree buffs, a damage effect per combo section. 4 How much is taken: Armour, Loaded Dice, Health clamped. 5 What happens next: knockback and death abilities, souls and XP for the killer." /></a>
+  <figcaption>Every hit answers five questions, and each answer belongs to a different system.</figcaption>
+</figure>
 
-TODO: can I attack → where does it hit → how hard → how much is taken → what happens next.
+A hit isn't one system. Before any damage happens, several earlier systems have already had a say: the swords have to be out (Weapon equip), the ability has to be off cooldown (GAS foundations), and the hero can't be stunned. After it lands, the attacker's stats, level and skills decide how hard it is, the target's Armour decides how much is taken, and a kill pays out souls and XP that feed straight back into the shop and levelling.
+
+The sections below follow a hit in order:
+
+| Stage | Question | Section |
+|---|---|---|
+| 1–2 | Can I swing, and what did the sword touch? | [Melee combos & hit detection](#melee-combos--hit-detection) |
+| 1–2 | The same for projectiles and area attacks | Ranged & area abilities |
+| 3–4 | How much damage, after buffs and Armour? | The damage pipeline |
+| 5 | Knockback, stun, death, souls and XP | Death, stun, knockback & rewards |
 
 ### Melee combos & hit detection
 
-<div class="placeholder">Diagram: a combo from key press to anim notify sweep to gameplay event</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-melee.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-melee.svg" alt="A melee combo in seven numbered steps. On the attacker's PC and the server: a key press starts the ability, which commits, slows the hero and plays the montage. On every machine the montage's AN_SendTargetGroup notify sweeps between sword sockets, skips the attacker, anyone already hit and anyone not hostile, plays local sparks and sends the hits in a gameplay event, even with no hits. On the server, StartCombo handles the first hit and starts the combo listeners; the combo window notify sets the next section when the right button is pressed in time; later hits arrive on ability.combo.damage. Every hit applies a damage effect with a spec and a context holding the hit. The table below lists every function." /></a>
+  <figcaption>The montage decides when, the sword decides what was hit, and only the server decides that it counts.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Every sword attack is a Gameplay Ability that plays an animation montage. Pressing the right button inside a short window chains the next swing, up to three in a row. The sword itself finds what it hit: at the moment of impact, a notify in the montage sweeps spheres between sockets placed along the blade, so a hit lands exactly where the player sees the sword. Teammates and the attacker are ignored, each enemy is hit once per swing, hit sparks play on every screen, and only the server turns the hits into damage.
+
+Two ability classes do this. [`UStabAbility`](code:UStabAbility::ActivateAbility) runs most attacks, light and heavy, with its buttons and damage set per montage section in the Blueprint. [`UGA_Combo`](code:UGA_Combo::ActivateAbility) runs the three-part dual slash.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Press attack | [`HandleAbilityInput`](code:AChrisPlayerCharacter::HandleAbilityInput) → `AbilityLocalInputPressed(InputID)` starts the ability given with that button → `SendGameplayEventToActor` (input-pressed tag) locally, plus `Server_SendGameplayEventToSelf` so the server's copy hears the press too | Owning client → server |
+| 2 | Start the swing | [`ActivateAbility`](code:UStabAbility::ActivateAbility): `K2_CommitAbility` (cost, cooldown) → walk speed 50 and the `SpeedOverride` loose tag → `PlayMontageAndWait` → `WaitGameplayEvent` listeners | Owning client (predicted) and server |
+| 3 | Sweep the sword | [`AN_SendTargetGroup::Notify`](code:UAN_SendTargetGroup::Notify): `SphereTraceMultiForObjects` between each pair of sockets → skip the attacker, anyone already hit, anyone not Hostile → [`SendLocalGameplayCue`](code:UAN_SendTargetGroup::SendLocalGameplayCue) → `SendGameplayEventToActor` with the hits | Every machine |
+| 4 | First hit | [`StartCombo`](code:UStabAbility::StartCombo) on `ability.stab.right`: push if set → `ApplyGameplayEffectToHitResultActor` for each hit → start the combo listeners | Server (damage), owning client and server (listeners) |
+| 5 | Combo window | [`AN_SendGameplayEvent::Notify`](code:UAN_SendGameplayEvent::Notify) sends `ability.combo.change.<section>` → [`HandleComboChangeEvent`](code:UStabAbility::HandleComboChangeEvent) sets `NextComboName` (`.end` clears it) → press → [`HandleComboCommit`](code:UStabAbility::HandleComboCommit): window open and right button? → `Montage_SetNextSection` → the next section plays and step 3 repeats | Owning client (predicted) and server |
+| 6 | Later hits | `ability.combo.damage` → [`HandleComboDamageEvent`](code:UStabAbility::HandleComboDamageEvent) (or [`DoDamage`](code:UGA_Combo::DoDamage) in GA_Combo) → this section's damage effect and push → [`PushTarget`](code:UChrisGameplayAbility::PushTarget) + apply | Server |
+| 7 | Apply | [`ApplyGameplayEffectToHitResultActor`](code:UChrisGameplayAbility::ApplyGameplayEffectToHitResultActor): `MakeOutgoingGameplayEffectSpec` → `MakeEffectContext` + `AddHitResult` → `SetContext` → `ApplyGameplayEffectSpecToTarget` | Server |
 
 #### How it works
 
-TODO
+**One ability, one montage** – each attack's montage holds every swing of its combo as named sections (combo01, combo02, combo03). `PlayMontageAndWait` starts at the first, and its four endings (completed, blended out, interrupted, cancelled) all end the ability, so an attack can never be left running. While it plays, the hero walks at 50. A loose `SpeedOverride` tag stops the anim instance from resetting the speed every frame. It isn't replicated because only the server and the attacker's PC move the hero; everyone else just receives the position.
+
+**The montage talks to the ability through gameplay events** – a notify placed on the montage timeline sends a tagged gameplay event to its owner, and the ability waits for that tag with `WaitGameplayEvent`. Button presses use the same mechanism, so presses, combo windows and hits all reach the ability the same way. The combo tag carries the section name: [`HandleComboChangeEvent`](code:UStabAbility::HandleComboChangeEvent) splits `ability.combo.change.combo02` at the dots and keeps `combo02`. The listener is set up without requiring an exact match, so it hears every child tag, and [`GetNotifyName_Implementation`](code:UAN_SendGameplayEvent::GetNotifyName_Implementation) labels each notify on the timeline with that last word.
+
+**The combo window** – `NextComboName` holds the section to jump to while the window is open and `NAME_None` while it's closed, so presses too early or too late do nothing. `ComboInputMap` says which button continues from each section, and the ability listens once per distinct button (a `TSet` removes duplicates, otherwise one press would be handled twice). `Montage_SetNextSection` doesn't cut the current swing short: it queues the next section to play when this one ends. The attacker's PC runs this straight away, and the server runs it too because the press was also sent as a Server RPC in step 1.
+
+**The sword finds the hit** – every attack animation has sockets along the blade (three for light attacks). [`AN_SendTargetGroup`](code:UAN_SendTargetGroup::Notify) slides a sphere (radius 35, or an attribute for smash and stun) from each socket to the next, on the frame it fires, so it covers a capsule along the blade wherever the sword is at that moment, including any turning since the swing began. It only looks for characters, ignores the attacker, keeps only targets whose team is Hostile, and records each actor it accepts in a `TSet`, so an enemy touched by two sweeps (they overlap at the middle socket) is hit once. The roll into double slash has two notifies, one per sword, so an enemy caught by both blades takes two hits.
+
+**A miss still sends the event** – the hits are sent once, after the sweeps, whether or not anything was hit. That matters for the first swing: Stab only sets up its combo listeners in `StartCombo`, which runs on the first hit event. If the event only came on a hit, swinging at thin air would leave the combo with nobody listening, and the player couldn't press on into the second swing.
+
+**Every machine sweeps, only the server damages** – notifies fire wherever the montage plays, and the montage is replicated, so every machine runs the sweep. Each one plays the hit sparks itself as a local gameplay cue, which costs nothing on the network. Only the server's copy of the ability listens for the hit events (`K2_HasAuthority`), so a client's sweep can never cause damage.
+
+**Damage per section** – each section of a Stab montage has its own entry in `ComboDamageMap`: a damage effect and a push. A finisher can hit harder and launch further than the first swing without any new code. GA_Combo's `DamageEffectMap` does the same, with a default effect for sections it doesn't list.
+
+**Spec and context** – the damage effect is the rule, made in the editor. [`ApplyGameplayEffectToHitResultActor`](code:UChrisGameplayAbility::ApplyGameplayEffectToHitResultActor) fills in a spec (the effect at this ability's level), attaches a context (who caused it, with which ability, and where it hit) and applies it to the target. The context is what lets the target's attribute set know who hit it, which Loaded Dice and Stealth rely on.
+
+**Links to other sections**
+
+- **Weapon equip** – every attack requires the `stats.weapon.equipped` tag, so nothing here runs with the swords away.
+- **GAS foundations** – step 1 depends on abilities given with input IDs, and `K2_CommitAbility` uses the cooldowns set up there. Every ability is blocked while the hero has the stun tag.
+- **Attributes & levelling** – the ability's level goes into the spec, so damage effects can scale with upgrades.
+- **The damage pipeline** – what the damage effect does once it reaches the target: Attack Damage, Armour and skill buffs.
+- **Ranged & area abilities** – smash and stun reuse Stab and this sweep, with the radius read from an attribute.
+- **Death, stun, knockback & rewards** – [`PushTarget`](code:UChrisGameplayAbility::PushTarget) sends the target a launch event that its own launched ability carries out.
 
 #### Why I designed it this way
 
-TODO
+- **The sword decides the hit** – sockets on the blade follow the animation exactly, so hits match what players see, and a new attack needs sockets rather than hand-made hitboxes.
+- **Timing lives in the montage, rules live in C++** – the combo window and the moment of impact are notifies placed on the timeline, so I can retime an attack in the editor without touching code, and the section names travel inside the tags.
+- **One way to talk to abilities** – presses, combo windows and hits are all gameplay events, so an ability only needs `WaitGameplayEvent` to react to any of them.
+- **Trust the server, not the client, but don't make the client wait** – the attacker's PC plays the swing and the next section straight away (prediction), the server decides what the hits do, and sparks are local because they're only cosmetic.
+- **Combos as data** – in Stab, a new combo is montage sections plus map entries in the Blueprint. GA_Combo is the older hard-coded version, and I'd move the dual slash onto Stab.
 
 ### Ranged & area abilities
 
@@ -417,4 +471,5 @@ TODO: before/after, with numbers where possible.
 
 ## What I'd do differently
 
-TODO
+- **Sweep every frame, not on one frame** – each hit notify checks where the blade is on a single frame, so a very fast swing can pass an enemy between frames. An anim notify state that sweeps every tick, from last tick's socket positions to this tick's, with one hit list for the whole window, would catch everything the blade passes through.
+- **One combo class** – `UGA_Combo` hard-codes its buttons, while `UStabAbility` reads them from data. I'd move the dual slash onto Stab and delete GA_Combo.

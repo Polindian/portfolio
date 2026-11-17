@@ -401,6 +401,26 @@
       "start": 11,
       "end": 62
     },
+    "UAN_SendGameplayEvent::GetNotifyName_Implementation": {
+      "path": "Source/AnimationTesting/Private/Animations/AN_SendGameplayEvent.cpp",
+      "start": 20,
+      "end": 29
+    },
+    "UAN_SendGameplayEvent::Notify": {
+      "path": "Source/AnimationTesting/Private/Animations/AN_SendGameplayEvent.cpp",
+      "start": 8,
+      "end": 18
+    },
+    "UAN_SendTargetGroup::Notify": {
+      "path": "Source/AnimationTesting/Private/Animations/AN_SendTargetGroup.cpp",
+      "start": 13,
+      "end": 102
+    },
+    "UAN_SendTargetGroup::SendLocalGameplayCue": {
+      "path": "Source/AnimationTesting/Private/Animations/AN_SendTargetGroup.cpp",
+      "start": 104,
+      "end": 114
+    },
     "UAN_SwordPhase::Notify": {
       "path": "Source/AnimationTesting/Private/Weapon/AN_SwordPhase.cpp",
       "start": 7,
@@ -496,6 +516,16 @@
       "start": 19,
       "end": 44
     },
+    "UChrisGameplayAbility::ApplyGameplayEffectToHitResultActor": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisGameplayAbility.cpp",
+      "start": 163,
+      "end": 184
+    },
+    "UChrisGameplayAbility::PushTarget": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisGameplayAbility.cpp",
+      "start": 103,
+      "end": 115
+    },
     "UChrisNetStatics::GetPlayerCountPerTeam": {
       "path": "Source/AnimationTesting/Private/Network/ChrisNetStatics.cpp",
       "start": 55,
@@ -520,6 +550,16 @@
       "path": "Source/AnimationTesting/Private/GAS/GAP_Dead.cpp",
       "start": 26,
       "end": 133
+    },
+    "UGA_Combo::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_Combo.cpp",
+      "start": 25,
+      "end": 67
+    },
+    "UGA_Combo::DoDamage": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_Combo.cpp",
+      "start": 217,
+      "end": 227
     },
     "UGA_EquipToggle::ActivateAbility": {
       "path": "Source/AnimationTesting/Private/Weapon/GA_EquipToggle.cpp",
@@ -760,6 +800,31 @@
       "path": "Source/AnimationTesting/Private/Widgets/ShopWidget.cpp",
       "start": 259,
       "end": 289
+    },
+    "UStabAbility::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/StabAbility.cpp",
+      "start": 23,
+      "end": 74
+    },
+    "UStabAbility::HandleComboChangeEvent": {
+      "path": "Source/AnimationTesting/Private/GAS/StabAbility.cpp",
+      "start": 225,
+      "end": 237
+    },
+    "UStabAbility::HandleComboCommit": {
+      "path": "Source/AnimationTesting/Private/GAS/StabAbility.cpp",
+      "start": 239,
+      "end": 287
+    },
+    "UStabAbility::HandleComboDamageEvent": {
+      "path": "Source/AnimationTesting/Private/GAS/StabAbility.cpp",
+      "start": 289,
+      "end": 385
+    },
+    "UStabAbility::StartCombo": {
+      "path": "Source/AnimationTesting/Private/GAS/StabAbility.cpp",
+      "start": 105,
+      "end": 218
     },
     "USwordEquipComponent": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.h",
