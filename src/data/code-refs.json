@@ -391,6 +391,31 @@
       "start": 29,
       "end": 46
     },
+    "AProjectileActor::NotifyActorBeginOverlap": {
+      "path": "Source/AnimationTesting/Private/GAS/ProjectileActor.cpp",
+      "start": 67,
+      "end": 106
+    },
+    "AProjectileActor::ShootProjectile": {
+      "path": "Source/AnimationTesting/Private/GAS/ProjectileActor.cpp",
+      "start": 30,
+      "end": 51
+    },
+    "AProjectileActor::Tick": {
+      "path": "Source/AnimationTesting/Private/GAS/ProjectileActor.cpp",
+      "start": 125,
+      "end": 131
+    },
+    "ATargetActor_Around::ActorInDetectionRange": {
+      "path": "Source/AnimationTesting/Private/TargetActor_Around.cpp",
+      "start": 46,
+      "end": 77
+    },
+    "ATargetActor_Around::ConfigureDetection": {
+      "path": "Source/AnimationTesting/Private/TargetActor_Around.cpp",
+      "start": 24,
+      "end": 30
+    },
     "FInventoryItemHandle": {
       "path": "Source/AnimationTesting/Private/Inventory/InventoryItem.h",
       "start": 16,
@@ -425,6 +450,11 @@
       "path": "Source/AnimationTesting/Private/Weapon/AN_SwordPhase.cpp",
       "start": 7,
       "end": 28
+    },
+    "UBTService_CheckCombatMode::CheckForAoEDanger": {
+      "path": "Source/AnimationTesting/Private/AI/BTService_CheckCombatMode.cpp",
+      "start": 53,
+      "end": 132
     },
     "UCAssetManager::GetLoadedCharacterDefinitions": {
       "path": "Source/AnimationTesting/Private/Framework/CAssetManager.cpp",
@@ -551,6 +581,11 @@
       "start": 26,
       "end": 133
     },
+    "UGA_BlindBomb::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_BlindBomb.cpp",
+      "start": 8,
+      "end": 93
+    },
     "UGA_Combo::ActivateAbility": {
       "path": "Source/AnimationTesting/Private/GAS/GA_Combo.cpp",
       "start": 25,
@@ -565,6 +600,26 @@
       "path": "Source/AnimationTesting/Private/Weapon/GA_EquipToggle.cpp",
       "start": 20,
       "end": 84
+    },
+    "UGA_Shoot::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_Shoot.cpp",
+      "start": 24,
+      "end": 62
+    },
+    "UGA_Shoot::CheckCooldown": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_Shoot.cpp",
+      "start": 96,
+      "end": 99
+    },
+    "UGA_Shoot::ResetShootState": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_Shoot.cpp",
+      "start": 64,
+      "end": 80
+    },
+    "UGA_Shoot::ShootProjectile": {
+      "path": "Source/AnimationTesting/Private/GAS/GA_Shoot.cpp",
+      "start": 119,
+      "end": 189
     },
     "UInventoryComponent::AddConsumablePurchase": {
       "path": "Source/AnimationTesting/Private/Inventory/InventoryComponent.cpp",
@@ -905,6 +960,31 @@
       "path": "Source/AnimationTesting/Private/Weapon/SwordEquipComponent.cpp",
       "start": 437,
       "end": 451
+    },
+    "UThrust::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/Thrust.cpp",
+      "start": 23,
+      "end": 44
+    },
+    "UThrust::EndAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/Thrust.cpp",
+      "start": 46,
+      "end": 61
+    },
+    "UThrust::PushForward": {
+      "path": "Source/AnimationTesting/Private/GAS/Thrust.cpp",
+      "start": 114,
+      "end": 122
+    },
+    "UThrust::StartThrust": {
+      "path": "Source/AnimationTesting/Private/GAS/Thrust.cpp",
+      "start": 69,
+      "end": 112
+    },
+    "UThrust::TargetReceived": {
+      "path": "Source/AnimationTesting/Private/GAS/Thrust.cpp",
+      "start": 124,
+      "end": 173
     }
   }
 }

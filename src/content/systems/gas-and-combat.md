@@ -378,23 +378,81 @@ The numbers match the diagram.
 
 ### Ranged & area abilities
 
-<div class="placeholder">Diagram: Ranged & area abilities</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-ranged.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-ranged.svg" alt="Four ranged and area abilities side by side, each with four numbered steps coloured by the machine that runs them. Shoot: hold aim activates without paying, RT makes the server spawn a projectile carrying the hit spec, every machine moves it and the server applies the spec on overlap, and the third shot pays mana and starts the cooldown. Thrust: commit and wait for the start event, a speed effect from the server plus forward input on the attacker's PC, a detection sphere on a socket, and the server launches, damages and burns each enemy. Smash and stun: a radius effect at the ability level sets the radius attribute, the hit notify sweeps with it, the impact slows the caster and starts the VFX effect, and the server skips airborne targets before pushing and applying the effect. Nightflare: using the item activates the granted ability, which overlaps a 240 radius sphere, filters targets and applies the blind effect. Below, an in-match upgrade raises the ability level, which every spec reads for radius, damage, stun length, VFX length, thrust speed and shoot cooldown. Links: the shop, levelling and melee feed in; the AI, the damage pipeline and knockback read from it." /></a>
+  <figcaption>Four abilities, four ways of finding targets, and one ability level that scales them all.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Every hero has the same four heavy abilities alongside their sword combos, and a shop item adds a fifth. **Shoot** raises the hero's arm to aim and fires a volley of three projectiles. **Thrust** dashes the hero across the arena, launching and damaging every enemy in the way. **Smash** and **stun** slam the sword into the ground, hitting every grounded enemy in a circle (stun also stops them using abilities for a while), and players can jump to dodge them. **Nightflare**, bought in the shop, blinds every enemy close to the player.
+
+All four abilities grow as they're upgraded during the match: a bigger radius, more damage, a longer stun, faster dashes, shorter cooldowns. Each one also obeys the same rules as melee: only Hostile characters are hit, each target once, and only the server decides what a hit does.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| Ability | # | Step | Calls, in order | Runs on |
+|---|---|---|---|---|
+| Shoot | 1 | Hold aim | [`ActivateAbility`](code:UGA_Shoot::ActivateAbility): swords must be away, GAS checks the mana cost can be paid, aim montage, listeners for release and RT. No commit yet | Owning client (predicted) and server |
+| | 2 | Press RT | [`ShootProjectile`](code:UGA_Shoot::ShootProjectile): on cooldown? less than 0.15 s since the last shot? → shoot montage → server `SpawnActor` at the `ProjectileSpawn` socket → [`AProjectileActor::ShootProjectile`](code:AProjectileActor::ShootProjectile) with speed, range, team and the hit spec | Owning client and server; spawn on the server |
+| | 3 | Fly and hit | [`Tick`](code:AProjectileActor::Tick) moves it on every machine → [`NotifyActorBeginOverlap`](code:AProjectileActor::NotifyActorBeginOverlap): Hostile with an ASC? → server `ApplyGameplayEffectSpecToSelf` on the target → impact VFX → `Destroy` | Every machine; damage on the server |
+| | 4 | Third shot | `CommitAbilityCost` → `CommitAbilityCooldown` (forced) → `AbilityCommittedCallbacks.Broadcast` for the cooldown gauge | Owning client (predicted) and server |
+| Thrust | 1 | Start | [`ActivateAbility`](code:UThrust::ActivateAbility): `K2_CommitAbility` → `PlayMontageAndWait` → wait for `ability.heavyattack2.start` | Owning client (predicted) and server |
+| | 2 | Dash | [`StartThrust`](code:UThrust::StartThrust): server applies `ThrustEffect` (speed) → owning client starts [`PushForward`](code:UThrust::PushForward), adding forward input every frame | Server (speed), owning client (input) |
+| | 3 | Detect | `WaitTargetData` → `BeginSpawningActor` → [`ConfigureDetection`](code:ATargetActor_Around::ConfigureDetection) → `FinishSpawningActor` → attach to `TargetThrustCenter` → [`ActorInDetectionRange`](code:ATargetActor_Around::ActorInDetectionRange) for each new Hostile enemy | Owning client and server; targets reported by the server |
+| | 4 | Hit | [`TargetReceived`](code:UThrust::TargetReceived): `LaunchCharacter` away from the hero → `DamageEffect` → `BurnEffect` if Scorched is owned. [`EndAbility`](code:UThrust::EndAbility) removes the speed and stops the input | Server |
+| Smash & stun | 1 | Set the radius | [`ActivateAbility`](code:UStabAbility::ActivateAbility): `RadiusSweepEffect` at the ability level → `SmashSweepRadius` / `StunSweepRadius` | Owning client (predicted) and server |
+| | 2 | Impact sweep | [`AN_SendTargetGroup::Notify`](code:UAN_SendTargetGroup::Notify) sweeps with the radius attribute → `ability.stab.right` with the hits | Every machine |
+| | 3 | Impact | [`StartCombo`](code:UStabAbility::StartCombo): walk speed 15 → caster sound → `VFXDurationEffect` | Owning client and server; effect on the server |
+| | 4 | Damage | Skip anyone falling → `PushTarget` → `ApplyGameplayEffectToHitResultActor` with `StabDamageEffect` | Server |
+| Nightflare | 1 | Use the item | [`Server_ActivateItem`](code:UInventoryComponent::Server_ActivateItem_Implementation) activates the granted ability → [`ActivateAbility`](code:UGA_BlindBomb::ActivateAbility): `K2_CommitAbility` | Server |
+| | 2 | Overlap | `OverlapMultiByObjectType`: a sphere of radius 240 at the player | Server |
+| | 3 | Filter | Skip the player, anyone already blinded, anyone not Hostile | Server |
+| | 4 | Blind | `ApplyGameplayEffectSpecToTarget` with one blind spec for every target → the blind cue plays on each target's screen | Server; cue on each target's PC |
 
 #### How it works
 
-TODO
+**Four ways to find a target, one set of rules** – melee sweeps the sword's sockets. These abilities find targets four other ways: a flying projectile, a sphere carried with the hero, a bigger sweep at the impact point, and an instant overlap around the player. However the targets are found, the same filters follow: never the attacker, each target once (a `TSet` of actors already hit), and only characters whose team is Hostile.
+
+**Shoot: pay late, check early** – most abilities pay their mana and start their cooldown the moment they activate. Shoot activates when the player starts aiming, but [`CheckCooldown`](code:UGA_Shoot::CheckCooldown) is overridden to always pass, so the arm can always be raised. The cooldown is checked per shot instead. The mana is paid on the third shot, together with the cooldown, so a player who keeps their last shot keeps their volley, but the cooldown doesn't start until it's fired. That doesn't let a player with no mana fire for free: before any ability activates, GAS checks its cost can be paid at its current level, so a volley the player can't afford can't even be aimed. The shot count lives on the ability (one instance per hero), so it survives letting go of aim, and [`ResetShootState`](code:UGA_Shoot::ResetShootState) clears it at every round reset, along with the Deadeye counter. Because the cooldown starts late, the ability announces its own commit (`AbilityCommittedCallbacks.Broadcast`) so the HUD's cooldown gauge still starts.
+
+**The projectile is flown by every machine** – only the server spawns it (otherwise there'd be one per machine), and it's a replicated actor, so it appears for everyone. It replicates only its direction, speed and team, not its position every frame: each machine starts it at the same socket and moves it with the same maths each frame (position + direction × speed × frame time), which keeps players in agreement for very little bandwidth. Its direction comes from where the shooter is looking (`GetActorEyesViewPoint`), so it flies towards the crosshair rather than the way the body faces. Its range is a timer (distance ÷ speed), and the hit spec, made by the ability at its level, travels inside it. On impact the target applies that spec to itself, which keeps the shooter in the effect's context.
+
+**Thrust holds the stick instead of setting the speed** – when a player moves, their PC moves them straight away and sends the server a record of the input. The server replays that input to check the result, and if its answer is different it sends a correction that snaps the player back (rubber-banding). [`PushForward`](code:UThrust::PushForward) adds forward input every frame on the attacker's PC, exactly like holding the stick forward, so the input goes into that record and the server reaches the same position. Setting the hero's velocity directly on their PC would never reach the server's replay, so the server would correct the dash away. The speed itself comes from `ThrustEffect`, a gameplay effect the server applies to the hero, so both machines agree on how fast "forward" is.
+
+**A target actor that travels with the hero** – Thrust finds enemies with [`ATargetActor_Around`](code:ATargetActor_Around::ActorInDetectionRange), my child of GAS's target actor class: an actor whose only job is finding targets and reporting them to an ability. The ability task `WaitTargetData` creates it and calls [`TargetReceived`](code:UThrust::TargetReceived) whenever it reports. It's created in two steps: `BeginSpawningActor` makes it without switching it on, [`ConfigureDetection`](code:ATargetActor_Around::ConfigureDetection) sets its radius, team and hit cue, and only then does `FinishSpawningActor` switch it on. Switched on any earlier, it could detect someone before it knew its size or team. It's then attached to a socket on the hero's mesh, so it dashes with them, and it's removed automatically when the ability ends. Only the server's copy reports targets, and every copy plays the hit sparks locally.
+
+**Pushing away from the hero** – the push direction is the target's position minus the hero's position, which gives an arrow pointing from the hero to the target. With the hero at (0, 0) and the target at (3, 4), that's (3, 4). `GetSafeNormal` shrinks it to length 1 while keeping its direction, (0.6, 0.8), so a target further away isn't launched harder, and multiplying by the push speed gives the launch. Melee and smash push through `PushTarget`, which asks the target's own launched ability to do it, so the push follows the same GAS rules as every other ability. Thrust currently calls `LaunchCharacter` directly, which skips those rules; I'd move it onto `PushTarget` so every attack knocks back the same way, and future hit reactions apply to all of them.
+
+**Smash and stun are the same code with different effects** – both are Stab Blueprints with the area settings filled in. The only difference is the gameplay effect plugged into their damage setting: smash's takes health, and stun's also gives the target the stun tag for a duration. Every ability lists that tag as blocking, so a stunned hero can't use any ability until the effect ends. Stun isn't code at all; it's an effect asset.
+
+**The radius is an attribute** – on activation, the ability applies `RadiusSweepEffect` to the hero, which sets `SmashSweepRadius` or `StunSweepRadius` from a curve table at the ability's level. The hit notify on the impact reads that attribute instead of its default 35. The attribute replicates to every player because every machine runs the notify (for the hit sparks), so every machine needs the same radius. My skeleton AI reads the same attribute in [`CheckForAoEDanger`](code:UBTService_CheckCombatMode::CheckForAoEDanger): when a player starts a heavy attack, skeletons inside that radius run out of it, and those just outside stop advancing.
+
+**Jumping dodges the ground** – before any push or damage, the server skips every target whose movement is falling, so a player in the air at the moment of impact isn't hit. The check comes before the push on purpose: pushing first would launch players who had dodged. On impact the caster also slows to 15 (planted by the swing), hears a 2D sound only they get, and gains `VFXDurationEffect`, a duration-only effect whose gameplay cue is the looping stun VFX. A cue attached to an effect starts when the effect is applied and stops when it ends, and it replicates with the effect, so everyone sees the VFX for exactly as long as it lasts.
+
+**One level, every number** – abilities are upgraded during the match with upgrade points from levelling ([`Server_UpgradeAbilityWithID`](code:UChrisAbilitySystemComponent::Server_UpgradeAbilityWithID_Implementation)). Every effect these abilities apply is made with the ability's current level, and every number in those effects is a curve-table value read at that level: the smash radius, the damage, the stun's length, the VFX's length, Thrust's speed and Shoot's cooldown. Upgrading an ability changes one number, and the next use reads the next row of every table. Balancing a level means editing a curve table, not code.
+
+**Nightflare: an overlap, not a sweep** – a sweep moves a shape from one point to another. An overlap asks what is inside a shape right now. Nightflare is instant, so [`UGA_BlindBomb`](code:UGA_BlindBomb::ActivateAbility) overlaps a sphere of radius 240 at the player, on the server, and ends straight away. It makes the blind spec once and applies the same spec to every Hostile character inside, which is cheaper than one per target and fine because they all get the same blind. It uses level 1 on purpose: it's a shop item, so it never levels up. The blind effect replicates to each target, and its cue darkens that player's own screen until it ends.
+
+**Links to other sections**
+
+- **The shop** – Nightflare is a shop item with a granted ability, and Scorched (Thrust's burn) and Deadeye (Shoot's different projectile and hit effect) are premium upgrades that switch on a flag attribute these abilities read.
+- **Attributes & levelling** – upgrade points from levelling raise ability levels, which every effect here reads.
+- **Melee combos & hit detection** – smash and stun are Stab abilities using the same hit notify, the same first-hit function and the same apply helper.
+- **The damage pipeline** – every damage effect these abilities apply.
+- **Death, stun, knockback & rewards** – the stun tag, `PushTarget` and the launched ability.
+- **AI** – skeletons read the smash and stun radius to get out of the way.
 
 #### Why I designed it this way
 
-TODO
+- **Pay late, check early** – a player can keep their last shot without losing the volley, but can never start a volley they can't pay for.
+- **Every machine flies the projectile** – replicating three values once is far cheaper than streaming a position every frame, and only the server's overlap decides the damage.
+- **Move with input, not velocity** – the dash goes through the same predicted movement as walking, so it never rubber-bands.
+- **Effects as data** – stun, burn, blind and Deadeye are effect assets, not code. Changing what an ability does, or how long it lasts, happens in the editor.
+- **One number to scale everything** – every effect reads the ability level from a curve table, so balancing is spreadsheet work.
+- **Counterplay** – jumping dodges smash and stun, and the AI reads the same radius players can see, so the same rule teaches both.
 
 ### The damage pipeline
 
@@ -472,4 +530,6 @@ TODO: before/after, with numbers where possible.
 ## What I'd do differently
 
 - **Sweep every frame, not on one frame** – each hit notify checks where the blade is on a single frame, so a very fast swing can pass an enemy between frames. An anim notify state that sweeps every tick, from last tick's socket positions to this tick's, with one hit list for the whole window, would catch everything the blade passes through.
+- **Stop projectiles on walls** – projectiles only collide with characters, so they fly through walls. They should stop on level geometry, play their impact effect and do no damage.
+- **One push path** – Thrust launches targets directly while every other attack uses `PushTarget`. Moving Thrust onto `PushTarget` means knockback rules, and any future hit reactions, apply to every attack.
 - **One combo class** – `UGA_Combo` hard-codes its buttons, while `UStabAbility` reads them from data. I'd move the dual slash onto Stab and delete GA_Combo.

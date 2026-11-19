@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 800" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Four ranged and area abilities side by side, each with four numbered steps coloured by the machine that runs them. Shoot: hold aim activates without paying, RT makes the server spawn a projectile carrying the hit spec, every machine moves it and the server applies the spec on overlap, and the third shot pays mana and starts the cooldown. Thrust: commit and wait for the start event, a speed effect from the server plus forward input on the attacker's PC, a detection sphere on a socket, and the server launches, damages and burns each enemy. Smash and stun: a radius effect at the ability level sets the radius attribute, the hit notify sweeps with it, the impact slows the caster and starts the VFX effect, and the server skips airborne targets before pushing and applying the effect. Nightflare: using the item activates the granted ability, which overlaps a 240 radius sphere, filters targets and applies the blind effect. Below, an in-match upgrade raises the ability level, which every spec reads for radius, damage, stun length, VFX length, thrust speed and shoot cooldown. Links: the shop, levelling and melee feed in; the AI, the damage pipeline and knockback read from it.">
+<defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="h4fc1b0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#4fc1b0"/></marker></defs>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="22" y="16" width="14" height="14" rx="3" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<text x="44" y="28" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">Attacker's PC (predicted) and the server</text>
+<rect x="322" y="16" width="14" height="14" rx="3" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<text x="344" y="28" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">Every machine</text>
+<rect x="622" y="16" width="14" height="14" rx="3" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<text x="644" y="28" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">Server only</text>
+<rect x="19" y="46" width="255" height="452" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340" stroke-opacity="1"/>
+<text x="33" y="72" font-size="15" fill="#e6e8ee" font-weight="700" text-anchor="start">Shoot</text>
+<text x="33" y="91" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GA_Shoot + AProjectileActor</text>
+<text x="33" y="110" font-size="11.5" fill="#4fc1b0" font-weight="600" text-anchor="start">Finds targets with a projectile</text>
+<rect x="31" y="126" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="47" cy="146" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="47" y="150" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="65" y="151" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Hold aim</text>
+<text x="43" y="172" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">ActivateAbility: swords away,</text>
+<text x="43" y="190" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">mana checked, nothing paid yet</text>
+<path d="M146.5 205 L146.5 216" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="31" y="218" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="47" cy="238" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="47" y="242" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="65" y="243" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Press RT</text>
+<text x="43" y="264" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">server spawns the projectile at</text>
+<text x="43" y="282" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">ProjectileSpawn, with the hit spec</text>
+<path d="M146.5 297 L146.5 308" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="31" y="310" width="231" height="78" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="47" cy="330" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="47" y="334" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="65" y="335" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Fly and hit</text>
+<text x="43" y="356" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Tick moves it on every machine;</text>
+<text x="43" y="374" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">server applies the spec on overlap</text>
+<path d="M146.5 389 L146.5 400" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="31" y="402" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="47" cy="422" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="47" y="426" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="65" y="427" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Third shot</text>
+<text x="43" y="448" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">CommitAbilityCost</text>
+<text x="43" y="466" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">CommitAbilityCooldown</text>
+<rect x="288" y="46" width="255" height="452" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340" stroke-opacity="1"/>
+<text x="302" y="72" font-size="15" fill="#e6e8ee" font-weight="700" text-anchor="start">Thrust</text>
+<text x="302" y="91" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">UThrust + ATargetActor_Around</text>
+<text x="302" y="110" font-size="11.5" fill="#4fc1b0" font-weight="600" text-anchor="start">Finds targets with a sphere on you</text>
+<rect x="300" y="126" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="316" cy="146" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="316" y="150" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="334" y="151" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Start</text>
+<text x="312" y="172" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">commit → montage → wait for</text>
+<text x="312" y="190" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">ability.heavyattack2.start</text>
+<path d="M415.5 205 L415.5 216" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="300" y="218" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="316" cy="238" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="316" y="242" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="334" y="243" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Dash</text>
+<text x="312" y="264" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">server: ThrustEffect (speed)</text>
+<text x="312" y="282" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">your PC: PushForward (input)</text>
+<path d="M415.5 297 L415.5 308" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="300" y="310" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="316" cy="330" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="316" y="334" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="334" y="335" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Detect</text>
+<text x="312" y="356" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">WaitTargetData spawns a sphere</text>
+<text x="312" y="374" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">on the TargetThrustCenter socket</text>
+<path d="M415.5 389 L415.5 400" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="300" y="402" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="316" cy="422" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="316" y="426" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="334" y="427" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Hit</text>
+<text x="312" y="448" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">TargetReceived: launch away,</text>
+<text x="312" y="466" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">damage, burn if Scorched</text>
+<rect x="557" y="46" width="255" height="452" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340" stroke-opacity="1"/>
+<text x="571" y="72" font-size="15" fill="#e6e8ee" font-weight="700" text-anchor="start">Smash &amp; stun</text>
+<text x="571" y="91" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">UStabAbility, area settings</text>
+<text x="571" y="110" font-size="11.5" fill="#4fc1b0" font-weight="600" text-anchor="start">Finds targets with a bigger sweep</text>
+<rect x="569" y="126" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="585" cy="146" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="585" y="150" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="603" y="151" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Set the radius</text>
+<text x="581" y="172" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">RadiusSweepEffect at the ability</text>
+<text x="581" y="190" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">level → the radius attribute</text>
+<path d="M684.5 205 L684.5 216" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="569" y="218" width="231" height="78" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="585" cy="238" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="585" y="242" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="603" y="243" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Impact sweep</text>
+<text x="581" y="264" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">AN_SendTargetGroup sweeps with</text>
+<text x="581" y="282" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">the radius attribute, not 35</text>
+<path d="M684.5 297 L684.5 308" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="569" y="310" width="231" height="78" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="585" cy="330" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="585" y="334" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="603" y="335" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Impact</text>
+<text x="581" y="356" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">StartCombo: slow to 15, caster</text>
+<text x="581" y="374" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">sound, VFXDurationEffect</text>
+<path d="M684.5 389 L684.5 400" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="569" y="402" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="585" cy="422" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="585" y="426" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="603" y="427" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Damage</text>
+<text x="581" y="448" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">skip anyone in the air → push</text>
+<text x="581" y="466" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ effect (stun adds the tag)</text>
+<rect x="826" y="46" width="255" height="452" rx="12" fill="rgba(255,255,255,0.015)" stroke="#2c3340" stroke-opacity="1"/>
+<text x="840" y="72" font-size="15" fill="#e6e8ee" font-weight="700" text-anchor="start">Nightflare</text>
+<text x="840" y="91" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">UGA_BlindBomb, shop item</text>
+<text x="840" y="110" font-size="11.5" fill="#4fc1b0" font-weight="600" text-anchor="start">Finds targets with an overlap</text>
+<rect x="838" y="126" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="854" cy="146" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="150" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="872" y="151" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Use the item</text>
+<text x="850" y="172" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Server_ActivateItem activates</text>
+<text x="850" y="190" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">the granted ability → commit</text>
+<path d="M953.5 205 L953.5 216" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="838" y="218" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="854" cy="238" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="242" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="872" y="243" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Overlap</text>
+<text x="850" y="264" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">OverlapMultiByObjectType:</text>
+<text x="850" y="282" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">radius 240 around you</text>
+<path d="M953.5 297 L953.5 308" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="838" y="310" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="854" cy="330" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="334" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="872" y="335" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Filter</text>
+<text x="850" y="356" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">skip yourself, anyone already</text>
+<text x="850" y="374" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">blinded, anyone not Hostile</text>
+<path d="M953.5 389 L953.5 400" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="838" y="402" width="231" height="78" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="854" cy="422" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="426" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="872" y="427" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Blind</text>
+<text x="850" y="448" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">ApplyGameplayEffectSpecToTarget</text>
+<text x="850" y="466" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ blind cue on their screen</text>
+<rect x="10" y="518" width="1080" height="120" rx="12" fill="rgba(255,255,255,0.015)" stroke="#4fc1b0" stroke-opacity="0.6"/>
+<text x="28" y="542" font-size="12.5" fill="#4fc1b0" font-weight="700" text-anchor="start">ONE LEVEL, EVERY NUMBER</text>
+<rect x="28" y="560" width="250" height="60" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="153" y="584" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="middle">In-match upgrade</text>
+<text x="153" y="604" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">Server_UpgradeAbilityWithID</text>
+<path d="M280 590 L312 590" fill="none" stroke="#4fc1b0" stroke-width="2" marker-end="url(#h4fc1b0)"/>
+<rect x="316" y="560" width="170" height="60" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="401" y="584" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="middle">Ability level +1</text>
+<text x="401" y="604" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace">GetAbilityLevel()</text>
+<path d="M488 590 L520 590" fill="none" stroke="#4fc1b0" stroke-width="2" marker-end="url(#h4fc1b0)"/>
+<rect x="524" y="575" width="58.400000000000006" height="30" rx="15" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="553.2" y="595" font-size="12" fill="#e6e8ee" font-weight="500" text-anchor="middle">Radius</text>
+<rect x="590.4" y="575" width="58.400000000000006" height="30" rx="15" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="619.6" y="595" font-size="12" fill="#e6e8ee" font-weight="500" text-anchor="middle">Damage</text>
+<rect x="656.8" y="575" width="95.4" height="30" rx="15" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="704.5" y="595" font-size="12" fill="#e6e8ee" font-weight="500" text-anchor="middle">Stun length</text>
+<rect x="760.1999999999999" y="575" width="88.0" height="30" rx="15" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="804.1999999999999" y="595" font-size="12" fill="#e6e8ee" font-weight="500" text-anchor="middle">VFX length</text>
+<rect x="856.1999999999999" y="575" width="102.80000000000001" height="30" rx="15" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="907.5999999999999" y="595" font-size="12" fill="#e6e8ee" font-weight="500" text-anchor="middle">Thrust speed</text>
+<rect x="967.0" y="575" width="117.60000000000001" height="30" rx="15" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="1025.8" y="595" font-size="12" fill="#e6e8ee" font-weight="500" text-anchor="middle">Shoot cooldown</text>
+<text x="1072" y="630" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="end">each spec reads the next row of its curve table</text>
+<rect x="10" y="656" width="1080" height="128" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9822b" stroke-opacity="0.6"/>
+<text x="28" y="680" font-size="12.5" fill="#d9822b" font-weight="700" text-anchor="start">LINKS TO OTHER SECTIONS</text>
+<rect x="28" y="696" width="512" height="76" rx="8" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="42" y="718" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Comes in from</text>
+<text x="42" y="738" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Shop: the Nightflare item, Scorched and Deadeye premium upgrades</text>
+<text x="42" y="756" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Levelling: upgrade points raise levels · Melee: the same sweep</text>
+<rect x="560" y="696" width="512" height="76" rx="8" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="574" y="718" font-size="13" fill="#e6e8ee" font-weight="600" text-anchor="start">Goes out to</text>
+<text x="574" y="738" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">AI: skeletons read the smash / stun radius to dodge out of it</text>
+<text x="574" y="756" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Damage pipeline: every hit effect · Knockback: PushTarget</text>
+</svg>
