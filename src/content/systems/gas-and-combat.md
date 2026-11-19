@@ -189,7 +189,7 @@ The numbers match the diagram.
 
 #### How it works
 
-**One asset class for every item** – [`UPA_ShopItem`](code:UPA_ShopItem) is a primary data asset with an icon, tooltip, price and stock settings, and three optional payloads: an `EquippedEffect` (a Gameplay Effect applied once and kept for the match), a `ConsumedEffect` (applied when the item is used), or a `GrantedAbility` (an ability given on purchase and activated when the item is used). Each item sets exactly one. Skills and upgrades use the equipped effect, potions the consumed effect, and Nightflare a granted ability, because a thrown bomb needs targeting and a projectile that an effect can't provide. The Asset Manager registers a "ShopItem" type, so the shop finds every item by type, like the hero definitions.
+**One asset class for every item** – [`UPA_ShopItem`](code:UPA_ShopItem) is a primary data asset with an icon, tooltip, price and stock settings, and three optional payloads: an `EquippedEffect` (a Gameplay Effect applied once and kept for the match), a `ConsumedEffect` (applied when the item is used), or a `GrantedAbility` (an ability given on purchase and activated when the item is used). Each item sets exactly one. Skills and upgrades use the equipped effect, potions the consumed effect, and Nightflare a granted ability, which finds every enemy around the player and blinds them. The Asset Manager registers a "ShopItem" type, so the shop finds every item by type, like the hero definitions.
 
 **Two rounds of checks** – the widget and `TryPurchase` check everything the client can know: the shop isn't closing, the item isn't owned, stock is left, souls are enough. A failure plays the reject sound and sends nothing. `Server_Purchase` then repeats the checks that matter, the phase and the souls, because the client's values could be stale or dishonest. Only the server pays, by subtracting the price from the Soul attribute, and only the server applies effects or grants abilities.
 
@@ -259,7 +259,7 @@ Twelve skills sit in four trees of three tiers: Assassin (stealth and attack pow
 
 #### What it does
 
-Potions bought in the shop go into a five-slot inventory. Buying the same potion again stacks it, up to three, and each potion can only be bought three times a match. In the arena a number key uses the potion in that slot: it applies its buff, the stack goes down by one, and an empty stack disappears. Nightflare works the same way from the player's side, but instead of a buff it throws the blind bomb it granted when it was bought.
+Potions bought in the shop go into a five-slot inventory. Buying the same potion again stacks it, up to three, and each potion can only be bought three times a match. In the arena a number key uses the potion in that slot: it applies its buff, the stack goes down by one, and an empty stack disappears. Nightflare works the same way from the player's side, but instead of a buff it sets off the blind bomb it granted when it was bought, blinding every enemy around the player.
 
 #### Step by step
 
