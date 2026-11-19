@@ -385,7 +385,7 @@ The numbers match the diagram.
 
 #### What it does
 
-Every hero has the same four heavy abilities alongside their sword combos, and a shop item adds a fifth. **Shoot** raises the hero's arm to aim and fires a volley of three projectiles. **Thrust** dashes the hero across the arena, launching and damaging every enemy in the way. **Smash** and **stun** slam the sword into the ground, hitting every grounded enemy in a circle (stun also stops them using abilities for a while), and players can jump to dodge them. **Nightflare**, bought in the shop, blinds every enemy close to the player.
+Every hero has the same four heavy abilities alongside their sword combos. **Shoot** raises the hero's arm to aim and fires a volley of three projectiles. **Thrust** dashes the hero across the arena, launching and damaging every enemy in the way. **Smash** and **stun** slam the sword into the ground, hitting every grounded enemy in a circle (stun also stops them using abilities for a while), and players can jump to dodge them. Premium upgrades from the shop make these four stronger (Scorched adds a burn to Thrust, Deadeye changes Shoot's projectile), and **Nightflare**, a consumable from the shop, blinds every enemy close to the player when it's used.
 
 All four abilities grow as they're upgraded during the match: a bigger radius, more damage, a longer stun, faster dashes, shorter cooldowns. Each one also obeys the same rules as melee: only Hostile characters are hit, each target once, and only the server decides what a hit does.
 
