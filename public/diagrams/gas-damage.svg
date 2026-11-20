@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 768" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="The damage pipeline in seven numbered steps. Stage one, worked out before Health changes: 1, the ability makes the spec with its level and a context saying who, which ability and where; 2, an MMC captures the attacker's and target's attributes and works out the base: light attacks use Attack Damage times the light bonus times the armour factor, heavy attacks use a curve value at the ability level times the heavy bonus, and the base MMC adds a Double Down roll. Armour blocks Armour over Armour plus 100. 3, GAS adds the negative number to Health, PreAttributeChange clamps it, and HealthUpdated fires; at zero it starts death before stage two has run. Stage two, in PostGameplayEffectExecute on the target: 4, undo damage after the round, ignore heals, note burn ticks and find the attacker from the context; 5, attacker bonuses Loaded Dice, Stealth Strike, Blood Serum, Bonebreaker and Deadeye multiply on top; 6, the target's reductions Arcane Aegis, Stasis Ward, Bulwark and Warden's Phial multiply into one heal-back; 7, clamp Health, cache the health percentage for rescaling, and credit the attacker's damage dealt. Links: melee and ranged hits, skill and shop attributes and levelling feed in; death, match stats, health bars and rescaling read from it.">
+<defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker><marker id="hd9a441" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d9a441"/></marker></defs>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="10" y="14" width="1080" height="172" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5fa8ff" stroke-opacity="0.5"/>
+<text x="28" y="38" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">STAGE 1 · THE MMC · WORKED OUT BEFORE HEALTH CHANGES</text>
+<rect x="28" y="48" width="300" height="126" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="44" cy="68" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="44" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="62" y="73" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Make the spec</text>
+<text x="42" y="96" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">ApplyGameplayEffectToHitResultActor</text>
+<text x="42" y="114" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">MakeOutgoingGameplayEffectSpec</text>
+<text x="42" y="132" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">effect + ability level, plus a context:</text>
+<text x="42" y="150" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">who caused it, which ability, where</text>
+<rect x="356" y="48" width="716" height="126" rx="8" fill="#151922" stroke="#5fa8ff" stroke-opacity="1"/>
+<circle cx="372" cy="68" r="10" fill="none" stroke="#5fa8ff" stroke-width="1.5"/>
+<text x="372" y="72" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="390" y="73" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Work out the base damage (capture Source and Target, then one formula)</text>
+<text x="370" y="96" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Light   MMC_LightAttackBuffDamage → AttackDamage × (1 + light bonus) × (1 − Armour / (Armour + 100))</text>
+<text x="370" y="114" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Heavy   Coefficient (curve value at the ability level) × MMC_HeavyAttackBuffDamage (1 + heavy bonus)</text>
+<text x="370" y="132" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Base    MMC_BaseAttackDamage → the light formula without the bonus, plus a Double Down roll (20%: ×1.3)</text>
+<text x="370" y="150" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Armour gives diminishing returns: 100 Armour blocks 50%, 200 blocks 67%, never 100%</text>
+<path d="M330 111 L354 111" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<rect x="10" y="214" width="1080" height="116" rx="12" fill="rgba(255,255,255,0.015)" stroke="#b08cff" stroke-opacity="0.5"/>
+<text x="28" y="238" font-size="12.5" fill="#b08cff" font-weight="700" text-anchor="start">GAS APPLIES IT TO HEALTH</text>
+<rect x="28" y="246" width="1044" height="72" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="44" cy="266" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="44" y="270" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="62" y="271" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Health changes: the effect adds the negative magnitude</text>
+<text x="42" y="294" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Health += magnitude  →  PreAttributeChange clamps it between 0 and MaxHealth  →  UChrisAbilitySystemComponent::HealthUpdated</text>
+<text x="42" y="312" font-size="11.5" fill="#e5636b" font-weight="400" text-anchor="start">At 0, HealthUpdated adds the empty tag, applies the death effect and sends the dead event, before stage 2 has run (fix: an IncomingDamage meta attribute)</text>
+<path d="M714 176 L714 244" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="10" y="358" width="1080" height="226" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9a441" stroke-opacity="0.5"/>
+<text x="1072" y="382" font-size="12.5" fill="#d9a441" font-weight="700" text-anchor="end">STAGE 2 · PostGameplayEffectExecute · ON THE TARGET'S ATTRIBUTE SET</text>
+<rect x="28" y="392" width="252" height="176" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="44" cy="412" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="44" y="416" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="62" y="417" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Who and what</text>
+<text x="42" y="440" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">round over + immune → undo it</text>
+<text x="42" y="458" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">damage only (Magnitude &lt; 0)</text>
+<text x="42" y="476" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">burn tick? damage.type.dot</text>
+<text x="42" y="494" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GetContext().GetEffectCauser()</text>
+<text x="42" y="512" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ the attacker's ASC</text>
+<path d="M282 480 L296 480" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<rect x="298" y="392" width="252" height="176" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="314" cy="412" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="314" y="416" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="332" y="417" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Bonuses (attacker)</text>
+<text x="312" y="440" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Loaded Dice ×1.3: 4th hit, 30%</text>
+<text x="312" y="458" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Stealth Strike ×1.4: from behind</text>
+<text x="312" y="476" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Blood Serum ×1.2: potion</text>
+<text x="312" y="494" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Bonebreaker ×1.5: smash tag</text>
+<text x="312" y="512" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Deadeye ×3: 3rd projectile</text>
+<text x="312" y="530" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">each: SetHealth, Magnitude grows</text>
+<text x="312" y="548" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">so they multiply</text>
+<path d="M552 480 L566 480" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<rect x="568" y="392" width="252" height="176" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="584" cy="412" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="584" y="416" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="602" y="417" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Reductions (target)</text>
+<text x="582" y="440" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Arcane Aegis: heavy tag</text>
+<text x="582" y="458" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Stasis Ward: while stunned</text>
+<text x="582" y="476" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Bulwark: always</text>
+<text x="582" y="494" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Warden's Phial: potion</text>
+<text x="582" y="512" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">multiplied into one value</text>
+<text x="582" y="530" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ one heal-back:</text>
+<text x="582" y="548" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">|Magnitude| × (1 − multiplier)</text>
+<path d="M822 480 L836 480" fill="none" stroke="#d9a441" stroke-width="2" marker-end="url(#hd9a441)"/>
+<rect x="838" y="392" width="252" height="176" rx="8" fill="#151922" stroke="#d9a441" stroke-opacity="1"/>
+<circle cx="854" cy="412" r="10" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+<text x="854" y="416" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="872" y="417" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Clamp, remember, credit</text>
+<text x="852" y="440" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">Clamp(Health, 0, MaxHealth)</text>
+<text x="852" y="458" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">SetCachedHealthPercent</text>
+<text x="852" y="476" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ RescaleHealth keeps the</text>
+<text x="852" y="494" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">percentage when max changes</text>
+<text x="852" y="512" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">AddDamageDealt(Causer,</text>
+<text x="852" y="530" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">  ActualDamage) → match stats</text>
+<path d="M153 320 L153 390" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="10" y="612" width="1080" height="142" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9822b" stroke-opacity="0.5"/>
+<text x="28" y="636" font-size="12.5" fill="#d9822b" font-weight="700" text-anchor="start">LINKS TO OTHER SECTIONS</text>
+<rect x="28" y="646" width="512" height="94" rx="8" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="42" y="671" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Comes in from</text>
+<text x="42" y="694" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Melee and ranged: every hit calls step 1 with the ability's level</text>
+<text x="42" y="712" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Skill trees and shop: the flag and bonus attributes in steps 2, 5 and 6</text>
+<text x="42" y="730" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Levelling: MMC_LevelBased grows Attack Damage and Armour</text>
+<rect x="560" y="646" width="512" height="94" rx="8" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="574" y="671" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Goes out to</text>
+<text x="574" y="694" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Death: HealthUpdated at 0 → the death effect and dead event</text>
+<text x="574" y="712" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Match stats: AddDamageDealt · Health bars: OnRep_Health</text>
+<text x="574" y="730" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Level-ups and Iron Clad: MaxHealthUpdated → RescaleHealth</text>
+</svg>

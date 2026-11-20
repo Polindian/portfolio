@@ -6,7 +6,7 @@ tags: ["GAS", "Gameplay Effects", "Attributes", "Anim Notifies", "Gameplay Tags"
 glance:
   - "Every attack is a Gameplay Ability, so it gets prediction and replication for free"
   - "Montage notifies open combo windows and sweep the sword's sockets; only the server turns hits into damage"
-  - "TODO: e.g. Damage is data-driven via Modifier Magnitude Calculations"
+  - "Damage is worked out in two stages: an MMC for stats against Armour, then the attribute set for every skill"
 keyFiles:
   - { path: "GAS/ChrisGameplayAbility.cpp", note: "Base ability class" }
   - { path: "GAS/ChrisAbilitySystemComponent.cpp", note: "Custom ASC" }
@@ -456,23 +456,71 @@ The numbers match the diagram.
 
 ### The damage pipeline
 
-<div class="placeholder">Diagram: The damage pipeline</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-damage.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-damage.svg" alt="The damage pipeline in seven numbered steps. Stage one, worked out before Health changes: 1, the ability makes the spec with its level and a context saying who, which ability and where; 2, an MMC captures the attacker's and target's attributes and works out the base: light attacks use Attack Damage times the light bonus times the armour factor, heavy attacks use a curve value at the ability level times the heavy bonus, and the base MMC adds a Double Down roll. Armour blocks Armour over Armour plus 100. 3, GAS adds the negative number to Health, PreAttributeChange clamps it, and HealthUpdated fires; at zero it starts death before stage two has run. Stage two, in PostGameplayEffectExecute on the target: 4, undo damage after the round, ignore heals, note burn ticks and find the attacker from the context; 5, attacker bonuses Loaded Dice, Stealth Strike, Blood Serum, Bonebreaker and Deadeye multiply on top; 6, the target's reductions Arcane Aegis, Stasis Ward, Bulwark and Warden's Phial multiply into one heal-back; 7, clamp Health, cache the health percentage for rescaling, and credit the attacker's damage dealt. Links: melee and ranged hits, skill and shop attributes and levelling feed in; death, match stats, health bars and rescaling read from it." /></a>
+  <figcaption>Two stages: an MMC works out the base before Health changes, then the target's attribute set adds the bonuses and reductions.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+Every hit, from a sword, a projectile, a dash or a smash, ends here. The attacker's Attack Damage and skills meet the target's Armour and defences, and one number comes off the target's Health. Light attacks grow with the attacker's stats; heavy abilities grow with the ability's level. Armour gives diminishing returns, so no hero becomes unkillable. Bonuses from skills and potions, and reductions from the target's own skills and potions, all multiply, so stacking them is strong but never overpowered. The attacker is credited with the damage they really dealt, for the end-of-match stats.
 
 #### Step by step
 
-TODO
+The numbers match the diagram. Everything here runs on the server; Health then replicates to every player.
+
+| # | Step | Calls, in order | Where |
+|---|---|---|---|
+| 1 | Make the spec | [`ApplyGameplayEffectToHitResultActor`](code:UChrisGameplayAbility::ApplyGameplayEffectToHitResultActor): `MakeOutgoingGameplayEffectSpec` (effect + ability level) → `MakeEffectContext` + `AddHitResult` → `ApplyGameplayEffectSpecToTarget` | The attacker's ability |
+| 2 | Base damage | The effect's modifier asks its MMC. Constructor: capture definitions (Attack Damage from the Source, Armour from the Target) → [`MMC_LightAttackBuffDamage`](code:UMMC_LightAttackBuffDamage::CalculateBaseMagnitude_Implementation), [`MMC_HeavyAttackBuffDamage`](code:UMMC_HeavyAttackBuffDamage::CalculateBaseMagnitude_Implementation) or [`MMC_BaseAttackDamage`](code:UMMC_BaseAttackDamage::CalculateBaseMagnitude_Implementation): `GetCapturedAttributeMagnitude` → formula → negative number × the effect's Coefficient | The MMC |
+| 3 | Health changes | GAS adds the magnitude to Health → [`PreAttributeChange`](code:UChrisAttributeSet::PreAttributeChange) clamps it → [`HealthUpdated`](code:UChrisAbilitySystemComponent::HealthUpdated) fires (at 0: death effect and dead event) | The target's attribute set and ASC |
+| 4 | Who and what | [`PostGameplayEffectExecute`](code:UChrisAttributeSet::PostGameplayEffectExecute): round over and immune → undo → damage only → burn tick? (`damage.type.dot`) → `GetContext().GetEffectCauser()` → the attacker's ASC | The target's attribute set |
+| 5 | Bonuses | Loaded Dice → Stealth Strike → Blood Serum → Bonebreaker → Deadeye: each reads the attacker's attributes, `SetHealth` takes the extra, and the running magnitude grows | The target's attribute set |
+| 6 | Reductions | Arcane Aegis → Stasis Ward → Bulwark → Warden's Phial: multiplied into one value → one heal-back with `SetHealth` | The target's attribute set |
+| 7 | Clamp, remember, credit | `SetHealth(Clamp(...))` → `SetCachedHealthPercent` → [`AddDamageDealt`](code:AChrisGameState::AddDamageDealt) on the Game State | The target's attribute set |
+| – | Max Health changes later | [`MaxHealthUpdated`](code:AChrisCharacter::MaxHealthUpdated) → [`RescaleHealth`](code:UChrisAttributeSet::RescaleHealth): MaxHealth × the cached percentage | The character |
 
 #### How it works
 
-TODO
+**An MMC works out one number** – a Modifier Magnitude Calculation is a small class a gameplay effect asks "how big is this?" when it's applied. In its constructor, each MMC writes capture definitions: which attribute it needs and from which side, the **Source** (the attacker) or the **Target** (the one being hit). It adds them to `RelevantAttributesToCapture` so GAS gathers those values from both ability system components when the effect lands. In `CalculateBaseMagnitude_Implementation` it reads them with `GetCapturedAttributeMagnitude`, works out the damage and returns it as a **negative** number, because the effect adds it to Health.
+
+**Light attacks scale with stats** – [`MMC_LightAttackBuffDamage`](code:UMMC_LightAttackBuffDamage::CalculateBaseMagnitude_Implementation) returns Attack Damage × (1 + the light bonus) × (1 − Armour ÷ (Armour + 100)). The light bonus is an attribute on the attacker: 0 normally, 0.1 with Bladed Edge. The skill doesn't need a tag check, because only effects built with this MMC read it.
+
+**Heavy abilities scale with their level** – a modifier using an MMC has a **Coefficient** box, and the final number is Coefficient × what the MMC returns. My heavy damage effects put their damage in the Coefficient, as a curve-table value read at the ability's level, and [`MMC_HeavyAttackBuffDamage`](code:UMMC_HeavyAttackBuffDamage::CalculateBaseMagnitude_Implementation) returns only the multiplier, 1 + the heavy bonus (1.2 with Juggernaut). So the two kinds of bonus come from different places: the **Coefficient** belongs to the effect and changes with the ability's level, while the **light and heavy bonuses** belong to the attacker and change when a skill is bought.
+
+**Armour gives diminishing returns** – Armour ÷ (Armour + 100) is the share blocked: 50 Armour blocks 33%, 100 blocks 50%, 200 blocks 67%. Every point helps a little less than the one before, and the result can never reach 100%.
+
+**Double Down** – the 20% chance of ×1.3 is rolled inside [`MMC_BaseAttackDamage`](code:UMMC_BaseAttackDamage::CalculateBaseMagnitude_Implementation). It's safe to roll random numbers there because damage effects are only applied on the server, so one machine rolls and everyone gets the result.
+
+**Stats grow without touching the pipeline** – [`MMC_LevelBased`](code:UMMC_LevelBased::CalculateBaseMagnitude_Implementation) isn't part of a hit. It belongs to an infinite effect applied once at setup, which captures the hero's Level live, so GAS recalculates it whenever Level changes. The growth lands in Attack Damage, Armour and the rest, and every hit just reads their current values.
+
+**Stage two runs on the target, after Health has changed** – GAS calls [`PostGameplayEffectExecute`](code:UChrisAttributeSet::PostGameplayEffectExecute) on the target's attribute set after an instant effect changes one of its attributes. It receives a record of what happened: which attribute, by how much (`EvaluatedData.Magnitude`), and the spec that did it. The spec's context says who caused it (`GetEffectCauser`), which gives the attacker's ability system component, so the bonuses can read the **attacker's** skills while the reductions read the **target's own**.
+
+**Damage types are tags I check myself** – my damage effects carry asset tags: `damage.type.heavy`, `.smash`, `.projectile` and `.dot`. GAS has its own way to make a modifier depend on tags, but I read these in C++ instead (`Def->InheritableGameplayEffectTags`), which lets each skill decide exactly which hits it affects: Bonebreaker only boosts smash, Deadeye only projectiles, Arcane Aegis only reduces heavy damage. DoT means damage over time: Scorched's burn ticks from Thrust, the only DoT in the game. Burn ticks skip the bonuses, so one Thrust can't roll Loaded Dice or Stealth Strike on every tick.
+
+**Bonuses multiply** – each bonus is a percentage of the damage **including** the bonuses before it. The running total is `Magnitude`, which is negative, so making the damage bigger means subtracting: −33 − 9.9 = −42.9. `Abs` gives the size without the sign whenever a percentage is needed. Loaded Dice and Stealth Strike together give 1.3 × 1.4 = ×1.82, not +70%, which keeps stacked skills strong without being overpowered, and the order of the bonuses doesn't change the result. Loaded Dice's and Deadeye's hit counters are attributes on the attacker, so they count that player's hits across every enemy.
+
+**Reductions multiply into one heal-back** – the target's reductions are multiplied into a single value starting at 1: two 20% reductions give 0.8 × 0.8 = 0.64, so 36% off, never stacking to 100%. The damage the target is spared is then given back in one `SetHealth`.
+
+**Keeping the percentage when max Health changes** – after every hit, `CachedHealthPercent` saves Health ÷ MaxHealth. When MaxHealth changes (a level-up, or Iron Clad's +100 at the start of a round), [`MaxHealthUpdated`](code:AChrisCharacter::MaxHealthUpdated) calls [`RescaleHealth`](code:UChrisAttributeSet::RescaleHealth), which sets Health to the new maximum × the saved percentage. A hero on 50 of 100 who levels up to 120 max goes to 60, still half health, instead of the bar dropping to 42%. The percentage has to be saved beforehand, because once MaxHealth has changed, Health ÷ MaxHealth gives the new, wrong percentage. A dead hero (0%) is never rescaled back to life.
+
+**Credit for the real damage** – the difference between Health before and after the hit, after every bonus, reduction and clamp, is added to the attacker's `DamageInflicted` in the Game State's match stats, unless they hurt themselves.
+
+**Links to other sections**
+
+- **Melee combos & hit detection, Ranged & area abilities** – every hit reaches step 1 through `ApplyGameplayEffectToHitResultActor`, a projectile's spec or a target-data apply, always with the ability's level.
+- **Skill trees & ability upgrades, the shop** – Bladed Edge, Juggernaut, Double Down, Loaded Dice, Stealth Strike, Bonebreaker, Deadeye and the defensive skills are all flag or bonus attributes read here. Blood Serum and Warden's Phial are potion effects.
+- **Attributes, XP & levelling** – Attack Damage, Armour and MaxHealth grow with level through `MMC_LevelBased`, and `PreAttributeChange` is the clamp described there.
+- **Death, stun, knockback & rewards** – `HealthUpdated` starts death when Health reaches 0. Stasis Ward reads the stun tag.
+- **The gameplay framework** – the Game State keeps the match stats `AddDamageDealt` writes to.
 
 #### Why I designed it this way
 
-TODO
+- **Two stages** – the MMC handles the maths every hit shares (stats against Armour), and the attribute set handles the conditional rules (who owns which skill, which way the attacker faces, which kind of hit). Each rule lives in one place.
+- **Skills as attributes** – buying a skill sets an attribute through an effect, and the pipeline reads it. No hit has to ask the shop what a player owns.
+- **Multiplying, not adding** – stacked bonuses and reductions stay strong without becoming overpowered, and reductions can never reach 100%.
+- **Diminishing returns on Armour** – Armour always helps, never makes a hero immune, and a single formula works at every level.
+- **Data for the numbers** – damage per ability level lives in curve tables, so balancing is spreadsheet work, not code.
 
 ### Death, stun, knockback & rewards
 
@@ -532,4 +580,7 @@ TODO: before/after, with numbers where possible.
 - **Sweep every frame, not on one frame** – each hit notify checks where the blade is on a single frame, so a very fast swing can pass an enemy between frames. An anim notify state that sweeps every tick, from last tick's socket positions to this tick's, with one hit list for the whole window, would catch everything the blade passes through.
 - **Stop projectiles on walls** – projectiles only collide with characters, so they fly through walls. They should stop on level geometry, play their impact effect and do no damage.
 - **One push path** – Thrust launches targets directly while every other attack uses `PushTarget`. Moving Thrust onto `PushTarget` means knockback rules, and any future hit reactions, apply to every attack.
+- **Change Health once per hit** – damage effects change Health directly, so death is judged the moment the base damage lands, before bonuses and reductions run. A hero on 35 Health with a 20% reduction, hit for 40, should survive on 3 (40 × 0.8 = 32); instead Health hits 0, death starts, and the reduction then heals 8 back onto a dying hero. An unreplicated `IncomingDamage` meta attribute fixes it: damage effects write to it instead of Health, every bonus and reduction is applied to that one number, and Health changes once, so death is judged on the final value and the damage credit is exact, even on overkill.
+- **Armour against heavy abilities** – heavy damage is the curve value × the heavy bonus, so it ignores Armour. Capturing Armour in the heavy MMC makes every attack respect it.
+- **Double Down on combo hits only** – its roll lives in the base MMC, so it follows whichever effects use that MMC, while the skill promises combo hits. Tagging the follow-up combo effects and rolling it in stage two would tie it to the hits it describes, and let the base MMC go.
 - **One combo class** – `UGA_Combo` hard-codes its buttons, while `UStabAbility` reads them from data. I'd move the dual slash onto Stab and delete GA_Combo.

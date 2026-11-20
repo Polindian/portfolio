@@ -21,6 +21,11 @@
       "start": 583,
       "end": 586
     },
+    "AChrisCharacter::MaxHealthUpdated": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 430,
+      "end": 436
+    },
     "AChrisCharacter::OnRep_TeamID": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 588,
@@ -210,6 +215,11 @@
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
       "start": 665,
       "end": 668
+    },
+    "AChrisGameState::AddDamageDealt": {
+      "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
+      "start": 671,
+      "end": 674
     },
     "AChrisGameState::AssignRandomCharactersToEmptySlots": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameState.cpp",
@@ -501,6 +511,11 @@
       "start": 111,
       "end": 128
     },
+    "UChrisAbilitySystemComponent::HealthUpdated": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 263,
+      "end": 403
+    },
     "UChrisAbilitySystemComponent::InitializeBaseAttributes": {
       "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
       "start": 32,
@@ -540,6 +555,11 @@
       "path": "Source/AnimationTesting/Private/GAS/ChrisAttributeSet.cpp",
       "start": 12,
       "end": 22
+    },
+    "UChrisAttributeSet::RescaleHealth": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAttributeSet.cpp",
+      "start": 306,
+      "end": 314
     },
     "UChrisGameInstance::StartMatch": {
       "path": "Source/AnimationTesting/Private/Framework/ChrisGameInstance.cpp",
@@ -770,6 +790,11 @@
       "path": "Source/AnimationTesting/Private/Widgets/LobbyWidget.cpp",
       "start": 155,
       "end": 174
+    },
+    "UMMC_BaseAttackDamage::CalculateBaseMagnitude_Implementation": {
+      "path": "Source/AnimationTesting/Private/GAS/MMC_BaseAttackDamage.cpp",
+      "start": 24,
+      "end": 51
     },
     "UMMC_HeavyAttackBuffDamage::CalculateBaseMagnitude_Implementation": {
       "path": "Source/AnimationTesting/Private/GAS/MMC_HeavyAttackBuffDamage.cpp",
