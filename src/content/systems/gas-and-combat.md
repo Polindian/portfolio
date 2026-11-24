@@ -596,21 +596,38 @@ The numbers match the diagram.
 
 ## How it connects
 
-- Gameplay Framework — the ASC lives on the character; souls come from the Game Mode; flags read Dominion
-- Networking — what runs on the server, what is predicted, what replicates
-- UI — ability gauges, the shop widget, the skill tree
-- AI — minions use the same ASC and attribute set, and press abilities through a behaviour tree task
-- Audio — cooldown and low-health sounds driven by tags
+<figure class="diagram">
+  <a href="../../diagrams/gas-connects.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-connects.svg" alt="The combat loop in six steps: an ability starts, a hit is found, the damage is worked out, death, stun and knockback follow, rewards pay souls and XP, and growth through levelling, the shop and skill trees makes the next hit stronger, which loops back to the ability. Around it sit the gameplay framework, networking, the UI, the skeleton AI and audio." /></a>
+  <figcaption>Every fight runs the same loop: what a hero earns makes their next hit stronger.</figcaption>
+</figure>
+
+Every fight runs one loop, and each step is a section above. An **ability** starts (it must be given, off cooldown, affordable, and allowed by the hero's tags, such as having the swords out). The **hit** is found by a sword sweep, a projectile, a sphere or an overlap. The **damage** is worked out by an MMC and then the target's attribute set. At 0 Health, **death** starts through a replicated tag, and stuns and knockbacks use the same tag and event patterns. The killer earns **rewards**, shared with teammates nearby, and those souls and XP become **growth**: levels raise stats and give upgrade points, and the shop sells skills that set attributes the damage pipeline reads. The next hit is stronger, and the loop goes round again.
+
+Around the loop:
+
+- **The gameplay framework** – rounds start and stop the fighting, kills are reported to the Game Mode for scoring, the Game State keeps the match stats, and the shop phase is when skills are bought. Round resets clear cooldowns and bring the dead back.
+- **Networking** – the server decides every hit, death and reward. The attacker's PC predicts its own abilities and montages, and attributes, effects and tags replicate the results to everyone.
+- **UI** – health bars and ability gauges read attributes and cooldown effects, and the shop and skill trees read what each hero owns.
+- **AI** – skeletons have the same ability system and attribute set as heroes, press abilities through a behaviour tree task, react to the same stun and death tags, and read the same smash and stun radius to get out of the way.
+- **Audio and VFX** – cues and sounds hang off the same effects and tags, so they last exactly as long as the state they show.
 
 ## Built to extend
 
 #### Easy to add today
 
-TODO
+- **A new skill** – a shop item data asset with an equipped effect that sets an attribute. If the bonus fits an existing slot (light or heavy bonus, a reduction), no code is needed; a new kind of bonus is one check in `PostGameplayEffectExecute`.
+- **A new attack or combo** – a Stab Blueprint: a montage with sections, hit notifies naming the sword's sockets, combo window notifies, and a `ComboInputMap` and `ComboDamageMap` entry for each section. No new C++.
+- **A new consumable** – a shop item with a consumed effect for a buff, or a granted ability for something that acts (like Nightflare). The inventory, stacking, cooldown and shop all work unchanged.
+- **A new damage type** – a `damage.type.*` tag on the damage effects, and the skills that should care check for it.
+- **A new hero** – a data table row with base stats, growth rates and assets. Every hero shares the same abilities, so a hero is data.
+- **Balancing** – damage per level, radius per level, stun length and rewards live in curve tables and Blueprint settings.
 
 #### Would need work first
 
-TODO
+- **Abilities unique to each hero** – every hero is given the same four heavy abilities today. Giving each hero their own list means moving the ability set into the hero data.
+- **Blocking, parrying and clashes** – blocking fits after the damage step (a blocking tag and a facing check, a recoil that reuses hit reactions, and a guard attribute to stop endless blocking), but it should come after the `IncomingDamage` rewrite so blocks are judged on the final number.
+- **A per-hit damage cap and the additive bonus bucket** – both are a few lines, once Health changes only once per hit.
+- **More status effects that lock input** – they can copy the stun pattern (a tag, a montage, input off), but running abilities should be cancelled explicitly first, so a status can't leave a hero stuck mid-ability.
 
 ## Challenges & bugs
 
@@ -621,11 +638,63 @@ TODO
 - **Fix** – `InitializeBaseAttributes` sets Level to 1 before the first call, so the starting level is never counted as progress.
 - **Lesson** – when something is calculated as a difference (new minus old), the starting "old" value matters as much as the formula.
 
-**Symptom → cause → fix → lesson** – TODO: UGA_Shoot fired multiple shots per press until input was debounced; the death effect needed Infinite duration for the respawn flow.
+### One press fired several shots
+
+- **Symptom** – the first shot of a volley did double damage, and only two shots fired before the cooldown.
+- **Cause** – the shoot input was bound to Enhanced Input's `Triggered` event, which fires every frame while the button is held, so one press could call [`ShootProjectile`](code:UGA_Shoot::ShootProjectile) more than once.
+- **Fix** – a `LastShotTime` check at the top of `ShootProjectile`: a shot less than 0.15 seconds after the last one is ignored.
+- **Lesson** – an input event isn't the same as a press. Check how often an input fires before trusting it to mean "once".
+
+### Heroes respawned on their own
+
+- **Symptom** – heroes killed near the end of a round came back by themselves and kept their input and movement into the shop.
+- **Cause** – the death effect had a duration. When it ran out, the dead tag went with it and `Respawn` ran, whatever the respawn timer or the round was doing.
+- **Fix** – the death effect is now Infinite, so [`RespawnImmediately`](code:AChrisCharacter::RespawnImmediately) removing it is the only way back, and round end cancels the death timers and resets the dead itself ([`ForceResetFromDeath`](code:AChrisCharacter::ForceResetFromDeath)).
+- **Lesson** – when an effect's tag drives a state, the effect's duration is part of the logic. Give one path the job of ending it.
+
+### Shoot's cooldown and Deadeye carried into the next round
+
+- **Symptom** – after a round reset, Shoot sometimes fired only one shot before a full cooldown, or showed ready but wouldn't fire, and Deadeye sometimes spent its triple damage on the first shot of a round.
+- **Cause** – Shoot kept its own shot count, timer and end time on the ability, which is one instance per hero and survives rounds. The round reset only removes cooldown effects, so it couldn't reach any of that, or the Deadeye hit counter.
+- **Fix** – Shoot now uses the standard cooldown effect, committed after the third shot, so the reset and the HUD both see it, and [`ResetShootState`](code:UGA_Shoot::ResetShootState) clears the shot count and the Deadeye counter from [`ResetAllCooldowns`](code:UChrisAbilitySystemComponent::ResetAllCooldowns).
+- **Lesson** – state kept outside GAS isn't reset by GAS. Anything an ability remembers needs its own reset.
+
+### The last potion in a slot skipped the shared cooldown
+
+- **Symptom** – drinking a consumable's last stack let another consumable be used straight away.
+- **Cause** – using the last stack removed the item, which removed what it had granted, including the shared cooldown effect, so the next item's cooldown check passed.
+- **Fix** – when [`ConsumeItem`](code:UInventoryComponent::ConsumeItem) uses the last stack, the item's granted effects stay until they expire by themselves.
+- **Lesson** – cleanup can undo more than the thing being cleaned up. Check what else depends on what's being removed.
+
+### Quicksilver's speed boost vanished in half a second
+
+- **Symptom** – the Quicksilver potion's speed boost appeared and was gone almost immediately.
+- **Cause** – the anim instance set the walk speed every frame from fixed numbers for each direction, overwriting the speed attribute the potion had raised.
+- **Fix** – the directional speeds became multipliers of the move speed attribute, so buffs and each hero's base speed both count. Abilities that set their own speed add the `SpeedOverride` tag so the anim instance leaves it alone.
+- **Lesson** – two systems writing the same value every frame means the last one wins. Give each value one owner, and let the others multiply it.
+
+### Recycled skeletons came back invisible
+
+- **Symptom** – some skeletons reused from the pool were invisible.
+- **Cause** – if a skeleton was dissolving when the dissolve started again, [`ApplyDissolveMaterial`](code:AChrisCharacter::ApplyDissolveMaterial) saved the dissolve materials as its "originals", so restoring them brought back the dissolve.
+- **Fix** – applying a dissolve restores the real materials first if one is already running, and [`ASkeletonAI::Activate`](code:ASkeletonAI::Activate) restores them as a safety net.
+- **Lesson** – pooled objects carry their last state into their next life. Reset everything on reuse.
+
+### Hits after the round ended restarted the death loop
+
+- **Symptom** – a hit landing just after the round ended could kill a hero and start the death sequence during the round transition.
+- **Cause** – damage effects kept applying after the round was decided.
+- **Fix** – a round-over immunity tag. [`PostGameplayEffectExecute`](code:UChrisAttributeSet::PostGameplayEffectExecute) gives back any damage taken while it's on, and healing still goes through.
+- **Lesson** – a round ending is a state the whole game has to respect, not just the timer.
 
 ## Optimisations
 
-TODO: before/after, with numbers where possible.
+- **Local gameplay cues for hit effects** – I moved the player abilities' hit cues from replicated cues to local ones. The hit notify already runs on every machine, so each one plays its own sparks at the impact point, and no cue is sent over the network for each hit.
+- **Projectiles replicate three values, not a position** – the server sends a projectile's direction, speed and team once, and every machine moves it with the same maths each frame, instead of streaming its position every frame.
+- **Pooled skeletons** – each barrack spawns its skeletons once and reuses dead ones, so the server isn't creating and destroying actors all match.
+- **Wasted sweeps found** – light attacks run an area sweep whose results only smash and stun use. It's one of the fixes in the improvement batch, along with deleting that unused code path.
+
+I haven't profiled these yet, so there are no before-and-after numbers here. Measuring the server's frame time and network traffic with Unreal Insights and the network profiler, before and after the improvement batch, is the next step.
 
 ## What I'd do differently
 

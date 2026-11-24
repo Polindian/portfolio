@@ -16,6 +16,11 @@
       "start": 16,
       "end": 292
     },
+    "AChrisCharacter::ApplyDissolveMaterial": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 615,
+      "end": 667
+    },
     "AChrisCharacter::ClientSideInit": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 60,
@@ -590,6 +595,11 @@
       "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
       "start": 32,
       "end": 83
+    },
+    "UChrisAbilitySystemComponent::ResetAllCooldowns": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
+      "start": 137,
+      "end": 169
     },
     "UChrisAbilitySystemComponent::ServerSideInit": {
       "path": "Source/AnimationTesting/Private/GAS/ChrisAbilitySystemComponent.cpp",
