@@ -1,6 +1,16 @@
 {
   "ref": "v0.9.0",
   "symbols": {
+    "AChrisAIController::ForgetActorIfDead": {
+      "path": "Source/AnimationTesting/Private/AI/ChrisAIController.cpp",
+      "start": 201,
+      "end": 221
+    },
+    "AChrisAIController::PawnStunTagUpdated": {
+      "path": "Source/AnimationTesting/Private/AI/ChrisAIController.cpp",
+      "start": 273,
+      "end": 290
+    },
     "AChrisCharacter": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.h",
       "start": 16,
@@ -10,6 +20,26 @@
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 60,
       "end": 64
+    },
+    "AChrisCharacter::DeathMontageFinished": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 303,
+      "end": 317
+    },
+    "AChrisCharacter::DeathTagUpdated": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 159,
+      "end": 205
+    },
+    "AChrisCharacter::FallBackTagUpdated": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 383,
+      "end": 400
+    },
+    "AChrisCharacter::ForceResetFromDeath": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 479,
+      "end": 515
     },
     "AChrisCharacter::GetAbilitySystemComponent": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
@@ -31,10 +61,25 @@
       "start": 588,
       "end": 596
     },
+    "AChrisCharacter::PlayDeathAnimation": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 336,
+      "end": 343
+    },
     "AChrisCharacter::PossessedBy": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 71,
       "end": 79
+    },
+    "AChrisCharacter::Respawn": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 523,
+      "end": 568
+    },
+    "AChrisCharacter::RespawnImmediately": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 471,
+      "end": 477
     },
     "AChrisCharacter::ServerSideInit": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
@@ -45,6 +90,16 @@
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
       "start": 578,
       "end": 581
+    },
+    "AChrisCharacter::StartDeathSequence": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 345,
+      "end": 362
+    },
+    "AChrisCharacter::StunTagUpdated": {
+      "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
+      "start": 364,
+      "end": 381
     },
     "AChrisCharacter::UpgradeAbilityWithInputID": {
       "path": "Source/AnimationTesting/Private/Character/ChrisCharacter.cpp",
@@ -261,6 +316,11 @@
       "start": 104,
       "end": 255
     },
+    "AChrisPlayerCharacter::OnStun": {
+      "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.cpp",
+      "start": 348,
+      "end": 351
+    },
     "AChrisPlayerCharacter::SetupPlayerInputComponent": {
       "path": "Source/AnimationTesting/Private/Player/ChrisPlayerCharacter.cpp",
       "start": 60,
@@ -415,6 +475,16 @@
       "path": "Source/AnimationTesting/Private/GAS/ProjectileActor.cpp",
       "start": 125,
       "end": 131
+    },
+    "ASkeletonAI::Activate": {
+      "path": "Source/AnimationTesting/Private/AI/SkeletonAI.cpp",
+      "start": 28,
+      "end": 72
+    },
+    "ASkeletonAI::IsReadyForReuse": {
+      "path": "Source/AnimationTesting/Private/AI/SkeletonAI.cpp",
+      "start": 74,
+      "end": 78
     },
     "ATargetActor_Around::ActorInDetectionRange": {
       "path": "Source/AnimationTesting/Private/TargetActor_Around.cpp",
@@ -571,10 +641,20 @@
       "start": 163,
       "end": 184
     },
+    "UChrisGameplayAbility::PushSelf": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisGameplayAbility.cpp",
+      "start": 94,
+      "end": 101
+    },
     "UChrisGameplayAbility::PushTarget": {
       "path": "Source/AnimationTesting/Private/GAS/ChrisGameplayAbility.cpp",
       "start": 103,
       "end": 115
+    },
+    "UChrisGameplayAbility::PushTargetsFromLocation": {
+      "path": "Source/AnimationTesting/Private/GAS/ChrisGameplayAbility.cpp",
+      "start": 142,
+      "end": 150
     },
     "UChrisNetStatics::GetPlayerCountPerTeam": {
       "path": "Source/AnimationTesting/Private/Network/ChrisNetStatics.cpp",
@@ -600,6 +680,16 @@
       "path": "Source/AnimationTesting/Private/GAS/GAP_Dead.cpp",
       "start": 26,
       "end": 133
+    },
+    "UGAP_Dead::GetFriendlyAlliesNearKiller": {
+      "path": "Source/AnimationTesting/Private/GAS/GAP_Dead.cpp",
+      "start": 136,
+      "end": 177
+    },
+    "UGAP_Launched::ActivateAbility": {
+      "path": "Source/AnimationTesting/Private/GAS/GAP_Launched.cpp",
+      "start": 19,
+      "end": 32
     },
     "UGA_BlindBomb::ActivateAbility": {
       "path": "Source/AnimationTesting/Private/GAS/GA_BlindBomb.cpp",

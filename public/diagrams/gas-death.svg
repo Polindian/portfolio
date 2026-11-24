@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 916" font-family="Inter, system-ui, Segoe UI, sans-serif" role="img" aria-label="Death, rewards, stun and knockback in twelve numbered steps, coloured by the machine that runs them. Death and respawn: 1, on the server HealthUpdated at zero applies the death effect, which grants the dead tag, and sends the dead event with the killing blow's context; 2, the dead tag replicates, so DeathTagUpdated runs StartDeathSequence on every machine, turning input off, cancelling abilities, playing the montage, hiding the hero from AI and dissolving the body, while the banner and death sound play only on the dying player's screen; 3, when the montage ends the capsule stops blocking others and the server starts the respawn timer, which removes the death effect; 4, the tag's removal runs Respawn on every machine, resetting the hero at their start spot with full stats. Rewards, in UGAP_Dead on the server: 5, the killer comes from the context and only heroes get credit; 6, the amount depends on whether a hero or skeleton died, and Stacked Odds can double it; 7, the killer gets everything alone, or half with the rest split between friendly heroes nearby; 8, a reward effect fills in XP and souls with SetByCaller and the kill is reported to the Game Mode. Stun and fall back: 9, the tag plays a montage, turns a player's input off and blocks abilities; 10, a skeleton's behaviour tree pauses. Knockback: 11, PushTarget stores the velocity in a hit result and sends the target a launch event; 12, the target's UGAP_Launched commits and launches itself, and the movement replicates. Links: the damage pipeline and the attacks feed in; levelling, the shop and the framework read from it.">
+<defs><marker id="h9aa3b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3b2"/></marker><marker id="h4fc1b0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#4fc1b0"/></marker><marker id="h5fa8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5fa8ff"/></marker></defs>
+<rect width="100%" height="100%" fill="#0d0f14"/>
+<rect x="22" y="12" width="14" height="14" rx="3" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<text x="44" y="24" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">Server only</text>
+<rect x="252" y="12" width="14" height="14" rx="3" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<text x="274" y="24" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">Every machine</text>
+<rect x="482" y="12" width="14" height="14" rx="3" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="504" y="24" font-size="12" fill="#9aa3b2" font-weight="400" text-anchor="start">Only the dying player's screen</text>
+<rect x="10" y="38" width="1080" height="184" rx="12" fill="rgba(255,255,255,0.015)" stroke="#e5636b" stroke-opacity="0.5"/>
+<text x="28" y="62" font-size="12.5" fill="#e5636b" font-weight="700" text-anchor="start">DEATH AND RESPAWN</text>
+<rect x="28" y="72" width="246" height="138" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="44" cy="92" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="44" y="96" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">1</text>
+<text x="62" y="97" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Health reaches 0</text>
+<text x="42" y="120" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">HealthUpdated</text>
+<text x="42" y="138" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">once only (health-empty tag)</text>
+<text x="42" y="156" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">AuthApplyGameEffect(Death)</text>
+<text x="42" y="174" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ grants the dead tag</text>
+<text x="42" y="192" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">+ dead event, with the context</text>
+<rect x="294" y="72" width="246" height="138" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="310" cy="92" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="310" y="96" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">2</text>
+<text x="328" y="97" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Everyone sees it</text>
+<text x="308" y="120" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">DeathTagUpdated</text>
+<text x="308" y="138" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">StartDeathSequence</text>
+<text x="308" y="156" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">input off, abilities cancelled,</text>
+<text x="308" y="174" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">montage, unseen by AI, dissolve</text>
+<text x="308" y="192" font-size="11.5" fill="#d9822b" font-weight="400" text-anchor="start">banner and death sound</text>
+<rect x="560" y="72" width="246" height="138" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="576" cy="92" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="576" y="96" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">3</text>
+<text x="594" y="97" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Montage ends</text>
+<text x="574" y="120" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">DeathMontageFinished</text>
+<text x="574" y="138" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">capsule stops blocking others</text>
+<text x="574" y="156" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">server: RespawnDelay timer</text>
+<text x="574" y="174" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">→ RespawnImmediately</text>
+<text x="574" y="192" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">removes the death effect</text>
+<rect x="826" y="72" width="246" height="138" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="842" cy="92" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="842" y="96" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">4</text>
+<text x="860" y="97" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Come back</text>
+<text x="840" y="120" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">DeathTagUpdated(0) → Respawn</text>
+<text x="840" y="138" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">everything from step 2 undone</text>
+<text x="840" y="156" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">swords away, StartSpot (server)</text>
+<text x="840" y="174" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">ApplyFullStatEffect</text>
+<text x="840" y="192" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">cooldowns kept</text>
+<path d="M276 141 L290 141" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M542 141 L556 141" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<path d="M808 141 L822 141" fill="none" stroke="#9aa3b2" stroke-width="2" marker-end="url(#h9aa3b2)"/>
+<rect x="10" y="246" width="1080" height="170" rx="12" fill="rgba(255,255,255,0.015)" stroke="#4fc1b0" stroke-opacity="0.5"/>
+<text x="1072" y="270" font-size="12.5" fill="#4fc1b0" font-weight="700" text-anchor="end">REWARDS · UGAP_Dead · TRIGGERED BY THE DEAD EVENT · SERVER ONLY</text>
+<rect x="28" y="282" width="246" height="122" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="44" cy="302" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="44" y="306" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">5</text>
+<text x="62" y="307" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Who killed whom</text>
+<text x="42" y="330" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">TriggerEventData->ContextHandle</text>
+<text x="42" y="348" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">.GetEffectCauser()</text>
+<text x="42" y="366" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">heroes only get credit</text>
+<text x="42" y="384" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">AddDeath · AddHeroKill</text>
+<rect x="294" y="282" width="246" height="122" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="310" cy="302" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="310" y="306" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">6</text>
+<text x="328" y="307" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">How much</text>
+<text x="308" y="330" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">hero or skeleton amount</text>
+<text x="308" y="348" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Stacked Odds: 15% → ×2</text>
+<text x="308" y="366" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">before the split, so the</text>
+<text x="308" y="384" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">whole group gains</text>
+<rect x="560" y="282" width="246" height="122" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="576" cy="302" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="576" y="306" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">7</text>
+<text x="594" y="307" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Who shares</text>
+<text x="574" y="330" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GetFriendlyAlliesNearKiller</text>
+<text x="574" y="348" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">alone: 100% to the killer</text>
+<text x="574" y="366" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">allies: 50% killer, 50% split</text>
+<text x="574" y="384" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">between friendly heroes nearby</text>
+<rect x="826" y="282" width="246" height="122" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="842" cy="302" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="842" y="306" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">8</text>
+<text x="860" y="307" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Pay and score</text>
+<text x="840" y="330" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">RewardEffect + SetByCaller</text>
+<text x="840" y="348" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">XP and souls filled in</text>
+<text x="840" y="366" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">→ ExperienceUpdated, the shop</text>
+<text x="840" y="384" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">GM->ReportKill(team)</text>
+<path d="M276 343 L290 343" fill="none" stroke="#4fc1b0" stroke-width="2" marker-end="url(#h4fc1b0)"/>
+<path d="M542 343 L556 343" fill="none" stroke="#4fc1b0" stroke-width="2" marker-end="url(#h4fc1b0)"/>
+<path d="M808 343 L822 343" fill="none" stroke="#4fc1b0" stroke-width="2" marker-end="url(#h4fc1b0)"/>
+<path d="M151 212 L151 280" fill="none" stroke="#4fc1b0" stroke-width="2" marker-end="url(#h4fc1b0)"/>
+<rect x="10" y="440" width="1080" height="150" rx="12" fill="rgba(255,255,255,0.015)" stroke="#b08cff" stroke-opacity="0.5"/>
+<text x="28" y="464" font-size="12.5" fill="#b08cff" font-weight="700" text-anchor="start">STUN AND FALL BACK · THE EFFECT GRANTS THE TAG, SO EVERY MACHINE REACTS</text>
+<rect x="28" y="474" width="512" height="104" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="44" cy="494" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="44" y="498" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">9</text>
+<text x="62" y="499" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">The character</text>
+<text x="42" y="522" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">StunTagUpdated · FallBackTagUpdated</text>
+<text x="42" y="540" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">added: montage on; OnStun turns a player's input off</text>
+<text x="42" y="558" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">every ability blocked, except GAP_Dead and GAP_Launched</text>
+<rect x="560" y="474" width="512" height="104" rx="8" fill="#151922" stroke="#b08cff" stroke-opacity="1"/>
+<circle cx="576" cy="494" r="10" fill="none" stroke="#b08cff" stroke-width="1.5"/>
+<text x="576" y="498" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">10</text>
+<text x="594" y="499" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">The skeleton's brain</text>
+<text x="574" y="522" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">PawnStunTagUpdated · PawnFallBackTagUpdated</text>
+<text x="574" y="540" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">added: StopLogic pauses the behaviour tree</text>
+<text x="574" y="558" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">removed: StartLogic, unless the round is over</text>
+<rect x="10" y="614" width="1080" height="150" rx="12" fill="rgba(255,255,255,0.015)" stroke="#5fa8ff" stroke-opacity="0.5"/>
+<text x="28" y="638" font-size="12.5" fill="#5fa8ff" font-weight="700" text-anchor="start">KNOCKBACK · THE TARGET LAUNCHES ITSELF</text>
+<rect x="28" y="648" width="512" height="104" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="44" cy="668" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="44" y="672" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">11</text>
+<text x="62" y="673" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Attacker: PushTarget(target, velocity)</text>
+<text x="42" y="696" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">velocity stored in a hit result's ImpactNormal</text>
+<text x="42" y="714" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">SendGameplayEventToActor(target,</text>
+<text x="42" y="732" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">  ability.passive.launch.activate)</text>
+<rect x="560" y="648" width="512" height="104" rx="8" fill="#151922" stroke="#4fc1b0" stroke-opacity="1"/>
+<circle cx="576" cy="668" r="10" fill="none" stroke="#4fc1b0" stroke-width="1.5"/>
+<text x="576" y="672" font-size="10.5" fill="#e6e8ee" font-weight="700" text-anchor="middle">12</text>
+<text x="594" y="673" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Target: UGAP_Launched</text>
+<text x="574" y="696" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">triggered by the event, server only, not blocked by stun</text>
+<text x="574" y="714" font-size="11" fill="#e9c46a" font-weight="500" text-anchor="start" font-family="JetBrains Mono, Consolas, monospace">K2_CommitAbility → PushSelf → LaunchCharacter</text>
+<text x="574" y="732" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">the new movement replicates to every player</text>
+<path d="M542 700 L556 700" fill="none" stroke="#5fa8ff" stroke-width="2" marker-end="url(#h5fa8ff)"/>
+<rect x="10" y="788" width="1080" height="118" rx="12" fill="rgba(255,255,255,0.015)" stroke="#d9822b" stroke-opacity="0.5"/>
+<text x="28" y="812" font-size="12.5" fill="#d9822b" font-weight="700" text-anchor="start">LINKS TO OTHER SECTIONS</text>
+<rect x="28" y="820" width="512" height="76" rx="8" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="42" y="845" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Comes in from</text>
+<text x="42" y="868" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Damage pipeline: Health hits 0, and its context names the killer</text>
+<text x="42" y="886" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Melee, ranged &amp; area: PushTarget and the stun effect</text>
+<rect x="560" y="820" width="512" height="76" rx="8" fill="#151922" stroke="#d9822b" stroke-opacity="1"/>
+<text x="574" y="845" font-size="13.5" fill="#e6e8ee" font-weight="600" text-anchor="start">Goes out to</text>
+<text x="574" y="868" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Levelling: XP → ExperienceUpdated · Shop: souls</text>
+<text x="574" y="886" font-size="11.5" fill="#9aa3b2" font-weight="400" text-anchor="start">Framework: ReportKill, match stats, StartSpot, round resets</text>
+</svg>

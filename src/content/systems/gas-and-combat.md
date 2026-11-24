@@ -524,23 +524,75 @@ The numbers match the diagram. Everything here runs on the server; Health then r
 
 ### Death, stun, knockback & rewards
 
-<div class="placeholder">Diagram: Death, stun, knockback & rewards</div>
+<figure class="diagram">
+  <a href="../../diagrams/gas-death.svg" target="_blank" rel="noopener" title="Open full size"><img src="../../diagrams/gas-death.svg" alt="Death, rewards, stun and knockback in twelve numbered steps, coloured by the machine that runs them. Death and respawn: 1, on the server HealthUpdated at zero applies the death effect, which grants the dead tag, and sends the dead event with the killing blow's context; 2, the dead tag replicates, so DeathTagUpdated runs StartDeathSequence on every machine, turning input off, cancelling abilities, playing the montage, hiding the hero from AI and dissolving the body, while the banner and death sound play only on the dying player's screen; 3, when the montage ends the capsule stops blocking others and the server starts the respawn timer, which removes the death effect; 4, the tag's removal runs Respawn on every machine, resetting the hero at their start spot with full stats. Rewards, in UGAP_Dead on the server: 5, the killer comes from the context and only heroes get credit; 6, the amount depends on whether a hero or skeleton died, and Stacked Odds can double it; 7, the killer gets everything alone, or half with the rest split between friendly heroes nearby; 8, a reward effect fills in XP and souls with SetByCaller and the kill is reported to the Game Mode. Stun and fall back: 9, the tag plays a montage, turns a player's input off and blocks abilities; 10, a skeleton's behaviour tree pauses. Knockback: 11, PushTarget stores the velocity in a hit result and sends the target a launch event; 12, the target's UGAP_Launched commits and launches itself, and the movement replicates. Links: the damage pipeline and the attacks feed in; levelling, the shop and the framework read from it." /></a>
+  <figcaption>The server decides; tags and events carry the decision to every machine.</figcaption>
+</figure>
 
 #### What it does
 
-TODO
+When a hero's Health reaches 0, they collapse and dissolve on every screen, and only they see the death banner. After a short delay they reintegrate at their own start point with full Health and Mana and their swords put away. The hero who landed the killing blow earns souls and XP, shared with friendly heroes standing nearby, and a lucky roll of Stacked Odds can double the whole reward. The kill counts towards their team's round score and everyone's match stats.
+
+Stunned heroes freeze in a stun animation and can't move or use abilities until it wears off, and stunned skeletons stop thinking. Knocked-back characters are launched by their own ability, so every knockback follows the same rules.
 
 #### Step by step
 
-TODO
+The numbers match the diagram.
+
+| # | Step | Calls, in order | Runs on |
+|---|---|---|---|
+| 1 | Health reaches 0 | [`HealthUpdated`](code:UChrisAbilitySystemComponent::HealthUpdated): health-empty guard → `AuthApplyGameEffect` (the death effect, which grants the dead tag) → `SendGameplayEventToActor` (the dead event, carrying the killing blow's context) | Server |
+| 2 | Everyone sees it | [`DeathTagUpdated`](code:AChrisCharacter::DeathTagUpdated) → [`StartDeathSequence`](code:AChrisCharacter::StartDeathSequence): `OnDead` (input off) → `CancelAllAbilities` → [`PlayDeathAnimation`](code:AChrisCharacter::PlayDeathAnimation) → gauge hidden → `MOVE_None` → hidden from AI perception → `OnDeathDissolve`. The death sound and `ShowDeathBanner` only for the dying player | Every machine; banner on the owning client |
+| 3 | Montage ends | [`DeathMontageFinished`](code:AChrisCharacter::DeathMontageFinished): capsule stops blocking others → server timer → [`RespawnImmediately`](code:AChrisCharacter::RespawnImmediately) removes the death effect | Every machine; timer and removal on the server |
+| 4 | Come back | `DeathTagUpdated` (tag removed) → [`Respawn`](code:AChrisCharacter::Respawn): undo step 2 → `ResetToUnequipped` → move to the controller's `StartSpot` (server) → `ApplyFullStatEffect` | Every machine; move on the server |
+| 5 | Who killed whom | [`UGAP_Dead::ActivateAbility`](code:UGAP_Dead::ActivateAbility), triggered by the dead event: `ContextHandle.GetEffectCauser()` → heroes only → `AddDeath` / `AddHeroKill` | Server |
+| 6 | How much | Hero or skeleton reward → Stacked Odds: the killer's chance attribute, `FRand` → ×2 | Server |
+| 7 | Who shares | [`GetFriendlyAlliesNearKiller`](code:UGAP_Dead::GetFriendlyAlliesNearKiller): overlap around the killer → friendly heroes only → 100% to a lone killer, or 50% to the killer and 50% split | Server |
+| 8 | Pay and score | `MakeOutgoingGameplayEffectSpec(RewardEffect)` → `SetSetByCallerMagnitude` for XP and souls → apply → [`ReportKill`](code:AChrisGameMode::ReportKill) with the killer's team | Server |
+| 9 | Stun and fall back | [`StunTagUpdated`](code:AChrisCharacter::StunTagUpdated) / [`FallBackTagUpdated`](code:AChrisCharacter::FallBackTagUpdated): montage → [`OnStun`](code:AChrisPlayerCharacter::OnStun) turns input off; removed → montage stops, input back | Every machine |
+| 10 | The skeleton's brain | [`PawnStunTagUpdated`](code:AChrisAIController::PawnStunTagUpdated) / `PawnFallBackTagUpdated`: `StopLogic` → removed: `StartLogic` unless the round is over | Server |
+| 11 | Knockback, attacker | [`PushTarget`](code:UChrisGameplayAbility::PushTarget): velocity into a hit result's `ImpactNormal` → target data → `SendGameplayEventToActor` with `ability.passive.launch.activate` | Server |
+| 12 | Knockback, target | [`UGAP_Launched::ActivateAbility`](code:UGAP_Launched::ActivateAbility): `K2_CommitAbility` → [`PushSelf`](code:UChrisGameplayAbility::PushSelf) → `LaunchCharacter` | Server; movement replicates |
 
 #### How it works
 
-TODO
+**Two things happen at 0 Health** – [`HealthUpdated`](code:UChrisAbilitySystemComponent::HealthUpdated), on the server, does two separate jobs. It applies the **death effect**, whose only purpose is granting the dead tag; effects replicate, so every machine gets the tag. And it sends the **dead event**, which carries the context of the hit that did it, the same context the damage pipeline attached to the spec, so the reward ability can tell who the killer was. A loose "health empty" tag makes sure this only happens once while Health sits at 0.
+
+**One function for adding and removing a tag** – the character registers for changes to the dead tag with `RegisterGameplayTagEvent`, a delegate that fires when the tag's count changes. [`DeathTagUpdated`](code:AChrisCharacter::DeathTagUpdated) receives the new count: anything above 0 means the hero just died, and 0 means they just came back. So death and respawn are the same function, and they run on every machine because the tag replicates. Inside, the banner and death sound are gated by `IsLocallyControlledByPlayer`, so they play only for the player who died, while the montage and the dissolve play for everyone.
+
+**Hooks each class fills in** – [`StartDeathSequence`](code:AChrisCharacter::StartDeathSequence) calls `OnDead`, a virtual function that's empty on the base character. The player character overrides it to turn their input off; the skeleton overrides it to note when it died and play its death sound. `OnStun`, `OnFallBack` and `OnRespawn` work the same way, so the base class decides *when* and each kind of character decides *what*. The sequence also cancels every ability, freezes movement, hides the health gauge, and turns off the hero's AI perception stimuli source, which is what makes them visible to the skeletons' senses, so skeletons stop attacking a body.
+
+**Respawning removes the effect, not the tag** – when the death montage ends, [`DeathMontageFinished`](code:AChrisCharacter::DeathMontageFinished) stops the capsule blocking other characters and, on the server, starts the respawn timer. [`RespawnImmediately`](code:AChrisCharacter::RespawnImmediately) then removes every active effect that grants the dead tag. A granted tag belongs to the effect that granted it, so ending the effect is how the tag goes, and its removal reaches every machine and runs [`Respawn`](code:AChrisCharacter::Respawn). That undoes the death sequence line by line, puts the swords away, moves the hero to their controller's `StartSpot` (the player start they were given at the start of the match) and fills Health and Mana. Cooldowns carry on; only the round reset clears them. If a round ends while someone is dead, [`ForceResetFromDeath`](code:AChrisCharacter::ForceResetFromDeath) does the reset itself and sets a one-time flag so the `Respawn` that follows returns early instead of running everything twice.
+
+**A passive ability started by an event** – [`UGAP_Dead`](code:UGAP_Dead::ActivateAbility) has no button. Its constructor adds an ability trigger, so it starts whenever a gameplay event with the dead tag reaches its owner. It runs only on the server, and it removes the stun tag from its blocked tags, so a hero who dies while stunned still pays out. Each death is its own activation: a smash that kills ten characters runs it ten times, with ten separate Stacked Odds rolls.
+
+**Rewards: killer, amount, sharing** – the killer is read from the dead event's context (`GetEffectCauser`), and only a hero earns rewards; a hero killed by a skeleton still has the death counted in the match stats. Killing a hero pays more than a skeleton. Stacked Odds gives the killer a 15% chance to double both rewards before they're shared, so their teammates gain from it too. [`GetFriendlyAlliesNearKiller`](code:UGAP_Dead::GetFriendlyAlliesNearKiller) uses the same overlap as Nightflare with the opposite filters: centred on the killer, friendly heroes only. Alone, the killer gets everything; with allies nearby, the killer gets half and the other half is split evenly, rounded to whole numbers.
+
+**SetByCaller: one effect, any amount** – the reward is one gameplay effect that adds to Experience and Souls, but the amounts change every kill. Its modifiers are left as blanks labelled with a tag, and the code fills them in with `SetSetByCallerMagnitude` before applying it, once for the killer and once for every ally together. Adding Experience runs `ExperienceUpdated` from the levelling section, so a kill can level a hero up on the spot. Finally the kill is reported to the Game Mode, which counts it towards the team's round score.
+
+**Stun and fall back** – the stun effect grants the stun tag for its duration, read from a curve at the stunning ability's level. [`StunTagUpdated`](code:AChrisCharacter::StunTagUpdated) uses the same add-or-remove pattern as death: it plays the stun montage on every machine, and the player's `OnStun` turns their input off. Every ability lists the stun tag as blocking, so nothing can be started; the reward and launched abilities are the exceptions. When the tag goes, the montage stops and input returns, unless the hero died in the meantime. Fall back works the same way with its own montage. On a skeleton, the AI controller listens for the same tags and pauses its behaviour tree (`StopLogic`), restarting it when the tag is removed, unless the round has ended.
+
+**The target launches itself** – [`PushTarget`](code:UChrisGameplayAbility::PushTarget) doesn't move anyone. It sends the target a gameplay event, and the velocity rides along in the event's target data, stored in a hit result's `ImpactNormal` field because that's a vector the envelope already has room for. On the target, [`UGAP_Launched`](code:UGAP_Launched::ActivateAbility) is another event-triggered passive: it commits (so a cooldown can limit repeated launches), reads the velocity back out and calls `LaunchCharacter` on itself. It runs on the server, and the character's movement replicates the launch to every player. Because every knockback goes through the target's own ability, the target's rules always apply, and any future rule (stagger, hit reactions, heavier heroes flying less far) has one place to live. [`PushTargetsFromLocation`](code:UChrisGameplayAbility::PushTargetsFromLocation) pushes a list of targets away from a point with the same subtract-and-normalise maths as Thrust.
+
+**Pooled skeletons** – skeletons aren't destroyed. Each barrack spawns its skeletons once into a pool. A dead skeleton becomes reusable only after [`IsReadyForReuse`](code:ASkeletonAI::IsReadyForReuse) has seen enough time pass for its dissolve to finish, and [`Activate`](code:ASkeletonAI::Activate) resets its movement, collision and materials, removes its death effect and places it at the barrack's next spawn spot. The AI controller stops the skeleton's behaviour tree and clears its senses when it dies, and [`ForgetActorIfDead`](code:AChrisAIController::ForgetActorIfDead) makes skeletons forget heroes who have died.
+
+**Links to other sections**
+
+- **The damage pipeline** – Health reaching 0 starts everything here, and its context names the killer.
+- **Melee combos, Ranged & area abilities** – `PushTarget` sends every knockback except Thrust's, and the stun ability's effect grants the stun tag.
+- **Attributes, XP & levelling** – rewards add Experience, which runs `ExperienceUpdated` and can level a hero up.
+- **The shop** – souls are what it spends. Stacked Odds is a skill bought there.
+- **Weapon equip** – `Respawn` resets the swords to unequipped.
+- **The gameplay framework** – `ReportKill` feeds round scoring, `AddDeath` and `AddHeroKill` the match stats, `StartSpot` comes from where the match placed each player, and round resets use `ForceResetFromDeath`.
 
 #### Why I designed it this way
 
-TODO
+- **Tags carry state to every machine** – the server applies one effect, and its replicated tag tells every machine to play the death, stun or fall-back state, with no extra RPCs.
+- **One function per state** – the same tag callback handles a state starting and ending, so the setup and its undo sit side by side.
+- **The server decides, the screens react** – deaths, rewards, respawn timing and knockback are all decided on the server; clients only play what the tags tell them.
+- **Passives started by events** – death rewards and knockback are abilities, so they use GAS's rules (blocked tags, cooldowns) and can be reused by any character.
+- **Shared kill rewards** – splitting rewards with nearby teammates rewards fighting together, and doubling before the split makes Stacked Odds a team skill.
+- **Pooling skeletons** – reusing bodies avoids spawning and destroying actors all match, which keeps the server steady.
 
 ## How it connects
 
@@ -584,4 +636,6 @@ TODO: before/after, with numbers where possible.
 - **Armour against heavy abilities** – heavy damage is the curve value × the heavy bonus, so it ignores Armour. Capturing Armour in the heavy MMC makes every attack respect it.
 - **Double Down on combo hits only** – its roll lives in the base MMC, so it follows whichever effects use that MMC, while the skill promises combo hits. Tagging the follow-up combo effects and rolling it in stage two would tie it to the hits it describes, and let the base MMC go.
 - **Add bonuses inside one bucket** – stage-two bonuses multiply, so they grow faster than their parts: Loaded Dice, Stealth Strike, Blood Serum and Deadeye together reach ×6.6 on a third shot, while reductions shrink towards a limit. Adding the bonuses (×1 + 0.3 + 0.4 + 0.2 + 2 = ×3.9) or capping the total would keep stacked damage in check, while reductions keep multiplying.
+- **Skip dead teammates when sharing rewards** – the ally overlap keeps every friendly hero in range, so a teammate lying dead nearby still takes a share. One dead-tag check fixes it.
+- **Say what the push velocity is** – `PushTarget` stores the velocity in a hit result's `ImpactNormal`, a field that normally means the surface's direction. A small target data type of its own would make the message say what it carries.
 - **One combo class** – `UGA_Combo` hard-codes its buttons, while `UStabAbility` reads them from data. I'd move the dual slash onto Stab and delete GA_Combo.
