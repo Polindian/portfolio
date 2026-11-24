@@ -645,13 +645,6 @@ Around the loop:
 - **Fix** – a `LastShotTime` check at the top of `ShootProjectile`: a shot less than 0.15 seconds after the last one is ignored.
 - **Lesson** – an input event isn't the same as a press. Check how often an input fires before trusting it to mean "once".
 
-### Heroes respawned on their own
-
-- **Symptom** – heroes killed near the end of a round came back by themselves and kept their input and movement into the shop.
-- **Cause** – the death effect had a duration. When it ran out, the dead tag went with it and `Respawn` ran, whatever the respawn timer or the round was doing.
-- **Fix** – the death effect is now Infinite, so [`RespawnImmediately`](code:AChrisCharacter::RespawnImmediately) removing it is the only way back, and round end cancels the death timers and resets the dead itself ([`ForceResetFromDeath`](code:AChrisCharacter::ForceResetFromDeath)).
-- **Lesson** – when an effect's tag drives a state, the effect's duration is part of the logic. Give one path the job of ending it.
-
 ### Shoot's cooldown and Deadeye carried into the next round
 
 - **Symptom** – after a round reset, Shoot sometimes fired only one shot before a full cooldown, or showed ready but wouldn't fire, and Deadeye sometimes spent its triple damage on the first shot of a round.
@@ -665,13 +658,6 @@ Around the loop:
 - **Cause** – using the last stack removed the item, which removed what it had granted, including the shared cooldown effect, so the next item's cooldown check passed.
 - **Fix** – when [`ConsumeItem`](code:UInventoryComponent::ConsumeItem) uses the last stack, the item's granted effects stay until they expire by themselves.
 - **Lesson** – cleanup can undo more than the thing being cleaned up. Check what else depends on what's being removed.
-
-### Quicksilver's speed boost vanished in half a second
-
-- **Symptom** – the Quicksilver potion's speed boost appeared and was gone almost immediately.
-- **Cause** – the anim instance set the walk speed every frame from fixed numbers for each direction, overwriting the speed attribute the potion had raised.
-- **Fix** – the directional speeds became multipliers of the move speed attribute, so buffs and each hero's base speed both count. Abilities that set their own speed add the `SpeedOverride` tag so the anim instance leaves it alone.
-- **Lesson** – two systems writing the same value every frame means the last one wins. Give each value one owner, and let the others multiply it.
 
 ### Recycled skeletons came back invisible
 
