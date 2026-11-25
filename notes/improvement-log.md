@@ -2,6 +2,33 @@
 
 Changes found while studying the Champions Arena code. Each one becomes a refactor branch off `develop` and a "What I'd do differently" / "Optimisations" entry on the site.
 
+## Open to-dos (keep this list current)
+
+**Editor checks still to do (combat & GAS page):**
+- 8: smash/stun impact cue — does the VFX scale with the radius?
+- 9: `GE_SmashRadius` / `GE_StunRadius` — Override from a curve per level?
+- 10: `GE_Nightflare_Blind` duration.
+- 11: the stun effect grants `stats.stun` with a curve-based duration?
+- 13: `GAP_Launched` cooldown (needed before adding combo pushes).
+- 14: death effect is Infinite and grants the dead tag.
+- 15: `RespawnDelay`, `DeathMontageFinishTimeShift`, `AllyShareRadius`, reward amounts.
+- 16: potions share the 10 s cooldown.
+- 17: in-game test: get stunned while aiming Shoot and mid-combo (does the aim stick?).
+- 18: roll capsule height.
+- Burn total: watch Health to confirm 40 or 44 per burn.
+- Server bone test (see the "server bone updates" entry below), then fix.
+
+**Code changes (Christopher writes them, branch off `develop`):**
+- `IncomingDamage` meta attribute rewrite, with Armour applied once on the target (fixes the killing-blow bug, heavies and skeletons ignoring Armour). Good PR story.
+- Additive bonus bucket; Blood Serum `!bIsDot`; MMC merge (one light MMC, Double Down on tagged combo hits); GA_Combo merged into Stab; Mode A dead code removed; Thrust onto `PushTarget`; `stats.stun` on Thrust; renames (Scorched effects, `StabDamageEffect`, `RightStabMontage`); projectiles stop on walls; skip dead allies in reward sharing; Fleetfoot balance; mesh tick option.
+- Planned feature: combo-hit stun (0.5–0.75 s) and small push (e.g. 400, 0, 100) after checking `GAP_Launched`.
+
+**Learning and website:**
+- Combined mock: gameplay framework + combat & GAS (score 0–10 each, review at the end).
+- Concise comments for the hard parts of each feature (file, function, line), added on a branch off `develop`.
+- Remaining tabs, each with a ~10-question quiz: Networking, AI, UI, Audio, Online backend. Then a final mixed mock.
+- After the code changes: update "What I'd do differently" entries that become "Challenges & bugs" stories, and add profiling numbers to Optimisations.
+
 ## 1. Move match phase and timers into the Game State
 
 - **System:** Gameplay Framework (also Networking)
@@ -144,7 +171,11 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 - **Rename `RightStabMontage`:** `UStabAbility` now plays every kind of attack, so call it something like `AttackMontage`. Add a property redirect in `DefaultEngine.ini` (`+PropertyRedirects=(OldName="StabAbility.RightStabMontage",NewName="StabAbility.AttackMontage")`) so the montages already set in the Blueprints aren't wiped. (Melee combos)
 - **Empty `Swipe` class:** `Swipe.cpp` / `Swipe.h` contain nothing. Delete them. (Melee combos)
 - **Debug log in `HandleComboCommit`:** the `UE_LOG` at the top runs on every combo button press and repeats the map lookups. Remove it or put it behind a verbose log category. (Melee combos)
-- **Editor check: server bone updates for hit detection:** `AN_SendTargetGroup` reads `GetSocketLocation` on the server, but a dedicated server renders nothing, so with the wrong setting it may not refresh bone positions and the sweep would use stale sword positions. On every hero (and minion) Blueprint, check the mesh's Optimization → Visibility Based Anim Tick Option is "Always Tick Pose and Refresh Bones". Not set anywhere in C++. (Melee hit detection)
+- **Editor check: server bone updates for hit detection:** `AN_SendTargetGroup` reads `GetSocketLocation` on the server, but a dedicated server renders nothing, so with the wrong setting it may not refresh bone positions and the sweep would use stale sword positions. Checked 2026-11-25: hero and skeleton Blueprints use **Always Tick Pose** (the `ACharacter` default). That ticks the animation, so notifies still fire, but it only refreshes bone positions when the mesh is rendered, and a dedicated server never renders. So the server's sockets are probably stale (the reference pose, moved along with the actor), and sweeps start from the wrong sword position.
+  - **Test first:** in `AN_SendTargetGroup`, log `GetSocketLocation` on the server and on the attacking client for the same swing (or draw a debug sphere on each). If the server's position doesn't follow the swing, it's confirmed.
+  - **Fix:** set the mesh to **Always Tick Pose and Refresh Bones** on the hero and skeleton Blueprints (or in the constructors). Other server-side socket users benefit too: Thrust's detection actor attached to `target_ThrustCneter`, and the projectile spawn socket.
+  - **Cost and optimisation:** the server now computes bone positions every frame for every character. Fine for an arena this size; if profiling shows it, switch to refreshing bones only while an attack is playing, or use Animation Update Rate Optimisation.
+  - If confirmed, it's a strong Challenges / Optimisations story for the site. (Melee hit detection / Networking)
 - **One-frame sweeps can miss fast swings:** each `AN_SendTargetGroup` checks the blade's position on a single frame only, so an enemy the blade passed through between frames isn't counted. Upgrade: an anim notify state that sweeps every tick from last tick's socket positions to this tick's, keeping one hit list for the whole window. (Melee hit detection)
 - **Light attacks do a wasted sweep:** `UStabAbility::HandleComboDamageEvent` calls `GetHitResultFromSweepLocationTargetData` (one extra sphere sweep per hit) before checking the mode, but only Mode A (smash/stun) uses the results; Mode B (light attacks) throws them away. Move the call inside the `bUseAoESweepResults` branch. (Melee / Optimisations)
 - **To verify (area section): Mode A airborne check looks reversed:** the comment says "Skip airborne targets", and `StartCombo` skips targets that are falling, but Mode A in `HandleComboDamageEvent` does `if (TargetCharacter && !IsFalling()) continue;`, which skips grounded targets and only damages airborne ones. Design confirmed: smash and stun should ignore airborne players so they can be dodged by jumping, so if Mode A runs for any smash/stun hit, flip it to `if (TargetCharacter && TargetCharacter->GetCharacterMovement()->IsFalling()) continue;`. Test a smash combo's later hits on a grounded enemy. (Ranged & area)
@@ -174,7 +205,7 @@ Changes found while studying the Champions Arena code. Each one becomes a refact
 - **To test: getting stunned mid-ability:** nothing cancels a running ability when the stun tag lands (`ActivationBlockedTags` only stops new ones starting). Abilities that play their montage through `PlayMontageAndWait` end when the stun montage interrupts it (if they share a slot), but `GA_Shoot` plays its aim montage with `PlayAnimMontage` and has no task waiting on it, and input is off while stunned, so letting go of aim during a stun may never arrive: the hero could come out of the stun still aiming. Test it; if so, cancel abilities in `StunTagUpdated` / `FallBackTagUpdated` on the server (excluding the passives), or give the stun effect a "cancel abilities with tags" setting. (Stun)
 - **Thrust can be activated while stunned:** the Thrust Blueprint's Activation Blocked Tags list only `stats.attacking`; the Blueprint's list replaced the C++ default that adds `stats.stun`. The right stab Blueprint lists `stats.stun` explicitly. Input is off while stunned, so players can't press it, but add `stats.stun` to Thrust. The other heavy attacks already list it. (Ranged & area / Stun)
 - **Thrust's attach socket name is misspelled in both places:** `target_ThrustCneter` on the Blueprint and the skeleton, so it works. Optional: rename both together. (Ranged & area)
-- **Scorched's effects are named the wrong way round:** `GE_Scorched_Equipped` is the burn itself (Has Duration, −4 Health, `GameplayCue.vfx.burning`, stacks once per target and refreshes), while `GE_ScorchedActive` is the shop's infinite flag (`ScorchedActive` = 1). Rename the burn to something like `GE_Scorched_Burn`. Confirmed: Period 0.5 s, Duration 5 s, so 10 ticks of 4 = 40, or 44 if "Execute Periodic Effect On Application" is ticked (an extra tick the moment it lands). Check the total with a log or by watching Health. Ticks skip Armour but Bulwark and the other reductions reduce each one. Still to confirm: its asset tags include `damage.type.dot`; without it every tick counts as a hit for Loaded Dice (a proc roll every 4 ticks) and gets Stealth Strike and Blood Serum. (Ranged & area / Damage pipeline)
+- **Scorched's effects are named the wrong way round:** `GE_Scorched_Equipped` is the burn itself (Has Duration, −4 Health, `GameplayCue.vfx.burning`, stacks once per target and refreshes), while `GE_ScorchedActive` is the shop's infinite flag (`ScorchedActive` = 1). Rename the burn to something like `GE_Scorched_Burn`. Confirmed: Period 0.5 s, Duration 5 s, so 10 ticks of 4 = 40, or 44 if "Execute Periodic Effect On Application" is ticked (an extra tick the moment it lands). Check the total with a log or by watching Health. Ticks skip Armour but Bulwark and the other reductions reduce each one. Confirmed: its asset tags include `damage.type.dot`, so the bonus exclusions work (except Blood Serum, logged above). (Ranged & area / Damage pipeline)
 - **Editor values found:** right stab move speed 100, sweep radius 35; Thrust detection radius 100 (C++ default 150), push speed 5000, cost and cooldown effects set; smash damage −85 at level 1 (`CT_Smash`), Thrust −50 (`CT_Thrust`); smash and Thrust damage effects apply fall-back effects; the right stab's first hit applies a 0.5 s stun (`GE_StabStun`); Bulwark = `DamageReduction` +0.1 (10% off every hit, any source); Fleetfoot = `MoveSpeed` Multiply (Additive) 1.05 (+5%); Iron Clad = `MaxHealth` +100 (Add Base), and `RescaleHealth` keeps the health percentage. All three Infinite. (Reference)
 - **Fleetfoot may be too small to feel:** +5% move speed is hard for players to notice (most notice around 10%). Playtest and consider 1.08–1.10. (Balance)
 - **Armour does nothing against skeletons:** the skeleton's combo damage effect (`GE_ComboDamage_Skeleton`) is a fixed −8 Scalable Float, with no MMC, so a hero's Armour (and the skeleton's own Attack Damage) never affect it. It also means no damage effect uses `MMC_BaseAttackDamage` except the light combo hits, so the MMC merge is safe. Decided: Armour should reduce every hit, not just heroes'. (Bulwark and the other reductions already apply to skeletons, since step 3 of `PostGameplayEffectExecute` has no source check.)
