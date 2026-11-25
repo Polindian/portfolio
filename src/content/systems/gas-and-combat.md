@@ -488,7 +488,7 @@ The numbers match the diagram. Everything here runs on the server; Health then r
 
 **Heavy abilities scale with their level** – a modifier using an MMC has a **Coefficient** box, and the final number is Coefficient × what the MMC returns. My heavy damage effects put their damage in the Coefficient, as a curve-table value read at the ability's level, and [`MMC_HeavyAttackBuffDamage`](code:UMMC_HeavyAttackBuffDamage::CalculateBaseMagnitude_Implementation) returns only the multiplier, 1 + the heavy bonus (1.2 with Juggernaut). So the two kinds of bonus come from different places: the **Coefficient** belongs to the effect and changes with the ability's level, while the **light and heavy bonuses** belong to the attacker and change when a skill is bought.
 
-**Armour gives diminishing returns** – Armour ÷ (Armour + 100) is the share blocked: 50 Armour blocks 33%, 100 blocks 50%, 200 blocks 67%. Every point helps a little less than the one before, and the result can never reach 100%.
+**Armour gives diminishing returns** – Armour ÷ (Armour + 100) is the share blocked: 50 Armour blocks 33%, 100 blocks 50%, 200 blocks 67%. Every point helps a little less than the one before, and the result can never reach 100%. Skeleton attacks are the exception today: their damage effect is a fixed number (8), so Armour doesn't reduce it.
 
 **Double Down** – the 20% chance of ×1.3 is rolled inside [`MMC_BaseAttackDamage`](code:UMMC_BaseAttackDamage::CalculateBaseMagnitude_Implementation). It's safe to roll random numbers there because damage effects are only applied on the server, so one machine rolls and everyone gets the result. The follow-up combo hits are the effects that use this MMC, so Double Down applies to exactly the combo hits the skill describes.
 
